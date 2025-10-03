@@ -48,6 +48,7 @@ module.exports = {
       resolve: ['.jsx', '.js'],
     }),
     replace({
+      preventAssignment: true,
       VERSION: JSON.stringify(version),
       PROD: prod ? 'true' : 'false',
       DEV_SERVER: devserver ? 'true' : 'false'

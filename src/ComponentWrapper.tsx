@@ -1,16 +1,21 @@
-import { Fragment, Component, h } from 'preact';
-import { IroInputType } from './ComponentTypes';
+import { Fragment, Component, h } from "preact";
+import { IroInputType } from "./ComponentTypes";
 
 const enum InputEventType {
-  MouseDown = 'mousedown',
-  MouseMove = 'mousemove',
-  MouseUp = 'mouseup',
-  TouchStart = 'touchstart',
-  TouchMove = 'touchmove',
-  TouchEnd = 'touchend'
-};
+  MouseDown = "mousedown",
+  MouseMove = "mousemove",
+  MouseUp = "mouseup",
+  TouchStart = "touchstart",
+  TouchMove = "touchmove",
+  TouchEnd = "touchend",
+}
 
-const SECONDARY_EVENTS = [InputEventType.MouseMove, InputEventType.TouchMove, InputEventType.MouseUp, InputEventType.TouchEnd];
+const SECONDARY_EVENTS = [
+  InputEventType.MouseMove,
+  InputEventType.TouchMove,
+  InputEventType.MouseUp,
+  InputEventType.TouchEnd,
+];
 
 interface Props {
   onInput: (x: number, y: number, type: IroInputType) => boolean | void;
@@ -21,7 +26,7 @@ interface State {}
 // Base component class for iro UI components
 // This extends the Preact component class to allow them to react to mouse/touch input events by themselves
 export class IroComponentWrapper extends Component<Props, State> {
-  public uid: string
+  public uid: string;
   public base: HTMLElement;
 
   constructor(props) {
@@ -42,24 +47,20 @@ export class IroComponentWrapper extends Component<Props, State> {
       // onTouchStart: eventHandler,
     };
 
-    const isHorizontal = props.layoutDirection === 'horizontal';
+    const isHorizontal = props.layoutDirection === "horizontal";
     const margin = props.margin === null ? props.sliderMargin : props.margin;
 
     const rootStyles = {
-      overflow: 'visible',
-      display: isHorizontal ? 'inline-block' : 'block'
+      overflow: "visible",
+      display: isHorizontal ? "inline-block" : "block",
     };
 
     // first component shouldn't have any margin
     if (props.index > 0) {
-      rootStyles[isHorizontal ? 'marginLeft' : 'marginTop'] = margin;
+      rootStyles[isHorizontal ? "marginLeft" : "marginTop"] = margin;
     }
 
-    return (
-      <Fragment>
-        { props.children(this.uid, rootProps, rootStyles) }
-      </Fragment>
-    )
+    return h(Fragment, null, props.children(this.uid, rootProps, rootStyles));
   }
 
   // More info on handleEvent:
@@ -81,7 +82,7 @@ export class IroComponentWrapper extends Component<Props, State> {
       case InputEventType.TouchStart:
         const result = inputHandler(x, y, IroInputType.Start);
         if (result !== false) {
-          SECONDARY_EVENTS.forEach(event => {
+          SECONDARY_EVENTS.forEach((event) => {
             document.addEventListener(event, this, { passive: false });
           });
         }
@@ -93,12 +94,12 @@ export class IroComponentWrapper extends Component<Props, State> {
       case InputEventType.MouseUp:
       case InputEventType.TouchEnd:
         inputHandler(x, y, IroInputType.End);
-        SECONDARY_EVENTS.forEach(event => {
-          document.removeEventListener(event, this, { passive: false } as EventListenerOptions);
+        SECONDARY_EVENTS.forEach((event) => {
+          document.removeEventListener(event, this, {
+            passive: false,
+          } as EventListenerOptions);
         });
         break;
     }
   }
-
-
 }

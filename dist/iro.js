@@ -9,44 +9,45 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, global.iro = factory());
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
-  var n,u,t,i,r,o,f={},e=[],c=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|^--/i;function s(n,l){for(var u in l){ n[u]=l[u]; }return n}function a(n){var l=n.parentNode;l&&l.removeChild(n);}function h(n,l,u){var t,i,r,o,f=arguments;if(l=s({},l),arguments.length>3){ for(u=[u],t=3;t<arguments.length;t++){ u.push(f[t]); } }if(null!=u&&(l.children=u),null!=n&&null!=n.defaultProps){ for(i in n.defaultProps){ void 0===l[i]&&(l[i]=n.defaultProps[i]); } }return o=l.key,null!=(r=l.ref)&&delete l.ref,null!=o&&delete l.key,v(n,l,o,r)}function v(l,u,t,i){var r={type:l,props:u,key:t,ref:i,__k:null,__p:null,__b:0,__e:null,l:null,__c:null,constructor:void 0};return n.vnode&&n.vnode(r),r}function d(n){return n.children}function y(n){if(null==n||"boolean"==typeof n){ return null; }if("string"==typeof n||"number"==typeof n){ return v(null,n,null,null); }if(null!=n.__e||null!=n.__c){var l=v(n.type,n.props,n.key,null);return l.__e=n.__e,l}return n}function m(n,l){this.props=n,this.context=l;}function w(n,l){if(null==l){ return n.__p?w(n.__p,n.__p.__k.indexOf(n)+1):null; }for(var u;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){ return u.__e; } }return "function"==typeof n.type?w(n):null}function g(n){var l,u;if(null!=(n=n.__p)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break} }return g(n)}}function k(l){(!l.__d&&(l.__d=!0)&&1===u.push(l)||i!==n.debounceRendering)&&(i=n.debounceRendering,(n.debounceRendering||t)(_));}function _(){var n,l,t,i,r,o,f,e;for(u.sort(function(n,l){return l.__v.__b-n.__v.__b});n=u.pop();){ n.__d&&(t=void 0,i=void 0,o=(r=(l=n).__v).__e,f=l.__P,e=l.u,l.u=!1,f&&(t=[],i=$(f,r,s({},r),l.__n,void 0!==f.ownerSVGElement,null,t,e,null==o?w(r):o),j(t,r),i!=o&&g(r))); }}function b(n,l,u,t,i,r,o,c,s){var h,v,p,d,y,m,g,k=u&&u.__k||e,_=k.length;if(c==f&&(c=null!=r?r[0]:_?w(u,0):null),h=0,l.__k=x(l.__k,function(u){if(null!=u){if(u.__p=l,u.__b=l.__b+1,null===(p=k[h])||p&&u.key==p.key&&u.type===p.type){ k[h]=void 0; }else { for(v=0;v<_;v++){if((p=k[v])&&u.key==p.key&&u.type===p.type){k[v]=void 0;break}p=null;} }if(d=$(n,u,p=p||f,t,i,r,o,null,c,s),(v=u.ref)&&p.ref!=v&&(g||(g=[])).push(v,u.__c||d,u),null!=d){if(null==m&&(m=d),null!=u.l){ d=u.l,u.l=null; }else if(r==p||d!=c||null==d.parentNode){n:if(null==c||c.parentNode!==n){ n.appendChild(d); }else{for(y=c,v=0;(y=y.nextSibling)&&v<_;v+=2){ if(y==d){ break n; } }n.insertBefore(d,c);}"option"==l.type&&(n.value="");}c=d.nextSibling,"function"==typeof l.type&&(l.l=d);}}return h++,u}),l.__e=m,null!=r&&"function"!=typeof l.type){ for(h=r.length;h--;){ null!=r[h]&&a(r[h]); } }for(h=_;h--;){ null!=k[h]&&D(k[h],k[h]); }if(g){ for(h=0;h<g.length;h++){ A(g[h],g[++h],g[++h]); } }}function x(n,l,u){if(null==u&&(u=[]),null==n||"boolean"==typeof n){ l&&u.push(l(null)); }else if(Array.isArray(n)){ for(var t=0;t<n.length;t++){ x(n[t],l,u); } }else { u.push(l?l(y(n)):n); }return u}function C(n,l,u,t,i){var r;for(r in u){ r in l||N(n,r,null,u[r],t); }for(r in l){ i&&"function"!=typeof l[r]||"value"===r||"checked"===r||u[r]===l[r]||N(n,r,l[r],u[r],t); }}function P(n,l,u){"-"===l[0]?n.setProperty(l,u):n[l]="number"==typeof u&&!1===c.test(l)?u+"px":null==u?"":u;}function N(n,l,u,t,i){var r,o,f,e,c;if("key"===(l=i?"className"===l?"class":l:"class"===l?"className":l)||"children"===l);else if("style"===l){ if(r=n.style,"string"==typeof u){ r.cssText=u; }else{if("string"==typeof t&&(r.cssText="",t=null),t){ for(o in t){ u&&o in u||P(r,o,""); } }if(u){ for(f in u){ t&&u[f]===t[f]||P(r,f,u[f]); } }} }else{ "o"===l[0]&&"n"===l[1]?(e=l!==(l=l.replace(/Capture$/,"")),c=l.toLowerCase(),l=(c in n?c:l).slice(2),u?(t||n.addEventListener(l,T,e),(n.t||(n.t={}))[l]=u):n.removeEventListener(l,T,e)):"list"!==l&&"tagName"!==l&&"form"!==l&&!i&&l in n?n[l]=null==u?"":u:"function"!=typeof u&&"dangerouslySetInnerHTML"!==l&&(l!==(l=l.replace(/^xlink:?/,""))?null==u||!1===u?n.removeAttributeNS("http://www.w3.org/1999/xlink",l.toLowerCase()):n.setAttributeNS("http://www.w3.org/1999/xlink",l.toLowerCase(),u):null==u||!1===u?n.removeAttribute(l):n.setAttribute(l,u)); }}function T(l){return this.t[l.type](n.event?n.event(l):l)}function $(l,u,t,i,r,o,f,e,c,a){var h,v,p,y,w,g,k,_,C,P,N=u.type;if(void 0!==u.constructor){ return null; }(h=n.__b)&&h(u);try{n:if("function"==typeof N){if(_=u.props,C=(h=N.contextType)&&i[h.__c],P=h?C?C.props.value:h.__p:i,t.__c?k=(v=u.__c=t.__c).__p=v.__E:("prototype"in N&&N.prototype.render?u.__c=v=new N(_,P):(u.__c=v=new m(_,P),v.constructor=N,v.render=H),C&&C.sub(v),v.props=_,v.state||(v.state={}),v.context=P,v.__n=i,p=v.__d=!0,v.__h=[]),null==v.__s&&(v.__s=v.state),null!=N.getDerivedStateFromProps&&s(v.__s==v.state?v.__s=s({},v.__s):v.__s,N.getDerivedStateFromProps(_,v.__s)),p){ null==N.getDerivedStateFromProps&&null!=v.componentWillMount&&v.componentWillMount(),null!=v.componentDidMount&&f.push(v); }else{if(null==N.getDerivedStateFromProps&&null==e&&null!=v.componentWillReceiveProps&&v.componentWillReceiveProps(_,P),!e&&null!=v.shouldComponentUpdate&&!1===v.shouldComponentUpdate(_,v.__s,P)){for(v.props=_,v.state=v.__s,v.__d=!1,v.__v=u,u.__e=null!=c?c!==t.__e?c:t.__e:null,u.__k=t.__k,h=0;h<u.__k.length;h++){ u.__k[h]&&(u.__k[h].__p=u); }break n}null!=v.componentWillUpdate&&v.componentWillUpdate(_,v.__s,P);}for(y=v.props,w=v.state,v.context=P,v.props=_,v.state=v.__s,(h=n.__r)&&h(u),v.__d=!1,v.__v=u,v.__P=l,h=v.render(v.props,v.state,v.context),u.__k=x(null!=h&&h.type==d&&null==h.key?h.props.children:h),null!=v.getChildContext&&(i=s(s({},i),v.getChildContext())),p||null==v.getSnapshotBeforeUpdate||(g=v.getSnapshotBeforeUpdate(y,w)),b(l,u,t,i,r,o,f,c,a),v.base=u.__e;h=v.__h.pop();){ v.__s&&(v.state=v.__s),h.call(v); }p||null==y||null==v.componentDidUpdate||v.componentDidUpdate(y,w,g),k&&(v.__E=v.__p=null);}else { u.__e=z(t.__e,u,t,i,r,o,f,a); }(h=n.diffed)&&h(u);}catch(l){n.__e(l,u,t);}return u.__e}function j(l,u){for(var t;t=l.pop();){ try{t.componentDidMount();}catch(l){n.__e(l,t.__v);} }n.__c&&n.__c(u);}function z(n,l,u,t,i,r,o,c){var s,a,h,v,p=u.props,d=l.props;if(i="svg"===l.type||i,null==n&&null!=r){ for(s=0;s<r.length;s++){ if(null!=(a=r[s])&&(null===l.type?3===a.nodeType:a.localName===l.type)){n=a,r[s]=null;break} } }if(null==n){if(null===l.type){ return document.createTextNode(d); }n=i?document.createElementNS("http://www.w3.org/2000/svg",l.type):document.createElement(l.type),r=null;}return null===l.type?p!==d&&(null!=r&&(r[r.indexOf(n)]=null),n.data=d):l!==u&&(null!=r&&(r=e.slice.call(n.childNodes)),h=(p=u.props||f).dangerouslySetInnerHTML,v=d.dangerouslySetInnerHTML,c||(v||h)&&(v&&h&&v.__html==h.__html||(n.innerHTML=v&&v.__html||"")),C(n,d,p,i,c),l.__k=l.props.children,v||b(n,l,u,t,"foreignObject"!==l.type&&i,r,o,f,c),c||("value"in d&&void 0!==d.value&&d.value!==n.value&&(n.value=null==d.value?"":d.value),"checked"in d&&void 0!==d.checked&&d.checked!==n.checked&&(n.checked=d.checked))),n}function A(l,u,t){try{"function"==typeof l?l(u):l.current=u;}catch(l){n.__e(l,t);}}function D(l,u,t){var i,r,o;if(n.unmount&&n.unmount(l),(i=l.ref)&&A(i,null,u),t||"function"==typeof l.type||(t=null!=(r=l.__e)),l.__e=l.l=null,null!=(i=l.__c)){if(i.componentWillUnmount){ try{i.componentWillUnmount();}catch(l){n.__e(l,u);} }i.base=i.__P=null;}if(i=l.__k){ for(o=0;o<i.length;o++){ i[o]&&D(i[o],u,t); } }null!=r&&a(r);}function H(n,l,u){return this.constructor(n,u)}function I(l,u,t){var i,o,c;n.__p&&n.__p(l,u),o=(i=t===r)?null:t&&t.__k||u.__k,l=h(d,null,[l]),c=[],$(u,i?u.__k=l:(t||u).__k=l,o||f,f,void 0!==u.ownerSVGElement,t&&!i?[t]:o?null:e.slice.call(u.childNodes),c,!1,t||f,i),j(c,l);}n={},m.prototype.setState=function(n,l){var u=this.__s!==this.state&&this.__s||(this.__s=s({},this.state));("function"!=typeof n||(n=n(u,this.props)))&&s(u,n),null!=n&&this.__v&&(this.u=!1,l&&this.__h.push(l),k(this));},m.prototype.forceUpdate=function(n){this.__v&&(n&&this.__h.push(n),this.u=!0,k(this));},m.prototype.render=d,u=[],t="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,i=n.debounceRendering,n.__e=function(n,l,u){for(var t;l=l.__p;){ if((t=l.__c)&&!t.__p){ try{if(t.constructor&&null!=t.constructor.getDerivedStateFromError){ t.setState(t.constructor.getDerivedStateFromError(n)); }else{if(null==t.componentDidCatch){ continue; }t.componentDidCatch(n);}return k(t.__E=t)}catch(l){n=l;} } }throw n},r=f,o=0;
+  var n,l,u,i,r,o,e,f,c,s,a,h,p={},v=[],y=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,w=Array.isArray;function d(n,l){for(var u in l){ n[u]=l[u]; }return n}function g(n){n&&n.parentNode&&n.parentNode.removeChild(n);}function _(l,u,t){var i,r,o,e={};for(o in u){ "key"==o?i=u[o]:"ref"==o?r=u[o]:e[o]=u[o]; }if(arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps){ for(o in l.defaultProps){ void 0===e[o]&&(e[o]=l.defaultProps[o]); } }return m(l,e,i,r,null)}function m(n,t,i,r,o){var e={type:n,props:t,key:i,ref:r,__k:null,__:null,__b:0,__e:null,__c:null,constructor:void 0,__v:null==o?++u:o,__i:-1,__u:0};return null==o&&null!=l.vnode&&l.vnode(e),e}function k(n){return n.children}function x(n,l){this.props=n,this.context=l;}function S(n,l){if(null==l){ return n.__?S(n.__,n.__i+1):null; }for(var u;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){ return u.__e; } }return "function"==typeof n.type?S(n):null}function C(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break} }return C(n)}}function M(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!$.__r++||r!=l.debounceRendering)&&((r=l.debounceRendering)||o)($);}function $(){for(var n,u,t,r,o,f,c,s=1;i.length;){ i.length>s&&i.sort(e),n=i.shift(),s=i.length,n.__d&&(t=void 0,r=void 0,o=(r=(u=n).__v).__e,f=[],c=[],u.__P&&((t=d({},r)).__v=r.__v+1,l.vnode&&l.vnode(t),O(u.__P,t,r,u.__n,u.__P.namespaceURI,32&r.__u?[o]:null,f,null==o?S(r):o,!!(32&r.__u),c),t.__v=r.__v,t.__.__k[t.__i]=t,N(f,t,c),r.__e=r.__=null,t.__e!=o&&C(t))); }$.__r=0;}function I(n,l,u,t,i,r,o,e,f,c,s){var a,h,y,w,d,g,_,m=t&&t.__k||v,b=l.length;for(f=P(u,l,m,f,b),a=0;a<b;a++){ null!=(y=u.__k[a])&&(h=-1==y.__i?p:m[y.__i]||p,y.__i=a,g=O(n,y,h,i,r,o,e,f,c,s),w=y.__e,y.ref&&h.ref!=y.ref&&(h.ref&&B(h.ref,null,y),s.push(y.ref,y.__c||w,y)),null==d&&null!=w&&(d=w),(_=!!(4&y.__u))||h.__k===y.__k?f=A(y,f,n,_):"function"==typeof y.type&&void 0!==g?f=g:w&&(f=w.nextSibling),y.__u&=-7); }return u.__e=d,f}function P(n,l,u,t,i){var r,o,e,f,c,s=u.length,a=s,h=0;for(n.__k=new Array(i),r=0;r<i;r++){ null!=(o=l[r])&&"boolean"!=typeof o&&"function"!=typeof o?(f=r+h,(o=n.__k[r]="string"==typeof o||"number"==typeof o||"bigint"==typeof o||o.constructor==String?m(null,o,null,null,null):w(o)?m(k,{children:o},null,null,null):null==o.constructor&&o.__b>0?m(o.type,o.props,o.key,o.ref?o.ref:null,o.__v):o).__=n,o.__b=n.__b+1,e=null,-1!=(c=o.__i=L(o,u,f,a))&&(a--,(e=u[c])&&(e.__u|=2)),null==e||null==e.__v?(-1==c&&(i>s?h--:i<s&&h++),"function"!=typeof o.type&&(o.__u|=4)):c!=f&&(c==f-1?h--:c==f+1?h++:(c>f?h--:h++,o.__u|=4))):n.__k[r]=null; }if(a){ for(r=0;r<s;r++){ null!=(e=u[r])&&0==(2&e.__u)&&(e.__e==t&&(t=S(e)),D(e,e)); } }return t}function A(n,l,u,t){var i,r;if("function"==typeof n.type){for(i=n.__k,r=0;i&&r<i.length;r++){ i[r]&&(i[r].__=n,l=A(i[r],l,u,t)); }return l}n.__e!=l&&(t&&(l&&n.type&&!l.parentNode&&(l=S(n)),u.insertBefore(n.__e,l||null)),l=n.__e);do{l=l&&l.nextSibling;}while(null!=l&&8==l.nodeType);return l}function L(n,l,u,t){var i,r,o,e=n.key,f=n.type,c=l[u],s=null!=c&&0==(2&c.__u);if(null===c&&null==n.key||s&&e==c.key&&f==c.type){ return u; }if(t>(s?1:0)){ for(i=u-1,r=u+1;i>=0||r<l.length;){ if(null!=(c=l[o=i>=0?i--:r++])&&0==(2&c.__u)&&e==c.key&&f==c.type){ return o; } } }return -1}function T(n,l,u){"-"==l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||y.test(l)?u:u+"px";}function j(n,l,u,t,i){var r,o;n:if("style"==l){ if("string"==typeof u){ n.style.cssText=u; }else {if("string"==typeof t&&(n.style.cssText=t=""),t){ for(l in t){ u&&l in u||T(n.style,l,""); } }if(u){ for(l in u){ t&&u[l]==t[l]||T(n.style,l,u[l]); } }} }else if("o"==l[0]&&"n"==l[1]){ r=l!=(l=l.replace(f,"$1")),o=l.toLowerCase(),l=o in n||"onFocusOut"==l||"onFocusIn"==l?o.slice(2):l.slice(2),n.l||(n.l={}),n.l[l+r]=u,u?t?u.u=t.u:(u.u=c,n.addEventListener(l,r?a:s,r)):n.removeEventListener(l,r?a:s,r); }else {if("http://www.w3.org/2000/svg"==i){ l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s"); }else if("width"!=l&&"height"!=l&&"href"!=l&&"list"!=l&&"form"!=l&&"tabIndex"!=l&&"download"!=l&&"rowSpan"!=l&&"colSpan"!=l&&"role"!=l&&"popover"!=l&&l in n){ try{n[l]=null==u?"":u;break n}catch(n$1){} }"function"==typeof u||(null==u||!1===u&&"-"!=l[4]?n.removeAttribute(l):n.setAttribute(l,"popover"==l&&1==u?"":u));}}function F(n){return function(u){if(this.l){var t=this.l[u.type+n];if(null==u.t){ u.t=c++; }else if(u.t<t.u){ return; }return t(l.event?l.event(u):u)}}}function O(n,u,t,i,r,o,e,f,c,s){var a,h,p,v,y,_,m,b,S,C,M,$,P,A,H,L,T,j=u.type;if(null!=u.constructor){ return null; }128&t.__u&&(c=!!(32&t.__u),o=[f=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof j){ try{if(b=u.props,S="prototype"in j&&j.prototype.render,C=(a=j.contextType)&&i[a.__c],M=a?C?C.props.value:a.__:i,t.__c?m=(h=u.__c=t.__c).__=h.__E:(S?u.__c=h=new j(b,M):(u.__c=h=new x(b,M),h.constructor=j,h.render=E),C&&C.sub(h),h.props=b,h.state||(h.state={}),h.context=M,h.__n=i,p=h.__d=!0,h.__h=[],h._sb=[]),S&&null==h.__s&&(h.__s=h.state),S&&null!=j.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=d({},h.__s)),d(h.__s,j.getDerivedStateFromProps(b,h.__s))),v=h.props,y=h.state,h.__v=u,p){ S&&null==j.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),S&&null!=h.componentDidMount&&h.__h.push(h.componentDidMount); }else {if(S&&null==j.getDerivedStateFromProps&&b!==v&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(b,M),!h.__e&&null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(b,h.__s,M)||u.__v==t.__v){for(u.__v!=t.__v&&(h.props=b,h.state=h.__s,h.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.some(function(n){n&&(n.__=u);}),$=0;$<h._sb.length;$++){ h.__h.push(h._sb[$]); }h._sb=[],h.__h.length&&e.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(b,h.__s,M),S&&null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(v,y,_);});}if(h.context=M,h.props=b,h.__P=n,h.__e=!1,P=l.__r,A=0,S){for(h.state=h.__s,h.__d=!1,P&&P(u),a=h.render(h.props,h.state,h.context),H=0;H<h._sb.length;H++){ h.__h.push(h._sb[H]); }h._sb=[];}else { do{h.__d=!1,P&&P(u),a=h.render(h.props,h.state,h.context),h.state=h.__s;}while(h.__d&&++A<25); }h.state=h.__s,null!=h.getChildContext&&(i=d(d({},i),h.getChildContext())),S&&!p&&null!=h.getSnapshotBeforeUpdate&&(_=h.getSnapshotBeforeUpdate(v,y)),L=a,null!=a&&a.type===k&&null==a.key&&(L=V(a.props.children)),f=I(n,w(L)?L:[L],u,t,i,r,o,e,f,c,s),h.base=u.__e,u.__u&=-161,h.__h.length&&e.push(h),m&&(h.__E=h.__=null);}catch(n$1){if(u.__v=null,c||null!=o){ if(n$1.then){for(u.__u|=c?160:128;f&&8==f.nodeType&&f.nextSibling;){ f=f.nextSibling; }o[o.indexOf(f)]=null,u.__e=f;}else {for(T=o.length;T--;){ g(o[T]); }z(u);} }else { u.__e=t.__e,u.__k=t.__k,n$1.then||z(u); }l.__e(n$1,u,t);} }else { null==o&&u.__v==t.__v?(u.__k=t.__k,u.__e=t.__e):f=u.__e=q(t.__e,u,t,i,r,o,e,c,s); }return (a=l.diffed)&&a(u),128&u.__u?void 0:f}function z(n){n&&n.__c&&(n.__c.__e=!0),n&&n.__k&&n.__k.forEach(z);}function N(n,u,t){for(var i=0;i<t.length;i++){ B(t[i],t[++i],t[++i]); }l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u);});}catch(n$1){l.__e(n$1,u.__v);}});}function V(n){return "object"!=typeof n||null==n||n.__b&&n.__b>0?n:w(n)?n.map(V):d({},n)}function q(u,t,i,r,o,e,f,c,s){var a,h,v,y,d,_,m,b=i.props,k=t.props,x=t.type;if("svg"==x?o="http://www.w3.org/2000/svg":"math"==x?o="http://www.w3.org/1998/Math/MathML":o||(o="http://www.w3.org/1999/xhtml"),null!=e){ for(a=0;a<e.length;a++){ if((d=e[a])&&"setAttribute"in d==!!x&&(x?d.localName==x:3==d.nodeType)){u=d,e[a]=null;break} } }if(null==u){if(null==x){ return document.createTextNode(k); }u=document.createElementNS(o,x,k.is&&k),c&&(l.__m&&l.__m(t,e),c=!1),e=null;}if(null==x){ b===k||c&&u.data==k||(u.data=k); }else {if(e=e&&n.call(u.childNodes),b=i.props||p,!c&&null!=e){ for(b={},a=0;a<u.attributes.length;a++){ b[(d=u.attributes[a]).name]=d.value; } }for(a in b){ if(d=b[a],"children"==a);else if("dangerouslySetInnerHTML"==a){ v=d; }else if(!(a in k)){if("value"==a&&"defaultValue"in k||"checked"==a&&"defaultChecked"in k){ continue; }j(u,a,null,d,o);} }for(a in k){ d=k[a],"children"==a?y=d:"dangerouslySetInnerHTML"==a?h=d:"value"==a?_=d:"checked"==a?m=d:c&&"function"!=typeof d||b[a]===d||j(u,a,d,b[a],o); }if(h){ c||v&&(h.__html==v.__html||h.__html==u.innerHTML)||(u.innerHTML=h.__html),t.__k=[]; }else if(v&&(u.innerHTML=""),I("template"==t.type?u.content:u,w(y)?y:[y],t,i,r,"foreignObject"==x?"http://www.w3.org/1999/xhtml":o,e,f,e?e[0]:i.__k&&S(i,0),c,s),null!=e){ for(a=e.length;a--;){ g(e[a]); } }c||(a="value","progress"==x&&null==_?u.removeAttribute("value"):null!=_&&(_!==u[a]||"progress"==x&&!_||"option"==x&&_!=b[a])&&j(u,a,_,b[a],o),a="checked",null!=m&&m!=u[a]&&j(u,a,m,b[a],o));}return u}function B(n,u,t){try{if("function"==typeof n){var i="function"==typeof n.__u;i&&n.__u(),i&&null==u||(n.__u=n(u));}else { n.current=u; }}catch(n$1){l.__e(n$1,t);}}function D(n,u,t){var i,r;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!=n.__e||B(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount){ try{i.componentWillUnmount();}catch(n$1){l.__e(n$1,u);} }i.base=i.__P=null;}if(i=n.__k){ for(r=0;r<i.length;r++){ i[r]&&D(i[r],u,t||"function"!=typeof n.type); } }t||g(n.__e),n.__c=n.__=n.__e=void 0;}function E(n,l,u){return this.constructor(n,u)}function G(u,t,i){var r,o,e,f;t==document&&(t=document.documentElement),l.__&&l.__(u,t),o=(r="function"==typeof i)?null:i&&i.__k||t.__k,e=[],f=[],O(t,u=(!r&&i||t).__k=_(k,null,[u]),o||p,p,t.namespaceURI,!r&&i?[i]:o?null:t.firstChild?n.call(t.childNodes):null,e,!r&&i?i:o?o.__e:t.firstChild,r,f),N(e,u,f);}n=v.slice,l={__e:function(n,l,u,t){for(var i,r,o;l=l.__;){ if((i=l.__c)&&!i.__){ try{if((r=i.constructor)&&null!=r.getDerivedStateFromError&&(i.setState(r.getDerivedStateFromError(n)),o=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),o=i.__d),o){ return i.__E=i }}catch(l$1){n=l$1;} } }throw n}},u=0,x.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!=this.state?this.__s:this.__s=d({},this.state),"function"==typeof n&&(n=n(d({},u),this.props)),n&&d(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),M(this));},x.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),M(this));},x.prototype.render=k,i=[],o="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,e=function(n,l){return n.__v.__b-l.__v.__b},$.__r=0,f=/(PointerCapture)$|Capture$/i,c=0,s=F(!1),a=F(!0),h=0;
 
-  function _defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) { descriptor.writable = true; }
-      Object.defineProperty(target, descriptor.key, descriptor);
+  function _defineProperties(e, r) {
+    for (var t = 0; t < r.length; t++) {
+      var o = r[t];
+      o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o);
     }
   }
-
-  function _createClass(Constructor, protoProps, staticProps) {
-    if (protoProps) { _defineProperties(Constructor.prototype, protoProps); }
-    if (staticProps) { _defineProperties(Constructor, staticProps); }
-    return Constructor;
+  function _createClass(e, r, t) {
+    return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
+      writable: !1
+    }), e;
   }
-
   function _extends() {
-    _extends = Object.assign || function (target) {
+    return _extends = Object.assign ? Object.assign.bind() : function (n) {
       var arguments$1 = arguments;
 
-      for (var i = 1; i < arguments.length; i++) {
-        var source = arguments$1[i];
-
-        for (var key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
-          }
-        }
+      for (var e = 1; e < arguments.length; e++) {
+        var t = arguments$1[e];
+        for (var r in t) { ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); }
       }
-
-      return target;
-    };
-
-    return _extends.apply(this, arguments);
+      return n;
+    }, _extends.apply(null, arguments);
+  }
+  function _toPrimitive(t, r) {
+    if ("object" != typeof t || !t) { return t; }
+    var e = t[Symbol.toPrimitive];
+    if (void 0 !== e) {
+      var i = e.call(t, r || "default");
+      if ("object" != typeof i) { return i; }
+      throw new TypeError("@@toPrimitive must return a primitive value.");
+    }
+    return ("string" === r ? String : Number)(t);
+  }
+  function _toPropertyKey(t) {
+    var i = _toPrimitive(t, "string");
+    return "symbol" == typeof i ? i : i + "";
   }
 
   // Some regular expressions for rgb() and hsl() Colors are borrowed from tinyColor
@@ -54,42 +55,41 @@
   // Kelvin temperature math borrowed from Neil Barlett's implementation
   // from https://github.com/neilbartlett/color-temperature
   // https://www.w3.org/TR/css3-values/#integers
-  var CSS_INTEGER = '[-\\+]?\\d+%?'; // http://www.w3.org/TR/css3-values/#number-value
-
-  var CSS_NUMBER = '[-\\+]?\\d*\\.\\d+%?'; // Allow positive/negative integer/number. Don't capture the either/or, just the entire outcome
-
-  var CSS_UNIT = '(?:' + CSS_NUMBER + ')|(?:' + CSS_INTEGER + ')'; // Parse function params
+  var CSS_INTEGER = '[-\\+]?\\d+%?';
+  // http://www.w3.org/TR/css3-values/#number-value
+  var CSS_NUMBER = '[-\\+]?\\d*\\.\\d+%?';
+  // Allow positive/negative integer/number. Don't capture the either/or, just the entire outcome
+  var CSS_UNIT = '(?:' + CSS_NUMBER + ')|(?:' + CSS_INTEGER + ')';
+  // Parse function params
   // Parens and commas are optional, and this also allows for whitespace between numbers
-
   var PERMISSIVE_MATCH_3 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?';
-  var PERMISSIVE_MATCH_4 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?'; // Regex patterns for functional color strings
-
+  var PERMISSIVE_MATCH_4 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?';
+  // Regex patterns for functional color strings
   var REGEX_FUNCTIONAL_RGB = new RegExp('rgb' + PERMISSIVE_MATCH_3);
   var REGEX_FUNCTIONAL_RGBA = new RegExp('rgba' + PERMISSIVE_MATCH_4);
   var REGEX_FUNCTIONAL_HSL = new RegExp('hsl' + PERMISSIVE_MATCH_3);
-  var REGEX_FUNCTIONAL_HSLA = new RegExp('hsla' + PERMISSIVE_MATCH_4); // Color string parsing regex
-
+  var REGEX_FUNCTIONAL_HSLA = new RegExp('hsla' + PERMISSIVE_MATCH_4);
+  // Color string parsing regex
   var HEX_START = '^(?:#?|0x?)';
   var HEX_INT_SINGLE = '([0-9a-fA-F]{1})';
   var HEX_INT_DOUBLE = '([0-9a-fA-F]{2})';
   var REGEX_HEX_3 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + '$');
   var REGEX_HEX_4 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + '$');
   var REGEX_HEX_6 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + '$');
-  var REGEX_HEX_8 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + '$'); // Kelvin temperature bounds
-
+  var REGEX_HEX_8 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + '$');
+  // Kelvin temperature bounds
   var KELVIN_MIN = 2000;
-  var KELVIN_MAX = 40000; // Math shorthands
-
+  var KELVIN_MAX = 40000;
+  // Math shorthands
   var log = Math.log,
-      round = Math.round,
-      floor = Math.floor;
+    round = Math.round,
+    floor = Math.floor;
   /**
    * @desc Clamp a number between a min and max value
    * @param num - input value
    * @param min - min allowed value
    * @param max - max allowed value
    */
-
   function clamp(num, min, max) {
     return Math.min(Math.max(num, min), max);
   }
@@ -98,8 +98,6 @@
    * @param str - css unit string
    * @param max - max unit value, used for calculating percentages
    */
-
-
   function parseUnit(str, max) {
     var isPercentage = str.indexOf('%') > -1;
     var num = parseFloat(str);
@@ -109,8 +107,6 @@
    * @desc Parse hex str to an int
    * @param str - hex string to parse
    */
-
-
   function parseHexInt(str) {
     return parseInt(str, 16);
   }
@@ -118,15 +114,10 @@
    * @desc Convert nunber into to 2-digit hex
    * @param int - number to convert
    */
-
-
   function intToHex(_int) {
     return _int.toString(16).padStart(2, '0');
   }
-
-  var IroColor =
-  /*#__PURE__*/
-  function () {
+  var IroColor = /*#__PURE__*/function () {
     /**
       * @constructor Color object
       * @param value - initial color value
@@ -139,8 +130,8 @@
         v: 0,
         a: 1
       };
-      if (value) { this.set(value); } // The watch callback function for this Color will be stored here
-
+      if (value) { this.set(value); }
+      // The watch callback function for this Color will be stored here
       this.onChange = onChange;
       this.initialValue = _extends({}, this.$); // copy initial value
     }
@@ -148,10 +139,7 @@
       * @desc Set the Color from any valid value
       * @param value - new color value
     */
-
-
     var _proto = IroColor.prototype;
-
     _proto.set = function set(value) {
       if (typeof value === 'string') {
         if (/^(?:#?|0x?)[0-9a-fA-F]{3,8}$/.test(value)) {
@@ -182,44 +170,33 @@
       * @param format - hsv | hsl | rgb
       * @param channel - individual channel to set, for example if model = hsl, chanel = h | s | l
       * @param value - new value for the channel
-    */
-    ;
-
+    */;
     _proto.setChannel = function setChannel(format, channel, value) {
       var _extends2;
-
       this[format] = _extends({}, this[format], (_extends2 = {}, _extends2[channel] = value, _extends2));
     }
     /**
      * @desc Reset color back to its initial value
-     */
-    ;
-
+     */;
     _proto.reset = function reset() {
       this.hsva = this.initialValue;
     }
     /**
       * @desc make new Color instance with the same value as this one
-    */
-    ;
-
+    */;
     _proto.clone = function clone() {
       return new IroColor(this);
     }
     /**
      * @desc remove color onChange
-     */
-    ;
-
+     */;
     _proto.unbind = function unbind() {
       this.onChange = undefined;
     }
     /**
       * @desc Convert hsv object to rgb
       * @param hsv - hsv color object
-    */
-    ;
-
+    */;
     IroColor.hsvToRgb = function hsvToRgb(hsv) {
       var h = hsv.h / 60;
       var s = hsv.s / 100;
@@ -242,9 +219,7 @@
     /**
       * @desc Convert rgb object to hsv
       * @param rgb - rgb object
-    */
-    ;
-
+    */;
     IroColor.rgbToHsv = function rgbToHsv(rgb) {
       var r = rgb.r / 255;
       var g = rgb.g / 255;
@@ -255,26 +230,20 @@
       var hue = 0;
       var value = max;
       var saturation = max === 0 ? 0 : delta / max;
-
       switch (max) {
         case min:
           hue = 0; // achromatic
-
           break;
-
         case r:
           hue = (g - b) / delta + (g < b ? 6 : 0);
           break;
-
         case g:
           hue = (b - r) / delta + 2;
           break;
-
         case b:
           hue = (r - g) / delta + 4;
           break;
       }
-
       return {
         h: hue * 60 % 360,
         s: clamp(saturation * 100, 0, 100),
@@ -284,15 +253,13 @@
     /**
       * @desc Convert hsv object to hsl
       * @param hsv - hsv object
-    */
-    ;
-
+    */;
     IroColor.hsvToHsl = function hsvToHsl(hsv) {
       var s = hsv.s / 100;
       var v = hsv.v / 100;
       var l = (2 - s) * v;
-      var divisor = l <= 1 ? l : 2 - l; // Avoid division by zero when lightness is close to zero
-
+      var divisor = l <= 1 ? l : 2 - l;
+      // Avoid division by zero when lightness is close to zero
       var saturation = divisor < 1e-9 ? 0 : s * v / divisor;
       return {
         h: hsv.h,
@@ -303,13 +270,11 @@
     /**
       * @desc Convert hsl object to hsv
       * @param hsl - hsl object
-    */
-    ;
-
+    */;
     IroColor.hslToHsv = function hslToHsv(hsl) {
       var l = hsl.l * 2;
-      var s = hsl.s * (l <= 100 ? l : 200 - l) / 100; // Avoid division by zero when l + s is near 0
-
+      var s = hsl.s * (l <= 100 ? l : 200 - l) / 100;
+      // Avoid division by zero when l + s is near 0
       var saturation = l + s < 1e-9 ? 0 : 2 * s / (l + s);
       return {
         h: hsl.h,
@@ -320,13 +285,10 @@
     /**
       * @desc Convert a kelvin temperature to an approx, RGB value
       * @param kelvin - kelvin temperature
-    */
-    ;
-
+    */;
     IroColor.kelvinToRgb = function kelvinToRgb(kelvin) {
       var temp = kelvin / 100;
       var r, g, b;
-
       if (temp < 66) {
         r = 255;
         g = -155.25485562709179 - 0.44596950469579133 * (g = temp - 2) + 104.49216199393888 * log(g);
@@ -336,7 +298,6 @@
         g = 325.4494125711974 + 0.07943456536662342 * (g = temp - 50) - 28.0852963507957 * log(g);
         b = 255;
       }
-
       return {
         r: clamp(floor(r), 0, 255),
         g: clamp(floor(g), 0, 255),
@@ -346,33 +307,26 @@
     /**
      * @desc Convert an RGB color to an approximate kelvin temperature
      * @param kelvin - kelvin temperature
-    */
-    ;
-
+    */;
     IroColor.rgbToKelvin = function rgbToKelvin(rgb) {
       var r = rgb.r,
-          b = rgb.b;
+        b = rgb.b;
       var eps = 0.4;
       var minTemp = KELVIN_MIN;
       var maxTemp = KELVIN_MAX;
       var temp;
-
       while (maxTemp - minTemp > eps) {
         temp = (maxTemp + minTemp) * 0.5;
-
         var _rgb = IroColor.kelvinToRgb(temp);
-
         if (_rgb.b / _rgb.r >= b / r) {
           maxTemp = temp;
         } else {
           minTemp = temp;
         }
       }
-
       return temp;
     };
-
-    _createClass(IroColor, [{
+    return _createClass(IroColor, [{
       key: "hsv",
       get: function get() {
         // value is cloned to allow changes to be made to the values before passing them back
@@ -385,9 +339,9 @@
       },
       set: function set(newValue) {
         var oldValue = this.$;
-        newValue = _extends({}, oldValue, newValue); // If this Color is being watched for changes we need to compare the new and old values to check the difference
+        newValue = _extends({}, oldValue, newValue);
+        // If this Color is being watched for changes we need to compare the new and old values to check the difference
         // Otherwise we can just be lazy
-
         if (this.onChange) {
           // Compute changed values
           var changes = {
@@ -396,13 +350,12 @@
             s: false,
             a: false
           };
-
           for (var key in oldValue) {
             changes[key] = newValue[key] != oldValue[key];
           }
-
-          this.$ = newValue; // If the value has changed, call hook callback
-
+          // Update the old value
+          this.$ = newValue;
+          // If the value has changed, call hook callback
           if (changes.h || changes.s || changes.v || changes.a) { this.onChange(this, changes); }
         } else {
           this.$ = newValue;
@@ -501,10 +454,9 @@
       key: "rgb",
       get: function get() {
         var _IroColor$hsvToRgb = IroColor.hsvToRgb(this.$),
-            r = _IroColor$hsvToRgb.r,
-            g = _IroColor$hsvToRgb.g,
-            b = _IroColor$hsvToRgb.b;
-
+          r = _IroColor$hsvToRgb.r,
+          g = _IroColor$hsvToRgb.g,
+          b = _IroColor$hsvToRgb.b;
         return {
           r: round(r),
           g: round(g),
@@ -530,10 +482,9 @@
       key: "hsl",
       get: function get() {
         var _IroColor$hsvToHsl = IroColor.hsvToHsl(this.$),
-            h = _IroColor$hsvToHsl.h,
-            s = _IroColor$hsvToHsl.s,
-            l = _IroColor$hsvToHsl.l;
-
+          h = _IroColor$hsvToHsl.h,
+          s = _IroColor$hsvToHsl.s,
+          l = _IroColor$hsvToHsl.l;
         return {
           h: round(h),
           s: round(s),
@@ -564,10 +515,9 @@
       set: function set(value) {
         var match;
         var r,
-            g,
-            b,
-            a = 1;
-
+          g,
+          b,
+          a = 1;
         if (match = REGEX_FUNCTIONAL_RGB.exec(value)) {
           r = parseUnit(match[1], 255);
           g = parseUnit(match[2], 255);
@@ -578,7 +528,6 @@
           b = parseUnit(match[3], 255);
           a = parseUnit(match[4], 1);
         }
-
         if (match) {
           this.rgb = {
             r: r,
@@ -608,10 +557,9 @@
       set: function set(value) {
         var match;
         var r,
-            g,
-            b,
-            a = 255;
-
+          g,
+          b,
+          a = 255;
         if (match = REGEX_HEX_3.exec(value)) {
           r = parseHexInt(match[1]) * 17;
           g = parseHexInt(match[2]) * 17;
@@ -631,7 +579,6 @@
           b = parseHexInt(match[3]);
           a = parseHexInt(match[4]);
         }
-
         if (match) {
           this.rgb = {
             r: r,
@@ -661,10 +608,9 @@
       set: function set(value) {
         var match;
         var h,
-            s,
-            l,
-            a = 1;
-
+          s,
+          l,
+          a = 1;
         if (match = REGEX_FUNCTIONAL_HSL.exec(value)) {
           h = parseUnit(match[1], 360);
           s = parseUnit(match[2], 100);
@@ -675,7 +621,6 @@
           l = parseUnit(match[3], 100);
           a = parseUnit(match[4], 1);
         }
-
         if (match) {
           this.hsl = {
             h: h,
@@ -697,8 +642,6 @@
         this.hslString = value;
       }
     }]);
-
-    return IroColor;
   }();
 
   var sliderDefaultOptions = {
@@ -711,20 +654,16 @@
    * @desc Get the bounding dimensions of the slider
    * @param props - slider props
    */
-
   function getSliderDimensions(props) {
-    var _sliderSize;
-
     var width = props.width,
-        sliderSize = props.sliderSize,
-        borderWidth = props.borderWidth,
-        handleRadius = props.handleRadius,
-        padding = props.padding,
-        sliderShape = props.sliderShape;
-    var ishorizontal = props.layoutDirection === 'horizontal'; // automatically calculate sliderSize if its not defined
-
-    sliderSize = (_sliderSize = sliderSize) != null ? _sliderSize : padding * 2 + handleRadius * 2;
-
+      sliderSize = props.sliderSize,
+      borderWidth = props.borderWidth,
+      handleRadius = props.handleRadius,
+      padding = props.padding,
+      sliderShape = props.sliderShape;
+    var ishorizontal = props.layoutDirection === 'horizontal';
+    // automatically calculate sliderSize if its not defined
+    sliderSize = sliderSize != null ? sliderSize : padding * 2 + handleRadius * 2;
     if (sliderShape === 'circle') {
       return {
         handleStart: props.padding + props.handleRadius,
@@ -752,38 +691,29 @@
    * @param props - slider props
    * @param color
    */
-
   function getCurrentSliderValue(props, color) {
     var hsva = color.hsva;
     var rgb = color.rgb;
-
     switch (props.sliderType) {
       case 'red':
         return rgb.r / 2.55;
-
       case 'green':
         return rgb.g / 2.55;
-
       case 'blue':
         return rgb.b / 2.55;
-
       case 'alpha':
         return hsva.a * 100;
-
       case 'kelvin':
         var minTemperature = props.minTemperature,
-            maxTemperature = props.maxTemperature;
+          maxTemperature = props.maxTemperature;
         var temperatureRange = maxTemperature - minTemperature;
-        var percent = (color.kelvin - minTemperature) / temperatureRange * 100; // clmap percentage
-
+        var percent = (color.kelvin - minTemperature) / temperatureRange * 100;
+        // clmap percentage
         return Math.max(0, Math.min(percent, 100));
-
       case 'hue':
         return hsva.h /= 3.6;
-
       case 'saturation':
         return hsva.s;
-
       case 'value':
       default:
         return hsva.v;
@@ -795,42 +725,33 @@
    * @param x - global input x position
    * @param y - global input y position
    */
-
   function getSliderValueFromInput(props, x, y) {
     var _getSliderDimensions = getSliderDimensions(props),
-        handleRange = _getSliderDimensions.handleRange,
-        handleStart = _getSliderDimensions.handleStart;
-
+      handleRange = _getSliderDimensions.handleRange,
+      handleStart = _getSliderDimensions.handleStart;
     var handlePos;
-
     if (props.layoutDirection === 'horizontal') {
       handlePos = -1 * y + handleRange + handleStart;
     } else {
       handlePos = x - handleStart;
-    } // clamp handle position
-
-
+    }
+    // clamp handle position
     handlePos = Math.max(Math.min(handlePos, handleRange), 0);
     var percent = Math.round(100 / handleRange * handlePos);
-
     switch (props.sliderType) {
       case 'kelvin':
         var minTemperature = props.minTemperature,
-            maxTemperature = props.maxTemperature;
+          maxTemperature = props.maxTemperature;
         var temperatureRange = maxTemperature - minTemperature;
         return minTemperature + temperatureRange * (percent / 100);
-
       case 'alpha':
         return percent / 100;
-
       case 'hue':
         return percent * 3.6;
-
       case 'red':
       case 'blue':
       case 'green':
         return percent * 2.55;
-
       default:
         return percent;
     }
@@ -840,23 +761,19 @@
    * @param props - slider props
    * @param color
    */
-
   function getSliderHandlePosition(props, color) {
     var _getSliderDimensions2 = getSliderDimensions(props),
-        width = _getSliderDimensions2.width,
-        height = _getSliderDimensions2.height,
-        handleRange = _getSliderDimensions2.handleRange,
-        handleStart = _getSliderDimensions2.handleStart;
-
+      width = _getSliderDimensions2.width,
+      height = _getSliderDimensions2.height,
+      handleRange = _getSliderDimensions2.handleRange,
+      handleStart = _getSliderDimensions2.handleStart;
     var ishorizontal = props.layoutDirection === 'horizontal';
     var sliderValue = getCurrentSliderValue(props, color);
     var midPoint = ishorizontal ? width / 2 : height / 2;
     var handlePos = handleStart + sliderValue / 100 * handleRange;
-
     if (ishorizontal) {
       handlePos = -1 * handlePos + handleRange + handleStart * 2;
     }
-
     return {
       x: ishorizontal ? midPoint : handlePos,
       y: ishorizontal ? handlePos : midPoint
@@ -867,45 +784,34 @@
    * @param props - slider props
    * @param color
    */
-
   function getSliderGradient(props, color) {
     var hsv = color.hsv;
     var rgb = color.rgb;
-
     switch (props.sliderType) {
       case 'red':
         return [[0, "rgb(" + 0 + "," + rgb.g + "," + rgb.b + ")"], [100, "rgb(" + 255 + "," + rgb.g + "," + rgb.b + ")"]];
-
       case 'green':
         return [[0, "rgb(" + rgb.r + "," + 0 + "," + rgb.b + ")"], [100, "rgb(" + rgb.r + "," + 255 + "," + rgb.b + ")"]];
-
       case 'blue':
         return [[0, "rgb(" + rgb.r + "," + rgb.g + "," + 0 + ")"], [100, "rgb(" + rgb.r + "," + rgb.g + "," + 255 + ")"]];
-
       case 'alpha':
         return [[0, "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0)"], [100, "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"]];
-
       case 'kelvin':
         var stops = [];
         var min = props.minTemperature;
         var max = props.maxTemperature;
         var numStops = 8;
         var range = max - min;
-
         for (var kelvin = min, stop = 0; kelvin < max; kelvin += range / numStops, stop += 1) {
           var _IroColor$kelvinToRgb = IroColor.kelvinToRgb(kelvin),
-              r = _IroColor$kelvinToRgb.r,
-              g = _IroColor$kelvinToRgb.g,
-              b = _IroColor$kelvinToRgb.b;
-
+            r = _IroColor$kelvinToRgb.r,
+            g = _IroColor$kelvinToRgb.g,
+            b = _IroColor$kelvinToRgb.b;
           stops.push([100 / numStops * stop, "rgb(" + r + "," + g + "," + b + ")"]);
         }
-
         return stops;
-
       case 'hue':
         return [[0, '#f00'], [16.666, '#ff0'], [33.333, '#0f0'], [50, '#0ff'], [66.666, '#00f'], [83.333, '#f0f'], [100, '#f00']];
-
       case 'saturation':
         var noSat = IroColor.hsvToHsl({
           h: hsv.h,
@@ -918,7 +824,6 @@
           v: hsv.v
         });
         return [[0, "hsl(" + noSat.h + "," + noSat.s + "%," + noSat.l + "%)"], [100, "hsl(" + fullSat.h + "," + fullSat.s + "%," + fullSat.l + "%)"]];
-
       case 'value':
       default:
         var hsl = IroColor.hsvToHsl({
@@ -930,14 +835,13 @@
     }
   }
 
-  var TAU = Math.PI * 2; // javascript's modulo operator doesn't produce positive numbers with negative input
+  var TAU = Math.PI * 2;
+  // javascript's modulo operator doesn't produce positive numbers with negative input
   // https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
-
   var mod = function mod(a, n) {
     return (a % n + n) % n;
-  }; // distance between points (x, y) and (0, 0)
-
-
+  };
+  // distance between points (x, y) and (0, 0)
   var dist = function dist(x, y) {
     return Math.sqrt(x * x + y * y);
   };
@@ -945,8 +849,6 @@
    * @param props - wheel props
    * @internal
    */
-
-
   function getHandleRange(props) {
     return props.width / 2 - props.padding - props.handleRadius - props.borderWidth;
   }
@@ -956,13 +858,10 @@
    * @param x
    * @param y
    */
-
-
   function isInputInsideWheel(props, x, y) {
     var _getWheelDimensions = getWheelDimensions(props),
-        cx = _getWheelDimensions.cx,
-        cy = _getWheelDimensions.cy;
-
+      cx = _getWheelDimensions.cx,
+      cy = _getWheelDimensions.cy;
     var r = props.width / 2;
     return dist(cx - x, cy - y) < r;
   }
@@ -970,7 +869,6 @@
    * @desc Get the point as the center of the wheel
    * @param props - wheel props
    */
-
   function getWheelDimensions(props) {
     var r = props.width / 2;
     return {
@@ -985,15 +883,17 @@
    * @param props - wheel props
    * @param angle - input angle
    */
-
   function translateWheelAngle(props, angle, invert) {
     var wheelAngle = props.wheelAngle;
-    var wheelDirection = props.wheelDirection; // inverted and clockwisee
-
-    if (invert && wheelDirection === 'clockwise') { angle = wheelAngle + angle; } // clockwise (input handling)
-    else if (wheelDirection === 'clockwise') { angle = 360 - wheelAngle + angle; } // inverted and anticlockwise
-      else if (invert && wheelDirection === 'anticlockwise') { angle = wheelAngle + 180 - angle; } // anticlockwise (input handling)
-        else if (wheelDirection === 'anticlockwise') { angle = wheelAngle - angle; }
+    var wheelDirection = props.wheelDirection;
+    // inverted and clockwisee
+    if (invert && wheelDirection === 'clockwise') { angle = wheelAngle + angle; }
+    // clockwise (input handling)
+    else if (wheelDirection === 'clockwise') { angle = 360 - wheelAngle + angle; }
+    // inverted and anticlockwise
+    else if (invert && wheelDirection === 'anticlockwise') { angle = wheelAngle + 180 - angle; }
+    // anticlockwise (input handling)
+    else if (wheelDirection === 'anticlockwise') { angle = wheelAngle - angle; }
     return mod(angle, 360);
   }
   /**
@@ -1001,14 +901,11 @@
    * @param props - wheel props
    * @param color
    */
-
   function getWheelHandlePosition(props, color) {
     var hsv = color.hsv;
-
     var _getWheelDimensions2 = getWheelDimensions(props),
-        cx = _getWheelDimensions2.cx,
-        cy = _getWheelDimensions2.cy;
-
+      cx = _getWheelDimensions2.cx,
+      cy = _getWheelDimensions2.cy;
     var handleRange = getHandleRange(props);
     var handleAngle = (180 + translateWheelAngle(props, hsv.h, true)) * (TAU / 360);
     var handleDist = hsv.s / 100 * handleRange;
@@ -1024,19 +921,17 @@
    * @param x - global input x position
    * @param y - global input y position
    */
-
   function getWheelValueFromInput(props, x, y) {
     var _getWheelDimensions3 = getWheelDimensions(props),
-        cx = _getWheelDimensions3.cx,
-        cy = _getWheelDimensions3.cy;
-
+      cx = _getWheelDimensions3.cx,
+      cy = _getWheelDimensions3.cy;
     var handleRange = getHandleRange(props);
     x = cx - x;
-    y = cy - y; // Calculate the hue by converting the angle to radians
-
-    var hue = translateWheelAngle(props, Math.atan2(-y, -x) * (360 / TAU)); // Find the point's distance from the center of the wheel
+    y = cy - y;
+    // Calculate the hue by converting the angle to radians
+    var hue = translateWheelAngle(props, Math.atan2(-y, -x) * (360 / TAU));
+    // Find the point's distance from the center of the wheel
     // This is used to show the saturation level
-
     var handleDist = Math.min(dist(x, y), handleRange);
     return {
       h: Math.round(hue),
@@ -1047,12 +942,11 @@
    * @desc Get the bounding dimensions of the box
    * @param props - box props
    */
-
   function getBoxDimensions(props) {
     var width = props.width,
-        boxHeight = props.boxHeight,
-        padding = props.padding,
-        handleRadius = props.handleRadius;
+      boxHeight = props.boxHeight,
+      padding = props.padding,
+      handleRadius = props.handleRadius;
     return {
       width: width,
       height: boxHeight != null ? boxHeight : width,
@@ -1065,13 +959,11 @@
    * @param x - global input x position
    * @param y - global input y position
    */
-
   function getBoxValueFromInput(props, x, y) {
     var _getBoxDimensions = getBoxDimensions(props),
-        width = _getBoxDimensions.width,
-        height = _getBoxDimensions.height,
-        radius = _getBoxDimensions.radius;
-
+      width = _getBoxDimensions.width,
+      height = _getBoxDimensions.height,
+      radius = _getBoxDimensions.radius;
     var handleStart = radius;
     var handleRangeX = width - radius * 2;
     var handleRangeY = height - radius * 2;
@@ -1087,13 +979,11 @@
    * @param props - box props
    * @param color
    */
-
   function getBoxHandlePosition(props, color) {
     var _getBoxDimensions2 = getBoxDimensions(props),
-        width = _getBoxDimensions2.width,
-        height = _getBoxDimensions2.height,
-        radius = _getBoxDimensions2.radius;
-
+      width = _getBoxDimensions2.width,
+      height = _getBoxDimensions2.height,
+      radius = _getBoxDimensions2.radius;
     var hsv = color.hsv;
     var handleStart = radius;
     var handleRangeX = width - radius * 2;
@@ -1108,11 +998,12 @@
    * @param props - box props
    * @param color
    */
-
   function getBoxGradients(props, color) {
     var hue = color.hue;
-    return [// saturation gradient
-    [[0, '#fff'], [100, "hsl(" + hue + ",100%,50%)"]], // lightness gradient
+    return [
+    // saturation gradient
+    [[0, '#fff'], [100, "hsl(" + hue + ",100%,50%)"]],
+    // lightness gradient
     [[0, 'rgba(0,0,0,0)'], [100, '#000']]];
   }
 
@@ -1132,10 +1023,9 @@
    * https://github.com/jaames/iro.js/pull/89
    * @props url - SVG reference URL
    */
-
   function resolveSvgUrl(url) {
-    if (!BASE_ELEMENTS) { BASE_ELEMENTS = document.getElementsByTagName('base'); } // Sniff useragent string to check if the user is running Safari
-
+    if (!BASE_ELEMENTS) { BASE_ELEMENTS = document.getElementsByTagName('base'); }
+    // Sniff useragent string to check if the user is running Safari
     var ua = window.navigator.userAgent;
     var isSafari = /^((?!chrome|android).)*safari/i.test(ua);
     var isIos = /iPhone|iPod|iPad/i.test(ua);
@@ -1149,18 +1039,15 @@
    * @props y - point y position
    * @props handlePositions - array of {x, y} coords for each handle
    */
-
   function getHandleAtPoint(props, x, y, handlePositions) {
     for (var i = 0; i < handlePositions.length; i++) {
       var dX = handlePositions[i].x - x;
       var dY = handlePositions[i].y - y;
       var dist = Math.sqrt(dX * dX + dY * dY);
-
       if (dist < props.handleRadius) {
         return i;
       }
     }
-
     return null;
   }
 
@@ -1173,7 +1060,7 @@
   function cssGradient(type, direction, stops) {
     return type + "-gradient(" + direction + ", " + stops.map(function (_ref) {
       var o = _ref[0],
-          col = _ref[1];
+        col = _ref[1];
       return col + " " + o + "%";
     }).join(',') + ")";
   }
@@ -1206,7 +1093,11 @@
     boxHeight: null
   };
 
-  var SECONDARY_EVENTS = ["mousemove" /* MouseMove */, "touchmove" /* TouchMove */, "mouseup" /* MouseUp */, "touchend" /* TouchEnd */];
+  var SECONDARY_EVENTS = [
+      "mousemove" /* MouseMove */,
+      "touchmove" /* TouchMove */,
+      "mouseup" /* MouseUp */,
+      "touchend" ];
   // Base component class for iro UI components
   // This extends the Preact component class to allow them to react to mouse/touch input events by themselves
   var IroComponentWrapper = /*@__PURE__*/(function (Component) {
@@ -1228,17 +1119,17 @@
               // https://github.com/preactjs/preact/issues/2113#issuecomment-553408767
               ontouchstart: eventHandler,
           };
-          var isHorizontal = props.layoutDirection === 'horizontal';
+          var isHorizontal = props.layoutDirection === "horizontal";
           var margin = props.margin === null ? props.sliderMargin : props.margin;
           var rootStyles = {
-              overflow: 'visible',
-              display: isHorizontal ? 'inline-block' : 'block'
+              overflow: "visible",
+              display: isHorizontal ? "inline-block" : "block",
           };
           // first component shouldn't have any margin
           if (props.index > 0) {
-              rootStyles[isHorizontal ? 'marginLeft' : 'marginTop'] = margin;
+              rootStyles[isHorizontal ? "marginLeft" : "marginTop"] = margin;
           }
-          return (h(d, null, props.children(this.uid, rootProps, rootStyles)));
+          return _(k, null, props.children(this.uid, rootProps, rootStyles));
       };
       // More info on handleEvent:
       // https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
@@ -1274,22 +1165,23 @@
               case "touchend" /* TouchEnd */:
                   inputHandler(x, y, 2 /* End */);
                   SECONDARY_EVENTS.forEach(function (event) {
-                      document.removeEventListener(event, this$1, { passive: false });
+                      document.removeEventListener(event, this$1, {
+                          passive: false,
+                      });
                   });
                   break;
           }
       };
 
       return IroComponentWrapper;
-  }(m));
+  }(x));
 
   function IroHandle(props) {
       var radius = props.r;
       var url = props.url;
       var cx = radius;
       var cy = radius;
-      return (h("svg", { className: ("IroHandle IroHandle--" + (props.index) + " " + (props.isActive ? 'IroHandle--isActive' : '')), style: {
-              '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0);',
+      return (_("svg", { className: ("IroHandle IroHandle--" + (props.index) + " " + (props.isActive ? 'IroHandle--isActive' : '')), style: {
               transform: ("translate(" + (cssValue(props.x)) + ", " + (cssValue(props.y)) + ")"),
               willChange: 'transform',
               top: cssValue(-radius),
@@ -1299,9 +1191,9 @@
               position: 'absolute',
               overflow: 'visible'
           } },
-          url && (h("use", Object.assign({ xlinkHref: resolveSvgUrl(url) }, props.props))),
-          !url && (h("circle", { cx: cx, cy: cy, r: radius, fill: "none", "stroke-width": 2, stroke: "#000" })),
-          !url && (h("circle", { cx: cx, cy: cy, r: radius - 2, fill: props.fill, "stroke-width": 2, stroke: "#fff" }))));
+          url && (_("use", Object.assign({ xlinkHref: resolveSvgUrl(url) }, props.props))),
+          !url && (_("circle", { cx: cx, cy: cy, r: radius, fill: "none", "stroke-width": 2, stroke: "#000" })),
+          !url && (_("circle", { cx: cx, cy: cy, r: radius - 2, fill: props.fill, "stroke-width": 2, stroke: "#fff" }))));
   }
   IroHandle.defaultProps = {
       fill: 'none',
@@ -1327,7 +1219,7 @@
           activeColor[props.sliderType] = value;
           props.onInput(type, props.id);
       }
-      return (h(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (h("div", Object.assign({}, rootProps, { className: "IroSlider", style: Object.assign({}, {position: 'relative',
+      return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroSlider", style: Object.assign({}, {position: 'relative',
               width: cssValue(width),
               height: cssValue(height),
               borderRadius: cssValue(radius),
@@ -1335,7 +1227,7 @@
               background: "conic-gradient(#ccc 25%, #fff 0 50%, #ccc 0 75%, #fff 0)",
               backgroundSize: '8px 8px'},
               rootStyles) }),
-          h("div", { className: "IroSliderGradient", style: Object.assign({}, {position: 'absolute',
+          _("div", { className: "IroSliderGradient", style: Object.assign({}, {position: 'absolute',
                   top: 0,
                   left: 0,
                   width: "100%",
@@ -1343,7 +1235,7 @@
                   borderRadius: cssValue(radius),
                   background: cssGradient('linear', props.layoutDirection === 'horizontal' ? 'to top' : 'to right', gradient)},
                   cssBorderStyles(props)) }),
-          h(IroHandle, { isActive: true, index: activeColor.index, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePos.x, y: handlePos.y }))); }));
+          _(IroHandle, { isActive: true, index: activeColor.index, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePos.x, y: handlePos.y }))); }));
   }
   IroSlider.defaultProps = Object.assign({}, sliderDefaultOptions);
 
@@ -1381,19 +1273,19 @@
           // let the color picker fire input:start, input:move or input:end events
           props.onInput(inputType, props.id);
       }
-      return (h(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (h("div", Object.assign({}, rootProps, { className: "IroBox", style: Object.assign({}, {width: cssValue(width),
+      return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroBox", style: Object.assign({}, {width: cssValue(width),
               height: cssValue(height),
               position: 'relative'},
               rootStyles) }),
-          h("div", { className: "IroBox", style: Object.assign({}, {width: '100%',
+          _("div", { className: "IroBox", style: Object.assign({}, {width: '100%',
                   height: '100%',
                   borderRadius: cssValue(radius)},
                   cssBorderStyles(props),
                   {background: cssGradient('linear', 'to bottom', gradients[1])
                       + ',' +
                       cssGradient('linear', 'to right', gradients[0])}) }),
-          colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (h(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
-          h(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+          colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
+          _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
   }
 
   var HUE_GRADIENT_CLOCKWISE = 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)';
@@ -1445,22 +1337,22 @@
           // let the color picker fire input:start, input:move or input:end events
           props.onInput(inputType, props.id);
       }
-      return (h(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (h("div", Object.assign({}, rootProps, { className: "IroWheel", style: Object.assign({}, {width: cssValue(width),
+      return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroWheel", style: Object.assign({}, {width: cssValue(width),
               height: cssValue(width),
               position: 'relative'},
               rootStyles) }),
-          h("div", { className: "IroWheelHue", style: Object.assign({}, circleStyles,
+          _("div", { className: "IroWheelHue", style: Object.assign({}, circleStyles,
                   {transform: ("rotateZ(" + (props.wheelAngle + 90) + "deg)"),
                   background: props.wheelDirection === 'clockwise' ? HUE_GRADIENT_CLOCKWISE : HUE_GRADIENT_ANTICLOCKWISE}) }),
-          h("div", { className: "IroWheelSaturation", style: Object.assign({}, circleStyles,
+          _("div", { className: "IroWheelSaturation", style: Object.assign({}, circleStyles,
                   {background: 'radial-gradient(circle closest-side, #fff, transparent)'}) }),
-          props.wheelLightness && (h("div", { className: "IroWheelLightness", style: Object.assign({}, circleStyles,
+          props.wheelLightness && (_("div", { className: "IroWheelLightness", style: Object.assign({}, circleStyles,
                   {background: '#000',
                   opacity: 1 - hsv.v / 100}) })),
-          h("div", { className: "IroWheelBorder", style: Object.assign({}, circleStyles,
+          _("div", { className: "IroWheelBorder", style: Object.assign({}, circleStyles,
                   cssBorderStyles(props)) }),
-          colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (h(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
-          h(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+          colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
+          _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
   }
 
   function createWidget(WidgetComponent) {
@@ -1468,7 +1360,7 @@
           var widget; // will become an instance of the widget component class
           var widgetRoot = document.createElement('div');
           // Render widget into a temp DOM node
-          I(h(WidgetComponent, Object.assign({}, {ref: function (ref) { return widget = ref; }},
+          G(_(WidgetComponent, Object.assign({}, {ref: function (ref) { return widget = ref; }},
               props)), widgetRoot);
           function mountWidget() {
               var container = parent instanceof Element ? parent : document.querySelector(parent);
@@ -1745,18 +1637,18 @@
                   });
               }
           }
-          return (h("div", { class: "IroColorPicker", id: state.id, style: {
+          return (_("div", { class: "IroColorPicker", id: state.id, style: {
                   display: state.display
               } }, layout.map(function (ref, componentIndex) {
                   var UiComponent = ref.component;
                   var options = ref.options;
 
-                  return (h(UiComponent, Object.assign({}, state, options, { ref: undefined, onInput: this$1.emitInputEvent.bind(this$1), parent: this$1, index: componentIndex })));
+                  return (_(UiComponent, Object.assign({}, state, options, { ref: undefined, onInput: this$1.emitInputEvent.bind(this$1), parent: this$1, index: componentIndex })));
           })));
       };
 
       return IroColorPicker;
-  }(m));
+  }(x));
   IroColorPicker.defaultProps = Object.assign({}, iroColorPickerOptionDefaults,
       {colors: [],
       display: 'block',
@@ -1772,7 +1664,7 @@
       iro.ColorPicker = IroColorPickerWidget;
       var ui;
       (function (ui) {
-          ui.h = h;
+          ui.h = _;
           ui.ComponentBase = IroComponentWrapper;
           ui.Handle = IroHandle;
           ui.Slider = IroSlider;
@@ -1784,4 +1676,4 @@
 
   return iro$1;
 
-}));
+})));
