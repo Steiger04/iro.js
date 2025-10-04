@@ -12,7 +12,7 @@ declare namespace iro {
     const Color: typeof IroColor;
     type ColorPicker = IroColorPicker;
     const ColorPicker: {
-        (parent: string | HTMLElement, props: Partial<import("./ColorPicker").ColorPickerProps>): IroColorPicker;
+        (parent: string | HTMLElement, props?: Partial<import("./ColorPicker").ColorPickerProps>): IroColorPicker;
         prototype: any;
         __component: import("preact").ComponentType<{}>;
     };

@@ -17,6 +17,39 @@ module.exports = {
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
 
+  // The root directory that Jest should scan for tests and modules within
+  roots: ['<rootDir>/tests'],
+
+  // A map from regular expressions to paths to transformers
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest'
+  },
+
+  // An array of file extensions your modules use
+  moduleFileExtensions: [
+    'ts',
+    'tsx',
+    'js',
+    'jsx',
+    'json'
+  ],
+
+  // Map module names to source files for local packages
+  moduleNameMapper: {
+    '^@irojs/iro-core$': '<rootDir>/../iro-core/src/index.ts'
+  },
+
+  // Don't ignore @irojs/iro-core in node_modules for transformation
+  transformIgnorePatterns: [
+    '/node_modules/(?!@irojs/iro-core)'
+  ],
+
+  // The test environment that will be used for testing
+  testEnvironment: 'jsdom',
+
+  // Setup files to run after the test environment is set up
+  setupFilesAfterEnv: ['<rootDir>/tests/setupEnv.ts'],
+
   // Indicates whether the coverage information should be collected while executing the test
   // collectCoverage: false,
 

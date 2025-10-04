@@ -8,6 +8,7 @@ interface State {
 export declare class IroComponentWrapper extends Component<Props, State> {
     uid: string;
     base: HTMLElement;
+    private isDragging;
     constructor(props: any);
     render(props: any): import("preact").VNode<import("preact").Attributes>;
     handleEvent(e: MouseEvent & TouchEvent): void;

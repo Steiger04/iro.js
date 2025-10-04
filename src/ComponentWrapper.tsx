@@ -28,6 +28,7 @@ interface State {}
 export class IroComponentWrapper extends Component<Props, State> {
   public uid: string;
   public base: HTMLElement;
+  private isDragging: boolean = false;
 
   constructor(props) {
     super(props);
@@ -53,6 +54,8 @@ export class IroComponentWrapper extends Component<Props, State> {
     const rootStyles = {
       overflow: "visible",
       display: isHorizontal ? "inline-block" : "block",
+      // Set touch-action: none during dragging to prevent browser touch gestures
+      touchAction: this.isDragging ? "none" : "auto",
     };
 
     // first component shouldn't have any margin
@@ -70,8 +73,6 @@ export class IroComponentWrapper extends Component<Props, State> {
     const inputHandler = this.props.onInput;
     // Get the screen position of the component
     const bounds = this.base.getBoundingClientRect();
-    // Prefect default browser action
-    e.preventDefault();
     // Detect if the event is a touch event by checking if it has the `touches` property
     // If it is a touch event, use the first touch input
     const point = e.touches ? e.changedTouches[0] : e;
@@ -82,6 +83,9 @@ export class IroComponentWrapper extends Component<Props, State> {
       case InputEventType.TouchStart:
         const result = inputHandler(x, y, IroInputType.Start);
         if (result !== false) {
+          // Prevent default only after drag has been initiated
+          e.preventDefault();
+          this.isDragging = true;
           SECONDARY_EVENTS.forEach((event) => {
             document.addEventListener(event, this, { passive: false });
           });
@@ -89,10 +93,18 @@ export class IroComponentWrapper extends Component<Props, State> {
         break;
       case InputEventType.MouseMove:
       case InputEventType.TouchMove:
+        // Prevent default only while dragging
+        if (this.isDragging) {
+          e.preventDefault();
+        }
         inputHandler(x, y, IroInputType.Move);
         break;
       case InputEventType.MouseUp:
       case InputEventType.TouchEnd:
+        if (this.isDragging) {
+          e.preventDefault();
+          this.isDragging = false;
+        }
         inputHandler(x, y, IroInputType.End);
         SECONDARY_EVENTS.forEach((event) => {
           document.removeEventListener(event, this, {

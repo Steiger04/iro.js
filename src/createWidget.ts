@@ -1,4 +1,4 @@
-import { h, render, ComponentType, Attributes } from 'preact';
+import { h, render, ComponentType, Attributes } from "preact";
 
 // Turn a component into a widget
 // This returns a factory function that can be used to create an instance of the widget component
@@ -8,46 +8,70 @@ import { h, render, ComponentType, Attributes } from 'preact';
 
 export interface Widget {
   base?: Element | Text;
-  onMount: (root: Element) => void;
+  onMount: (root: HTMLElement) => void;
 }
 
-export function createWidget<C extends Widget, P>(WidgetComponent: ComponentType) {
-
-  const widgetFactory = function (parent: string | HTMLElement, props: Partial<P>): C {
-    let widget: C; // will become an instance of the widget component class
-    const widgetRoot = document.createElement('div');
+export function createWidget<C extends Widget, P>(
+  WidgetComponent: ComponentType
+) {
+  const widgetFactory = function (
+    parent: string | HTMLElement,
+    props: Partial<P> = {}
+  ): C {
+    let widget: C = null!; // will become an instance of the widget component class
+    const widgetRoot = document.createElement("div");
 
     // Render widget into a temp DOM node
     render(
       h(WidgetComponent, {
-        ref: ref => widget = ref,
-        ...props,
+        ref: (ref: C | null) => (widget = ref!),
+        ...(props || {}),
       } as Attributes),
       widgetRoot
     );
-    
+
     function mountWidget() {
-      const container = parent instanceof Element ? parent : document.querySelector(parent);
+      const container =
+        parent instanceof Element ? parent : document.querySelector(parent);
+      if (!container) {
+        // Warn if selector not found
+        if (typeof parent === "string") {
+          console.warn(`[iro.js] Selector "${parent}" not found in document`);
+        }
+        return;
+      }
+      // Guard against missing widget.base before appending
+      if (!widget.base) {
+        console.warn("[iro.js] Widget base element not ready, retrying...");
+        // Retry on next frame
+        requestAnimationFrame(mountWidget);
+        return;
+      }
       container.appendChild(widget.base);
-      widget.onMount(container);
-    };
+      // Only call onMount if container is an HTMLElement (not SVG or other Element types)
+      if (container instanceof HTMLElement) {
+        widget.onMount(container);
+      }
+    }
     // Mount it into the DOM when the page document is ready
-    if (document.readyState !== 'loading') {
+    const isElementParent = parent instanceof Element;
+    if (isElementParent || document.readyState !== "loading") {
       mountWidget();
     } else {
-      document.addEventListener('DOMContentLoaded', mountWidget);
+      document.addEventListener("DOMContentLoaded", mountWidget, {
+        once: true,
+      });
     }
 
     return widget;
-  }
+  };
 
   // Allow the widget factory to inherit component prototype + static class methods
   // This makes it easier for plugin authors to extend the base widget component
   widgetFactory.prototype = WidgetComponent.prototype;
   Object.assign(widgetFactory, WidgetComponent);
   // Add reference to base component too
-  widgetFactory.__component = WidgetComponent; 
+  widgetFactory.__component = WidgetComponent;
 
   return widgetFactory;
-
 }

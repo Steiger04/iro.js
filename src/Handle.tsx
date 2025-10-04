@@ -1,5 +1,5 @@
-import { h } from 'preact';
-import { resolveSvgUrl, cssValue } from '@irojs/iro-core';
+import { h } from "preact";
+import { resolveSvgUrl, cssValue } from "@irojs/iro-core";
 
 interface IroHandleProps {
   isActive: boolean;
@@ -19,39 +19,39 @@ export function IroHandle(props: IroHandleProps) {
   const cy = radius;
 
   return (
-    <svg 
-      className={`IroHandle IroHandle--${props.index} ${props.isActive ? 'IroHandle--isActive' : ''}`}
+    <svg
+      className={`IroHandle IroHandle--${props.index} ${
+        props.isActive ? "IroHandle--isActive" : ""
+      }`}
       style={{
-        transform: `translate(${ cssValue(props.x) }, ${ cssValue(props.y) })`,
-        willChange: 'transform',
+        transform: `translate(${cssValue(props.x)}, ${cssValue(props.y)})`,
+        willChange: "transform",
         top: cssValue(-radius),
         left: cssValue(-radius),
         width: cssValue(radius * 2),
         height: cssValue(radius * 2),
-        position: 'absolute',
-        overflow: 'visible'
+        position: "absolute",
+        overflow: "visible",
       }}
     >
-      {url && (
-        <use xlinkHref={resolveSvgUrl(url)} { ...props.props }/>
-      )}
+      {url && <use xlinkHref={resolveSvgUrl(url)} {...props.props} />}
       {!url && (
         <circle
-          cx={ cx }
-          cy={ cy }
-          r={ radius }
+          cx={cx}
+          cy={cy}
+          r={radius}
           fill="none"
-          stroke-width={ 2 }
+          strokeWidth={2}
           stroke="#000"
         />
       )}
       {!url && (
-        <circle 
-          cx={ cx }
-          cy={ cy }
-          r={ radius - 2 }
-          fill={ props.fill } 
-          stroke-width={ 2 }
+        <circle
+          cx={cx}
+          cy={cy}
+          r={radius - 2}
+          fill={props.fill}
+          strokeWidth={2}
           stroke="#fff"
         />
       )}
@@ -60,10 +60,10 @@ export function IroHandle(props: IroHandleProps) {
 }
 
 IroHandle.defaultProps = {
-  fill: 'none',
+  fill: "none",
   x: 0,
   y: 0,
   r: 8,
   url: null,
-  props: {x: 0, y: 0}
+  props: { x: 0, y: 0 },
 };
