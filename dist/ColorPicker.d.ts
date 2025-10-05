@@ -12,6 +12,7 @@ export interface ColorPickerProps extends IroColorPickerOptions {
     colors?: IroColorValue[];
     transparency?: boolean;
     margin?: number;
+    preserveVisualHueOnWheelChange?: boolean;
 }
 export interface ColorPickerState extends ColorPickerProps {
     layout: ColorPickerLayoutDefinition[] | ColorPickerLayoutShorthand;
@@ -28,6 +29,7 @@ export declare class IroColorPicker extends Component<ColorPickerProps, ColorPic
     private events;
     private activeEvents;
     private deferredEvents;
+    private suppressColorEvents;
     constructor(props: ColorPickerProps);
     /**
      * @desc Get the current gamut type from state or props
@@ -87,6 +89,16 @@ export declare class IroColorPicker extends Component<ColorPickerProps, ColorPic
      * @desc Reset the color picker to the initial color provided in the color picker options
      */
     reset(): void;
+    /**
+     * @desc Transform colors when wheelAngle or wheelDirection changes
+     * Transforms colors to preserve their visual position when wheel parameters change.
+     * @param oldWheelAngle - the current wheelAngle value
+     * @param oldWheelDirection - the current wheelDirection value
+     * @param newWheelAngle - the new wheelAngle value
+     * @param newWheelDirection - the new wheelDirection value
+     * @emits wheel:transform - Fired once after all colors have been transformed
+     */
+    private transformColorsForWheelChange;
     /**
      * @desc Set the gamut for all colors in the color picker
      * @param newGamut - the new gamut type to apply

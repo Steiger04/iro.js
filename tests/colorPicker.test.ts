@@ -313,3 +313,103 @@ describe("ColorPicker gamut API", () => {
     }, 10);
   });
 });
+
+describe("Wheel CSS rotation visual alignment", () => {
+  test("Wheel hue gradient rotates correctly for clockwise with wheelAngle=0", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "clockwise",
+      wheelAngle: 0,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(90deg)");
+  });
+
+  test("Wheel hue gradient rotates correctly for clockwise with wheelAngle=35", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "clockwise",
+      wheelAngle: 35,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(55deg)");
+  });
+
+  test("Wheel hue gradient rotates correctly for clockwise with wheelAngle=90", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "clockwise",
+      wheelAngle: 90,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(0deg)");
+  });
+
+  test("Wheel hue gradient rotates correctly for anticlockwise with wheelAngle=0", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "anticlockwise",
+      wheelAngle: 0,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(90deg)");
+  });
+
+  test("Wheel hue gradient rotates correctly for anticlockwise with wheelAngle=35", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "anticlockwise",
+      wheelAngle: 35,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(125deg)");
+  });
+
+  test("Wheel hue gradient rotates correctly for anticlockwise with wheelAngle=90", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "anticlockwise",
+      wheelAngle: 90,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(180deg)");
+  });
+
+  test("Wheel hue gradient rotates correctly for clockwise with negative wheelAngle", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "clockwise",
+      wheelAngle: -45,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(135deg)");
+  });
+
+  test("Wheel hue gradient rotates correctly for anticlockwise with negative wheelAngle", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "anticlockwise",
+      wheelAngle: -45,
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.style.transform).toBe("rotateZ(45deg)");
+  });
+
+  test("Wheel hue gradient element exists for clockwise direction", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "clockwise",
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.className).toBe("IroWheelHue");
+  });
+
+  test("Wheel hue gradient element exists for anticlockwise direction", () => {
+    const colorPicker = IroColorPicker(root, {
+      wheelDirection: "anticlockwise",
+    });
+    const wheelHue = root.querySelector(".IroWheelHue") as HTMLElement;
+    expect(wheelHue).not.toBeNull();
+    expect(wheelHue.className).toBe("IroWheelHue");
+  });
+});

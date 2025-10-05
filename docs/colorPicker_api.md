@@ -8,14 +8,14 @@ The color picker API is the main feature of iro.js, and is accessible on `iro.Co
 
 **Arguments:**
 
-* `{String | DOM Element}` CSS selector or DOM node for the color picker container
-* `{Object}` [color picker options](#options)
+- `{String | DOM Element}` CSS selector or DOM node for the color picker container
+- `{Object}` [color picker options](#options)
 
 ## Options
 
 ### `width`
 
-The total width of the color picker UI, measured in pixels. 
+The total width of the color picker UI, measured in pixels.
 
 **Default value**: `300`
 
@@ -51,7 +51,7 @@ Component stacking direction; either `"vertical"` or `"horizontal"`.
 
 ### `borderWidth`
 
-Width of the border around the controls, measured in pixels. 
+Width of the border around the controls, measured in pixels.
 
 **Default value**: `0` (no border)
 
@@ -115,6 +115,31 @@ Direction of the color wheel's hue gradient, either `"clockwise"` or `"anticlock
 
 **Default value**: `"anticlockwise"`
 
+### `preserveVisualHueOnWheelChange`
+
+When set to `true`, dynamically changing `wheelAngle` or `wheelDirection` via `setOptions()` will automatically transform color hues to preserve their visual position on the color wheel. This means colors will appear in the same location on the wheel after the rotation/direction change, but their HSV hue values will be adjusted accordingly.
+
+When set to `false`, hues remain unchanged and visual positions will shift when wheel parameters change.
+
+**Default value**: `true`
+
+**Example:**
+
+```js
+// With preserveVisualHueOnWheelChange: true (default)
+// Color at visual position 90° will maintain its visual position
+// when wheelAngle changes, but its HSV hue value will be recalculated
+colorPicker.setOptions({ wheelAngle: 90 });
+
+// Disable automatic hue transformation
+colorPicker.setOptions({
+  wheelAngle: 180,
+  preserveVisualHueOnWheelChange: false,
+});
+```
+
+**See also:** [wheel:transform event](#wheel-transform)
+
 ### `sliderSize`
 
 Slider size, measured in pixels.
@@ -159,8 +184,8 @@ The ID value passed to the color picker config.
 
 **Arguments:**
 
-* `{Number}` width
-* `{Number}` height
+- `{Number}` width
+- `{Number}` height
 
 ### `on`
 
@@ -168,8 +193,8 @@ Add a listener to a color picker event.
 
 **Arguments:**
 
-* `{String | Array}` [Event Type(s)](#events)
-* `{Function}` callback
+- `{String | Array}` [Event Type(s)](#events)
+- `{Function}` callback
 
 **Example:**
 
@@ -190,8 +215,8 @@ Remove event listeners that were registered with `on`.
 
 **Arguments:**
 
-* `{String | Array}` [Event Type(s)](#events)
-* `{Function}` callback
+- `{String | Array}` [Event Type(s)](#events)
+- `{Function}` callback
 
 **Example:**
 
@@ -218,8 +243,8 @@ Add another selectable color to the color picker.
 
 **Arguments:**
 
-* `{IroColorValue}` color value - The color to add, this can be an `iro.Color` or any [supported color format](/color_api.html#supported-color-formats).
-* `{Number}` color index (optional) - Defaults to the end of the color array
+- `{IroColorValue}` color value - The color to add, this can be an `iro.Color` or any [supported color format](/color_api.html#supported-color-formats).
+- `{Number}` color index (optional) - Defaults to the end of the color array
 
 ### `removeColor`
 
@@ -227,7 +252,7 @@ Remove a color from the color picker.
 
 **Arguments:**
 
-* `{Number}` color index
+- `{Number}` color index
 
 ### `setActiveColor`
 
@@ -235,7 +260,7 @@ Set the currently 'active' color (the color that is selected and highlighted).
 
 **Arguments:**
 
-* `{Number}` color index
+- `{Number}` color index
 
 ### `setColors`
 
@@ -243,7 +268,7 @@ Replaces all the colors currently on the color picker with a new set of colors.
 
 **Arguments:**
 
-* `{Color []}` new color values
+- `{Color []}` new color values
 
 ## Utility Methods
 
@@ -253,7 +278,7 @@ Set the color picker to a new size.
 
 **Arguments:**
 
-* `{Number}` width
+- `{Number}` width
 
 ### `reset`
 
@@ -269,7 +294,7 @@ Used internally to dispatch an event. All function arguments after the event typ
 
 **Arguments:**
 
-* `{String}` [Event Type](#events)
+- `{String}` [Event Type](#events)
 
 ### `deferredEmit`
 
@@ -277,7 +302,7 @@ Used internally to dispatch an deferred event. Deferred events are stored until 
 
 **Arguments:**
 
-* `{String}` [Event Type](#events)
+- `{String}` [Event Type](#events)
 
 ## Events
 
@@ -289,7 +314,7 @@ Fired whenever the color changes -- either when the user interacts with the cont
 
 ### `input:change`
 
-Similar to `color:change`, except this is only fired whenever the color is changed with *direct user input*. Callbacks for this event recieve exactly the same parameters as `color:change`. It is also safe to modify the `color` object within callbacks for this event.
+Similar to `color:change`, except this is only fired whenever the color is changed with _direct user input_. Callbacks for this event recieve exactly the same parameters as `color:change`. It is also safe to modify the `color` object within callbacks for this event.
 
 ### `input:start`
 
@@ -318,3 +343,21 @@ Fired whenever the 'active' color is switched. This event's callbacks will recei
 ### `mount`
 
 Fired when the colorPicker's UI has been mounted to the DOM and is ready for user interaction. The colorPicker object is passed to this event's callback function.
+
+### `wheel:transform`
+
+Fired when color hues are automatically transformed due to changes in `wheelAngle` or `wheelDirection` settings (when `preserveVisualHueOnWheelChange` is `true`). This event's callback will receive an object containing the old and new wheel parameters:
+
+```js
+colorPicker.on("wheel:transform", (params) => {
+  console.log("Wheel transformed:", params);
+  // params: {
+  //   oldWheelAngle: 0,
+  //   oldWheelDirection: 'anticlockwise',
+  //   newWheelAngle: 90,
+  //   newWheelDirection: 'anticlockwise'
+  // }
+});
+```
+
+**Note**: This event fires after all colors have been transformed but does not fire individual `color:change` events to avoid an "event storm". If you need to react to the transformed colors, listen to this event instead.

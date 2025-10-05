@@ -59,7 +59,7 @@ module.exports = {
       tsconfigOverride: {
         compilerOptions: {
           module: 'esnext',
-          target: 'esnext',
+          target: 'es2015',
           declaration: !devserver ? true : false,
           sourceMap: devserver ? true : false
         },
@@ -69,7 +69,9 @@ module.exports = {
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
       jsx: 'h',
       objectAssign: 'Object.assign',
-      transforms: {}
+      transforms: {
+        dangerousForOf: true,
+      }
     }),
     // commonjs(),
     devserver ? serve({

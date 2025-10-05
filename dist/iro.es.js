@@ -1242,22 +1242,63 @@ function getSliderGradient(props, color) {
   }
 }
 
+/**
+ * Mathematical utility functions
+ */
+/**
+ * Tau constant (2π)
+ */
 var TAU = Math.PI * 2;
-// javascript's modulo operator doesn't produce positive numbers with negative input
-// https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
+/**
+ * Modulo operation that always returns positive numbers
+ * JavaScript's modulo operator doesn't produce positive numbers with negative input
+ * @see https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
+ */
 var mod = function mod(a, n) {
   return (a % n + n) % n;
 };
-// distance between points (x, y) and (0, 0)
+/**
+ * Calculate the Euclidean distance between point (x, y) and origin (0, 0)
+ */
 var dist = function dist(x, y) {
   return Math.sqrt(x * x + y * y);
 };
+
+/**
+ * COORDINATE SYSTEM CONVENTION:
+ *
+ * Mathematical Convention (internal calculations):
+ * - 0° = East (positive X-axis, right)
+ * - 90° = North (positive Y-axis, up in math, but down in DOM)
+ * - Positive rotation = counterclockwise
+ *
+ * HSV Hue Convention:
+ * - 0° = Red
+ * - 120° = Green
+ * - 240° = Blue
+ *
+ * DOM/CSS Convention:
+ * - Y-axis points downward (opposite of mathematical convention)
+ * - conic-gradient starts at 0° = North (12 o'clock position)
+ *
+ * wheelAngle:
+ * - Defines the visual rotation offset of the wheel
+ * - wheelAngle=0 means red (hue=0) appears at the default position
+ * - Positive wheelAngle rotates the wheel counterclockwise
+ *
+ * wheelDirection:
+ * - 'anticlockwise': hue increases counterclockwise (mathematical convention)
+ * - 'clockwise': hue increases clockwise (inverted)
+ */
 /**
  * @param props - wheel props
  * @internal
  */
 function getHandleRange(props) {
-  return props.width / 2 - props.padding - props.handleRadius - props.borderWidth;
+  var r = props.width / 2 - props.padding - props.handleRadius - props.borderWidth;
+  // Clamp to non-negative to prevent division by zero and inverted coordinates
+  // when padding + handleRadius + borderWidth >= width/2
+  return Math.max(0, r);
 }
 /**
  * Returns true if point (x, y) lands inside the wheel
@@ -1286,27 +1327,57 @@ function getWheelDimensions(props) {
   };
 }
 /**
- * @desc Translate an angle according to wheelAngle and wheelDirection
+ * Translate between HSV hue and visual wheel angle
+ *
  * @param props - wheel props
- * @param angle - input angle
+ * @param angle - input angle (visual angle if invert=false, hue if invert=true)
+ * @param invert - if false: visual angle → hue, if true: hue → visual angle
+ * @returns translated angle in degrees (0-360)
+ *
+ * Without invert: Converts from visual wheel position to HSV hue
+ * With invert: Converts from HSV hue to visual wheel position
+ *
+ * These transformations are mathematically bidirectional:
+ * translateWheelAngle(props, translateWheelAngle(props, angle, false), true) === angle
  */
 function translateWheelAngle(props, angle, invert) {
-  var wheelAngle = props.wheelAngle;
-  var wheelDirection = props.wheelDirection;
-  // inverted and clockwise
-  if (invert && wheelDirection === "clockwise") { angle = wheelAngle + angle; }
-  // clockwise (input handling)
-  else if (wheelDirection === "clockwise") { angle = 360 - wheelAngle + angle; }
-  // inverted and anticlockwise
-  else if (invert && wheelDirection === "anticlockwise") { angle = wheelAngle + 180 - angle; }
-  // anticlockwise (input handling)
-  else if (wheelDirection === "anticlockwise") { angle = wheelAngle + angle; }
+  var _props$wheelAngle;
+  // Default to 0 if wheelAngle is null or undefined (nullish coalescing)
+  var wheelAngle = (_props$wheelAngle = props.wheelAngle) != null ? _props$wheelAngle : 0;
+  // Normalize wheelDirection: only 'clockwise' is clockwise, everything else is 'anticlockwise'
+  var wd = props.wheelDirection === "clockwise" ? "clockwise" : "anticlockwise";
+  if (invert) {
+    // HSV Hue → Visual Angle (inverse transformation)
+    if (wd === "anticlockwise") {
+      // visual angle = hue - wheelAngle
+      angle = angle - wheelAngle;
+    } else {
+      // clockwise: visual angle = wheelAngle - hue
+      angle = wheelAngle - angle;
+    }
+  } else {
+    // Visual Angle → HSV Hue (forward transformation)
+    if (wd === "anticlockwise") {
+      // hue = visual angle + wheelAngle
+      angle = angle + wheelAngle;
+    } else {
+      // clockwise: hue = wheelAngle - visual angle
+      angle = wheelAngle - angle;
+    }
+  }
   return mod(angle, 360);
 }
 /**
- * @desc Get the current handle position for a given color
+ * Calculate the handle position (x, y) for a given color
+ *
  * @param props - wheel props
- * @param color
+ * @param color - color object with HSV values
+ * @returns {x, y} coordinates in pixels relative to the wheel container
+ *
+ * The position is calculated by:
+ * 1. Converting HSV hue to visual angle using translateWheelAngle
+ * 2. Converting to Cartesian coordinates using trigonometry
+ * 3. Adjusting for DOM coordinate system (Y-axis points down)
  */
 function getWheelHandlePosition(props, color) {
   var hsv = color.hsv;
@@ -1314,34 +1385,63 @@ function getWheelHandlePosition(props, color) {
     cx = _getWheelDimensions2.cx,
     cy = _getWheelDimensions2.cy;
   var handleRange = getHandleRange(props);
-  var handleAngle = (180 + translateWheelAngle(props, hsv.h, true)) * (TAU / 360);
+  // If handleRange is zero or negative, return center to avoid inverted coordinates
+  if (handleRange <= 0) {
+    return {
+      x: cx,
+      y: cy
+    };
+  }
+  // Convert HSV hue to visual angle
+  var visualAngle = translateWheelAngle(props, hsv.h, true);
+  // Convert to radians
+  var angleRad = visualAngle * (TAU / 360);
+  // Calculate distance from center based on saturation
   var handleDist = hsv.s / 100 * handleRange;
-  var direction = props.wheelDirection === "clockwise" ? -1 : 1;
+  // Convert polar to Cartesian coordinates
+  // Note: Y-axis in DOM points down, so we negate the sin component
   return {
-    x: cx + handleDist * Math.cos(handleAngle) * direction,
-    y: cy + handleDist * Math.sin(handleAngle) * direction
+    x: cx + handleDist * Math.cos(angleRad),
+    y: cy - handleDist * Math.sin(angleRad)
   };
 }
 /**
- * @desc Get the current wheel value from user input
+ * Calculate HSV values from user input coordinates
+ *
  * @param props - wheel props
- * @param x - global input x position
- * @param y - global input y position
+ * @param x - input x position in pixels
+ * @param y - input y position in pixels
+ * @returns {h, s} - hue (0-360) and saturation (0-100)
+ *
+ * The values are calculated by:
+ * 1. Converting input coordinates to polar coordinates (angle, distance)
+ * 2. Converting visual angle to HSV hue using translateWheelAngle
+ * 3. Converting distance to saturation percentage
  */
 function getWheelValueFromInput(props, x, y) {
   var _getWheelDimensions3 = getWheelDimensions(props),
     cx = _getWheelDimensions3.cx,
     cy = _getWheelDimensions3.cy;
   var handleRange = getHandleRange(props);
-  x = cx - x;
-  y = cy - y;
-  // Calculate the hue by converting the angle to radians
-  var hue = translateWheelAngle(props, Math.atan2(-y, -x) * (360 / TAU));
-  // Find the point's distance from the center of the wheel
-  // This is used to show the saturation level
-  var handleDist = Math.min(dist(x, y), handleRange);
+  // Calculate relative position from center
+  var dx = x - cx;
+  var dy = cy - y; // Note: cy - y because DOM Y-axis points down
+  // Calculate angle in mathematical convention (0° = East, positive = CCW)
+  var visualAngle = Math.atan2(dy, dx) * (360 / TAU);
+  // Convert visual angle to HSV hue (translateWheelAngle will normalize)
+  var hue = translateWheelAngle(props, visualAngle, false);
+  // If handleRange is zero or negative, saturation is always 0
+  // (entire wheel is collapsed to a point)
+  if (handleRange <= 0) {
+    return {
+      h: mod(Math.round(hue), 360),
+      s: 0
+    };
+  }
+  // Calculate distance from center for saturation
+  var handleDist = Math.min(dist(dx, dy), handleRange);
   return {
-    h: Math.round(hue),
+    h: mod(Math.round(hue), 360),
     s: Math.round(100 / handleRange * handleDist)
   };
 }
@@ -1506,7 +1606,8 @@ var iroColorPickerOptionDefaults = {
   sliderSize: null,
   sliderMargin: 12,
   boxHeight: null,
-  gamut: "none"
+  gamut: "none",
+  preserveVisualHueOnWheelChange: true
 };
 
 var SECONDARY_EVENTS = [
@@ -1647,22 +1748,10 @@ function IroSlider(props) {
         activeColor[props.sliderType] = value;
         props.onInput(type, props.id);
     }
-    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroSlider", style: Object.assign({}, {position: 'relative',
-            width: cssValue(width),
-            height: cssValue(height),
-            borderRadius: cssValue(radius),
+    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroSlider", style: Object.assign({ position: 'relative', width: cssValue(width), height: cssValue(height), borderRadius: cssValue(radius), 
             // checkered bg to represent alpha
-            background: "conic-gradient(#ccc 25%, #fff 0 50%, #ccc 0 75%, #fff 0)",
-            backgroundSize: '8px 8px'},
-            rootStyles) }),
-        _("div", { className: "IroSliderGradient", style: Object.assign({}, {position: 'absolute',
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                borderRadius: cssValue(radius),
-                background: cssGradient('linear', props.layoutDirection === 'horizontal' ? 'to top' : 'to right', gradient)},
-                cssBorderStyles(props)) }),
+            background: "conic-gradient(#ccc 25%, #fff 0 50%, #ccc 0 75%, #fff 0)", backgroundSize: '8px 8px' }, rootStyles) }),
+        _("div", { className: "IroSliderGradient", style: Object.assign({ position: 'absolute', top: 0, left: 0, width: "100%", height: "100%", borderRadius: cssValue(radius), background: cssGradient('linear', props.layoutDirection === 'horizontal' ? 'to top' : 'to right', gradient) }, cssBorderStyles(props)) }),
         _(IroHandle, { isActive: true, index: activeColor.index, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePos.x, y: handlePos.y }))); }));
 }
 IroSlider.defaultProps = Object.assign({}, sliderDefaultOptions);
@@ -1701,51 +1790,56 @@ function IroBox(props) {
         // let the color picker fire input:start, input:move or input:end events
         props.onInput(inputType, props.id);
     }
-    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroBox", style: Object.assign({}, {width: cssValue(width),
-            height: cssValue(height),
-            position: 'relative'},
-            rootStyles) }),
-        _("div", { className: "IroBox", style: Object.assign({}, {width: '100%',
-                height: '100%',
-                borderRadius: cssValue(radius)},
-                cssBorderStyles(props),
-                {background: cssGradient('linear', 'to bottom', gradients[1])
+    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroBox", style: Object.assign({ width: cssValue(width), height: cssValue(height), position: 'relative' }, rootStyles) }),
+        _("div", { className: "IroBox", style: Object.assign(Object.assign({ width: '100%', height: '100%', borderRadius: cssValue(radius) }, cssBorderStyles(props)), { background: cssGradient('linear', 'to bottom', gradients[1])
                     + ',' +
-                    cssGradient('linear', 'to right', gradients[0])}) }),
+                    cssGradient('linear', 'to right', gradients[0]) }) }),
         colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
         _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
 }
 
-var HUE_GRADIENT_CLOCKWISE = 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)';
-var HUE_GRADIENT_ANTICLOCKWISE = 'conic-gradient(red, magenta, blue, aqua, lime, yellow, red)';
+var HUE_GRADIENT_CLOCKWISE = "conic-gradient(red, yellow, lime, aqua, blue, magenta, red)";
+var HUE_GRADIENT_ANTICLOCKWISE = "conic-gradient(red, magenta, blue, aqua, lime, yellow, red)";
+// Base rotation to convert from math convention (0°=East) to CSS (0°=North)
+var BASE_ROT_DEG = 90;
 function IroWheel(props) {
-    var ref = getWheelDimensions(props);
-    var width = ref.width;
+    var _a;
     var colors = props.colors;
     var borderWidth = props.borderWidth;
+    // Default to 0 if wheelAngle is null or undefined (nullish coalescing)
+    var wheelAngle = (_a = props.wheelAngle) !== null && _a !== void 0 ? _a : 0;
+    // Normalize wheelDirection: only 'clockwise' is clockwise, everything else is 'anticlockwise'
+    var wd = (props.wheelDirection === "clockwise" ? "clockwise" : "anticlockwise");
+    // Create props object with default values for core functions
+    var propsWithDefaults = Object.assign(Object.assign({}, props), { wheelAngle: wheelAngle, wheelDirection: wd });
+    var ref = getWheelDimensions(propsWithDefaults);
+    var width = ref.width;
+    // Calculate hue rotation: BASE_ROT_DEG converts from math to CSS coordinates
+    // For clockwise: subtract wheelAngle, for anticlockwise: add wheelAngle
+    var hueRotation = wd === "clockwise" ? BASE_ROT_DEG - wheelAngle : BASE_ROT_DEG + wheelAngle;
     var colorPicker = props.parent;
     var activeColor = props.color;
     var hsv = activeColor.hsv;
-    var handlePositions = colors.map(function (color) { return getWheelHandlePosition(props, color); });
+    var handlePositions = colors.map(function (color) { return getWheelHandlePosition(propsWithDefaults, color); });
     var circleStyles = {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
-        borderRadius: '50%',
-        boxSizing: 'border-box'
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        boxSizing: "border-box",
     };
     function handleInput(x, y, inputType) {
         if (inputType === 0 /* Start */) {
-            // input hitbox is a square, 
+            // input hitbox is a square,
             // so we want to ignore any initial clicks outside the circular shape of the wheel
-            if (!isInputInsideWheel(props, x, y)) {
+            if (!isInputInsideWheel(propsWithDefaults, x, y)) {
                 // returning false will cease all event handling for this interaction
                 return false;
             }
             // getHandleAtPoint() returns the index for the handle if the point 'hits' it, or null otherwise
-            var activeHandle = getHandleAtPoint(props, x, y, handlePositions);
+            var activeHandle = getHandleAtPoint(propsWithDefaults, x, y, handlePositions);
             // If the input hit a handle, set it as the active handle, but don't update the color
             if (activeHandle !== null) {
                 colorPicker.setActiveColor(activeHandle);
@@ -1753,34 +1847,56 @@ function IroWheel(props) {
             // If the input didn't hit a handle, set the currently active handle to that position
             else {
                 colorPicker.inputActive = true;
-                activeColor.hsv = getWheelValueFromInput(props, x, y);
+                activeColor.hsv = getWheelValueFromInput(propsWithDefaults, x, y);
                 props.onInput(inputType, props.id);
             }
         }
         // move is fired when the user has started dragging
         else if (inputType === 1 /* Move */) {
             colorPicker.inputActive = true;
-            activeColor.hsv = getWheelValueFromInput(props, x, y);
+            activeColor.hsv = getWheelValueFromInput(propsWithDefaults, x, y);
         }
         // let the color picker fire input:start, input:move or input:end events
         props.onInput(inputType, props.id);
     }
-    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroWheel", style: Object.assign({}, {width: cssValue(width),
-            height: cssValue(width),
-            position: 'relative'},
-            rootStyles) }),
-        _("div", { className: "IroWheelHue", style: Object.assign({}, circleStyles,
-                {transform: ("rotateZ(" + (props.wheelAngle + 90) + "deg)"),
-                background: props.wheelDirection === 'clockwise' ? HUE_GRADIENT_CLOCKWISE : HUE_GRADIENT_ANTICLOCKWISE}) }),
-        _("div", { className: "IroWheelSaturation", style: Object.assign({}, circleStyles,
-                {background: 'radial-gradient(circle closest-side, #fff, transparent)'}) }),
-        props.wheelLightness && (_("div", { className: "IroWheelLightness", style: Object.assign({}, circleStyles,
-                {background: '#000',
-                opacity: 1 - hsv.v / 100}) })),
-        _("div", { className: "IroWheelBorder", style: Object.assign({}, circleStyles,
-                cssBorderStyles(props)) }),
-        colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
+    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroWheel", style: Object.assign({ width: cssValue(width), height: cssValue(width), position: "relative" }, rootStyles) }),
+        _("div", { className: "IroWheelHue", style: Object.assign(Object.assign({}, circleStyles), { transform: ("rotateZ(" + hueRotation + "deg)"), background: wd === "clockwise"
+                    ? HUE_GRADIENT_CLOCKWISE
+                    : HUE_GRADIENT_ANTICLOCKWISE }) }),
+        _("div", { className: "IroWheelSaturation", style: Object.assign(Object.assign({}, circleStyles), { background: "radial-gradient(circle closest-side, #fff, transparent)" }) }),
+        props.wheelLightness && (_("div", { className: "IroWheelLightness", style: Object.assign(Object.assign({}, circleStyles), { background: "#000", opacity: 1 - hsv.v / 100 }) })),
+        _("div", { className: "IroWheelBorder", style: Object.assign(Object.assign({}, circleStyles), cssBorderStyles(props)) }),
+        colors
+            .filter(function (color) { return color !== activeColor; })
+            .map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
         _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+}
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) { if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        { t[p] = s[p]; } }
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        { for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                { t[p[i]] = s[p[i]]; }
+        } }
+    return t;
 }
 
 function createWidget(WidgetComponent) {
@@ -1790,8 +1906,7 @@ function createWidget(WidgetComponent) {
         var widget = null; // will become an instance of the widget component class
         var widgetRoot = document.createElement("div");
         // Render widget into a temp DOM node
-        G(_(WidgetComponent, Object.assign({}, {ref: function (ref) { return (widget = ref); }},
-            (props || {}))), widgetRoot);
+        G(_(WidgetComponent, Object.assign({ ref: function (ref) { return (widget = ref); } }, (props || {}))), widgetRoot);
         function mountWidget() {
             var container = parent instanceof Element ? parent : document.querySelector(parent);
             if (!container) {
@@ -1835,7 +1950,6 @@ function createWidget(WidgetComponent) {
     return widgetFactory;
 }
 
-function objectWithoutProperties (obj, exclude) { var target = {}; for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && exclude.indexOf(k) === -1) target[k] = obj[k]; return target; }
 var IroColorPicker = /*@__PURE__*/(function (Component) {
     function IroColorPicker(props) {
         var this$1 = this;
@@ -1846,6 +1960,7 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         this.events = {};
         this.activeEvents = {};
         this.deferredEvents = {};
+        this.suppressColorEvents = false;
         this.id = props.id || "";
         var colors = props.colors && props.colors.length > 0
             ? props.colors
@@ -1854,10 +1969,7 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         this.setActiveColor(0);
         // Pass all the props into the component's state,
         // Except we want to add the color object and make sure that refs aren't passed down to children
-        this.state = Object.assign({}, props,
-            {color: this.color,
-            colors: this.colors,
-            layout: props.layout || "default"});
+        this.state = Object.assign(Object.assign({}, props), { color: this.color, colors: this.colors, layout: props.layout || "default" });
     }
 
     if ( Component ) IroColorPicker.__proto__ = Component;
@@ -2035,18 +2147,33 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
     };
     // Public utility methods
     IroColorPicker.prototype.setOptions = function setOptions (newOptions) {
+        var _a, _b, _c, _d, _e, _f;
         // Step 1: Filter out internal state fields that shouldn't be set from outsidea
-        var color = newOptions.color;
-        var colors = newOptions.colors;
-        var rest$1 = objectWithoutProperties( newOptions, ["color", "colors"] );
-        var safeOptions = rest$1;
+        var _g = newOptions;
+        var color = _g.color;
+        var colors = _g.colors;
+        var safeOptions = __rest(_g, ["color", "colors"]);
+        // Step 1a: Check if wheelAngle or wheelDirection are being changed
+        var preserveVisualHue = (_b = (_a = safeOptions.preserveVisualHueOnWheelChange) !== null && _a !== void 0 ? _a : this.props.preserveVisualHueOnWheelChange) !== null && _b !== void 0 ? _b : true;
+        if (preserveVisualHue &&
+            (safeOptions.wheelAngle !== undefined ||
+                safeOptions.wheelDirection !== undefined)) {
+            var oldWheelAngle = (_c = this.state.wheelAngle) !== null && _c !== void 0 ? _c : iroColorPickerOptionDefaults.wheelAngle;
+            var oldWheelDirection = (_d = this.state.wheelDirection) !== null && _d !== void 0 ? _d : iroColorPickerOptionDefaults.wheelDirection;
+            var newWheelAngle = (_e = safeOptions.wheelAngle) !== null && _e !== void 0 ? _e : oldWheelAngle;
+            var newWheelDirection = (_f = safeOptions.wheelDirection) !== null && _f !== void 0 ? _f : oldWheelDirection;
+            // Only transform if values actually changed
+            if (oldWheelAngle !== newWheelAngle ||
+                oldWheelDirection !== newWheelDirection) {
+                this.transformColorsForWheelChange(oldWheelAngle, oldWheelDirection, newWheelAngle, newWheelDirection);
+            }
+        }
         // Step 2: Check if gamut is being changed
         var gamutChanging = safeOptions.gamut !== undefined &&
             safeOptions.gamut !== this.getCurrentGamut();
         // Step 3: Separate gamut from rest of options
         var gamut = safeOptions.gamut;
-        var rest$2 = objectWithoutProperties( safeOptions, ["gamut"] );
-        var rest = rest$2;
+        var rest = __rest(safeOptions, ["gamut"]);
         // Step 4: Early return if only unchanged gamut is provided
         if (gamut !== undefined &&
             !gamutChanging &&
@@ -2059,7 +2186,11 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         }
         else {
             // Step 6: Apply only non-gamut options to avoid passing unchanged gamut key
-            this.setState(rest);
+            // Include transformed colors in state update if wheel parameters changed
+            var stateUpdate = safeOptions.wheelAngle !== undefined ||
+                safeOptions.wheelDirection !== undefined
+                ? Object.assign(Object.assign({}, rest), { colors: this.colors }) : rest;
+            this.setState(stateUpdate);
         }
     };
     /**
@@ -2077,6 +2208,50 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         this.setState({ colors: this.colors });
     };
     /**
+     * @desc Transform colors when wheelAngle or wheelDirection changes
+     * Transforms colors to preserve their visual position when wheel parameters change.
+     * @param oldWheelAngle - the current wheelAngle value
+     * @param oldWheelDirection - the current wheelDirection value
+     * @param newWheelAngle - the new wheelAngle value
+     * @param newWheelDirection - the new wheelDirection value
+     * @emits wheel:transform - Fired once after all colors have been transformed
+     */
+    IroColorPicker.prototype.transformColorsForWheelChange = function transformColorsForWheelChange (oldWheelAngle, oldWheelDirection, newWheelAngle, newWheelDirection) {
+        var oldProps = {
+            wheelAngle: oldWheelAngle,
+            wheelDirection: oldWheelDirection,
+        };
+        var newProps = {
+            wheelAngle: newWheelAngle,
+            wheelDirection: newWheelDirection,
+        };
+        try {
+            // Suppress color:change events during transformation to avoid event storm
+            this.suppressColorEvents = true;
+            this.colors.forEach(function (color) {
+                // Step 1: Calculate visual angle with old parameters (HSV Hue → Visual Angle)
+                var visualAngle = translateWheelAngle(oldProps, color.hsv.h, true);
+                // Step 2: Calculate new hue at that visual position with new parameters (Visual Angle → HSV Hue)
+                var newHue = Math.round(translateWheelAngle(newProps, visualAngle, false));
+                // Step 3: Update the color with new hue, keeping saturation and value unchanged
+                color.hsv = { h: newHue, s: color.hsv.s, v: color.hsv.v };
+            });
+        }
+        finally {
+            // Always restore event handling
+            this.suppressColorEvents = false;
+        }
+        // Update state with transformed colors
+        this.setState({ colors: this.colors });
+        // Emit single aggregated event after all transformations
+        this.emit("wheel:transform", {
+            oldWheelAngle: oldWheelAngle,
+            oldWheelDirection: oldWheelDirection,
+            newWheelAngle: newWheelAngle,
+            newWheelDirection: newWheelDirection,
+        });
+    };
+    /**
      * @desc Set the gamut for all colors in the color picker
      * @param newGamut - the new gamut type to apply
      * @param extraState - optional additional state to update in the same batch
@@ -2088,7 +2263,7 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
             color.setGamutType(newGamut, { silent: true });
         });
         // Comment 1 & 3: Update state in single batch with gamut and any extra options
-        this.setState(Object.assign({}, {gamut: newGamut, colors: this.colors}, extraState));
+        this.setState(Object.assign({ gamut: newGamut, colors: this.colors }, extraState));
         // Emit aggregated gamut:change event once after all colors updated
         this.emit("gamut:change", newGamut);
     };
@@ -2107,7 +2282,18 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
      * @param changes - shows which h,s,v,a color channels changed
      */
     IroColorPicker.prototype.onColorChange = function onColorChange (color, changes) {
-        this.setState({ color: this.color });
+        // Early return if color events are suppressed (e.g., during wheel transformation)
+        if (this.suppressColorEvents) {
+            // Still update state.color if this is the active color
+            if (color === this.color) {
+                this.setState({ color: this.color });
+            }
+            return;
+        }
+        // Only update state if this is the active color
+        if (color === this.color) {
+            this.setState({ color: this.color });
+        }
         if (this.inputActive) {
             this.inputActive = false;
             this.emit("input:change", color, changes);
@@ -2171,6 +2357,7 @@ IroColorPicker.defaultProps = {
     id: undefined,
     layout: "default",
     margin: 0,
+    preserveVisualHueOnWheelChange: true,
 };
 var IroColorPickerWidget = createWidget(IroColorPicker);
 

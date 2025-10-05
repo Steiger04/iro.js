@@ -5,6 +5,7 @@ import {
   IroColorPickerOptions,
   iroColorPickerOptionDefaults,
   GamutType,
+  translateWheelAngle,
 } from "@irojs/iro-core";
 
 import { IroInputType } from "./ComponentTypes";
@@ -38,6 +39,7 @@ export interface ColorPickerProps extends IroColorPickerOptions {
   colors?: IroColorValue[];
   transparency?: boolean;
   margin?: number;
+  preserveVisualHueOnWheelChange?: boolean;
 }
 
 export interface ColorPickerState extends ColorPickerProps {
@@ -56,6 +58,7 @@ export class IroColorPicker extends Component<
     id: undefined,
     layout: "default",
     margin: 0,
+    preserveVisualHueOnWheelChange: true,
   };
 
   public el!: HTMLElement;
@@ -67,6 +70,7 @@ export class IroColorPicker extends Component<
   private events: ColorPickerEvents = {};
   private activeEvents: ColorPickerEventGuards = {};
   private deferredEvents: ColorDeferredEvents = {};
+  private suppressColorEvents = false;
 
   constructor(props: ColorPickerProps) {
     super(props);
@@ -260,6 +264,38 @@ export class IroColorPicker extends Component<
     // Step 1: Filter out internal state fields that shouldn't be set from outsidea
     const { color, colors, ...safeOptions } = newOptions as any;
 
+    // Step 1a: Check if wheelAngle or wheelDirection are being changed
+    const preserveVisualHue =
+      safeOptions.preserveVisualHueOnWheelChange ??
+      this.props.preserveVisualHueOnWheelChange ??
+      true;
+    if (
+      preserveVisualHue &&
+      (safeOptions.wheelAngle !== undefined ||
+        safeOptions.wheelDirection !== undefined)
+    ) {
+      const oldWheelAngle =
+        this.state.wheelAngle ?? iroColorPickerOptionDefaults.wheelAngle;
+      const oldWheelDirection =
+        this.state.wheelDirection ??
+        iroColorPickerOptionDefaults.wheelDirection;
+      const newWheelAngle = safeOptions.wheelAngle ?? oldWheelAngle;
+      const newWheelDirection = safeOptions.wheelDirection ?? oldWheelDirection;
+
+      // Only transform if values actually changed
+      if (
+        oldWheelAngle !== newWheelAngle ||
+        oldWheelDirection !== newWheelDirection
+      ) {
+        this.transformColorsForWheelChange(
+          oldWheelAngle,
+          oldWheelDirection,
+          newWheelAngle,
+          newWheelDirection
+        );
+      }
+    }
+
     // Step 2: Check if gamut is being changed
     const gamutChanging =
       safeOptions.gamut !== undefined &&
@@ -282,7 +318,13 @@ export class IroColorPicker extends Component<
       this.setGamut(gamut as GamutType, rest);
     } else {
       // Step 6: Apply only non-gamut options to avoid passing unchanged gamut key
-      this.setState(rest);
+      // Include transformed colors in state update if wheel parameters changed
+      const stateUpdate =
+        safeOptions.wheelAngle !== undefined ||
+        safeOptions.wheelDirection !== undefined
+          ? { ...rest, colors: this.colors }
+          : rest;
+      this.setState(stateUpdate);
     }
   }
 
@@ -300,6 +342,63 @@ export class IroColorPicker extends Component<
   public reset() {
     this.colors.forEach((color) => color.reset());
     this.setState({ colors: this.colors });
+  }
+
+  /**
+   * @desc Transform colors when wheelAngle or wheelDirection changes
+   * Transforms colors to preserve their visual position when wheel parameters change.
+   * @param oldWheelAngle - the current wheelAngle value
+   * @param oldWheelDirection - the current wheelDirection value
+   * @param newWheelAngle - the new wheelAngle value
+   * @param newWheelDirection - the new wheelDirection value
+   * @emits wheel:transform - Fired once after all colors have been transformed
+   */
+  private transformColorsForWheelChange(
+    oldWheelAngle: number,
+    oldWheelDirection: string,
+    newWheelAngle: number,
+    newWheelDirection: string
+  ) {
+    const oldProps = {
+      wheelAngle: oldWheelAngle,
+      wheelDirection: oldWheelDirection as "clockwise" | "anticlockwise",
+    };
+    const newProps = {
+      wheelAngle: newWheelAngle,
+      wheelDirection: newWheelDirection as "clockwise" | "anticlockwise",
+    };
+
+    try {
+      // Suppress color:change events during transformation to avoid event storm
+      this.suppressColorEvents = true;
+
+      this.colors.forEach((color) => {
+        // Step 1: Calculate visual angle with old parameters (HSV Hue → Visual Angle)
+        const visualAngle = translateWheelAngle(oldProps, color.hsv.h, true);
+
+        // Step 2: Calculate new hue at that visual position with new parameters (Visual Angle → HSV Hue)
+        const newHue = Math.round(
+          translateWheelAngle(newProps, visualAngle, false)
+        );
+
+        // Step 3: Update the color with new hue, keeping saturation and value unchanged
+        color.hsv = { h: newHue, s: color.hsv.s, v: color.hsv.v };
+      });
+    } finally {
+      // Always restore event handling
+      this.suppressColorEvents = false;
+    }
+
+    // Update state with transformed colors
+    this.setState({ colors: this.colors });
+
+    // Emit single aggregated event after all transformations
+    this.emit("wheel:transform", {
+      oldWheelAngle,
+      oldWheelDirection,
+      newWheelAngle,
+      newWheelDirection,
+    });
   }
 
   /**
@@ -338,7 +437,19 @@ export class IroColorPicker extends Component<
    * @param changes - shows which h,s,v,a color channels changed
    */
   private onColorChange(color: IroColor, changes: any) {
-    this.setState({ color: this.color });
+    // Early return if color events are suppressed (e.g., during wheel transformation)
+    if (this.suppressColorEvents) {
+      // Still update state.color if this is the active color
+      if (color === this.color) {
+        this.setState({ color: this.color });
+      }
+      return;
+    }
+
+    // Only update state if this is the active color
+    if (color === this.color) {
+      this.setState({ color: this.color });
+    }
     if (this.inputActive) {
       this.inputActive = false;
       this.emit("input:change", color, changes);
