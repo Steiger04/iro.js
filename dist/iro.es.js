@@ -2035,11 +2035,10 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
     };
     // Public utility methods
     IroColorPicker.prototype.setOptions = function setOptions (newOptions) {
-        // Step 1: Filter out internal state fields that shouldn't be set from outside
+        // Step 1: Filter out internal state fields that shouldn't be set from outsidea
         var color = newOptions.color;
         var colors = newOptions.colors;
-        var layout = newOptions.layout;
-        var rest$1 = objectWithoutProperties( newOptions, ["color", "colors", "layout"] );
+        var rest$1 = objectWithoutProperties( newOptions, ["color", "colors"] );
         var safeOptions = rest$1;
         // Step 2: Check if gamut is being changed
         var gamutChanging = safeOptions.gamut !== undefined &&

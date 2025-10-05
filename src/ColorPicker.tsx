@@ -257,8 +257,8 @@ export class IroColorPicker extends Component<
   // Public utility methods
 
   public setOptions(newOptions: Partial<ColorPickerProps>) {
-    // Step 1: Filter out internal state fields that shouldn't be set from outside
-    const { color, colors, layout, ...safeOptions } = newOptions as any;
+    // Step 1: Filter out internal state fields that shouldn't be set from outsidea
+    const { color, colors, ...safeOptions } = newOptions as any;
 
     // Step 2: Check if gamut is being changed
     const gamutChanging =
