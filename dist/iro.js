@@ -110,6 +110,40 @@
     C: GAMUT_C
   };
   /**
+   * D50-adapted sRGB to XYZ transformation matrix (3x3)
+   *
+   * This matrix converts linear RGB (sRGB primaries) to CIE XYZ color space
+   * using D50 white point adaptation (ICC Profile Connection Space standard).
+   *
+   * Source: ICC sRGB Profile (IEC 61966-2-1 with Bradford chromatic adaptation to D50)
+   * Reference: https://alicevision.readthedocs.io/en/latest/group__colorConvertMatrices.html
+   *
+   * Note: node-hue-api v5.0.0-beta.16 contains typos in this matrix:
+   * - Row 1, Col 3: has 0.0930804 instead of correct 0.1430804
+   * - Row 2, Col 3: has 0.0406169 instead of correct 0.0606169
+   *
+   * Matrix format: [row][column]
+   * - Row 0: X coefficients [R, G, B]
+   * - Row 1: Y coefficients [R, G, B]
+   * - Row 2: Z coefficients [R, G, B]
+   */
+  var SRGB_TO_XYZ_D50 = [[0.4360747, 0.3850649, 0.1430804], [0.2225045, 0.7168786, 0.0606169], [0.0139322, 0.0971045, 0.7141733]];
+  /**
+   * XYZ D50 to linear sRGB inverse transformation matrix (3x3)
+   *
+   * This is the mathematically correct inverse of SRGB_TO_XYZ_D50.
+   * Computed using standard matrix inversion with 7 decimal places precision.
+   *
+   * Source: ICC sRGB Profile inverse (D50 → linear sRGB)
+   * Reference: https://alicevision.readthedocs.io/en/latest/group__colorConvertMatrices.html
+   *
+   * Matrix format: [row][column]
+   * - Row 0: R coefficients [X, Y, Z]
+   * - Row 1: G coefficients [X, Y, Z]
+   * - Row 2: B coefficients [X, Y, Z]
+   */
+  var XYZ_TO_SRGB_D50 = [[3.1338561, -1.6168667, -0.4906146], [-0.9787684, 1.9161415, 0.033454], [0.0719453, -0.2289914, 1.4052427]];
+  /**
    * Applies gamma correction (linearization) to an sRGB color channel
    *
    * This function converts sRGB values to linear RGB, which is necessary
@@ -142,6 +176,28 @@
     }
   }
   /**
+   * Color Space Notes:
+   *
+   * This implementation uses D50-adapted sRGB matrices (ICC Profile Connection Space)
+   * instead of the native D65 sRGB matrices for compatibility with node-hue-api.
+   *
+   * D50 vs D65:
+   * - D65: Native sRGB white point (x=0.3127, y=0.3290) - daylight illuminant
+   * - D50: ICC PCS white point (x=0.3457, y=0.3585) - used in ICC profiles
+   *
+   * The D50-adapted matrices apply Bradford chromatic adaptation to convert
+   * sRGB primaries from D65 to D50, ensuring compatibility with the Philips Hue
+   * ecosystem and node-hue-api library.
+   *
+   * For reference, the native D65 sRGB matrices would be:
+   * RGB→XYZ: [[0.4124564, 0.3575761, 0.1804375],
+   *           [0.2126729, 0.7151522, 0.0721750],
+   *           [0.0193339, 0.1191920, 0.9503041]]
+   * XYZ→RGB: [[ 3.2404542, -1.5371385, -0.4985314],
+   *           [-0.9692660,  1.8760108,  0.0415560],
+   *           [ 0.0556434, -0.2040259,  1.0572252]]
+   */
+  /**
    * Converts RGB color values to CIE 1931 xy chromaticity coordinates
    *
    * This implementation follows the Philips Hue official algorithm:
@@ -169,10 +225,14 @@
     red = applyGammaCorrection(red);
     green = applyGammaCorrection(green);
     blue = applyGammaCorrection(blue);
-    // Step 3: Convert linear RGB to CIE XYZ using node-hue-api transformation matrix
-    var X = red * 0.4360747 + green * 0.3850649 + blue * 0.0930804;
-    var Y = red * 0.2225045 + green * 0.7168786 + blue * 0.0406169;
-    var Z = red * 0.0139322 + green * 0.0971045 + blue * 0.7141733;
+    // Step 3: Convert linear RGB to CIE XYZ using D50-adapted sRGB transformation matrix
+    //
+    // Uses SRGB_TO_XYZ_D50 constant matrix for D50 white point adaptation
+    // (ICC Profile Connection Space standard) for compatibility with node-hue-api
+    // and Philips Hue ecosystem.
+    var X = red * SRGB_TO_XYZ_D50[0][0] + green * SRGB_TO_XYZ_D50[0][1] + blue * SRGB_TO_XYZ_D50[0][2];
+    var Y = red * SRGB_TO_XYZ_D50[1][0] + green * SRGB_TO_XYZ_D50[1][1] + blue * SRGB_TO_XYZ_D50[1][2];
+    var Z = red * SRGB_TO_XYZ_D50[2][0] + green * SRGB_TO_XYZ_D50[2][1] + blue * SRGB_TO_XYZ_D50[2][2];
     // Step 4: Convert XYZ to xy chromaticity coordinates
     var sum = X + Y + Z;
     // Handle black point (divide by zero)
@@ -368,10 +428,13 @@
     var Y = brightness;
     var X = Y / y * x;
     var Z = Y / y * z;
-    // Step 3: XYZ → Linear RGB (node-hue-api inverse transformation matrix)
-    var Rlin = X * 1.612 + Y * -0.203 + Z * -0.302;
-    var Glin = X * -0.509 + Y * 1.412 + Z * 0.066;
-    var Blin = X * 0.026 + Y * -0.072 + Z * 0.962;
+    // Step 3: XYZ → Linear RGB (D50-adapted sRGB inverse transformation matrix)
+    //
+    // Uses XYZ_TO_SRGB_D50 constant matrix, which is the mathematically correct
+    // inverse of SRGB_TO_XYZ_D50.
+    var Rlin = X * XYZ_TO_SRGB_D50[0][0] + Y * XYZ_TO_SRGB_D50[0][1] + Z * XYZ_TO_SRGB_D50[0][2];
+    var Glin = X * XYZ_TO_SRGB_D50[1][0] + Y * XYZ_TO_SRGB_D50[1][1] + Z * XYZ_TO_SRGB_D50[1][2];
+    var Blin = X * XYZ_TO_SRGB_D50[2][0] + Y * XYZ_TO_SRGB_D50[2][1] + Z * XYZ_TO_SRGB_D50[2][2];
     // Clamp negative values (can occur for colors outside sRGB gamut)
     Rlin = Math.max(0, Rlin);
     Glin = Math.max(0, Glin);
@@ -421,8 +484,34 @@
   // Kelvin temperature bounds
   var KELVIN_MIN = 2000;
   var KELVIN_MAX = 40000;
-  // Epsilon for numerical stability in divisions
-  var EPS = 1e-9;
+  // Epsilon for numerical stability in color conversions
+  // 1e-7 is recommended for graphics/geometry applications with IEEE-754 doubles
+  // Used for: achromatic color detection and division-by-zero protection
+  var EPS = 1e-7;
+  // Channel-specific epsilon thresholds for change detection in HSV color space
+  // These absolute thresholds are chosen based on perceptual significance and
+  // practical precision needs for each channel's scale:
+  //
+  // - Hue (0-360°): 1e-3 = 0.001° threshold
+  //   Rationale: Sub-degree changes are imperceptible; prevents false positives
+  //   from floating-point arithmetic while detecting meaningful color shifts
+  //
+  // - Saturation/Value (0-100): 1e-3 = 0.001% threshold
+  //   Rationale: 0.001% change is imperceptible on 0-100 scale; balances
+  //   precision with robustness against rounding errors
+  //
+  // - Alpha (0-1): 1e-5 = 0.00001 threshold
+  //   Rationale: Alpha uses normalized 0-1 scale, so needs tighter threshold;
+  //   0.00001 change is negligible while avoiding spurious onChange events
+  //
+  // Note: Absolute thresholds (vs relative) are used because:
+  // 1. Simpler implementation without division
+  // 2. HSV channels have well-defined ranges (not arbitrary magnitudes)
+  // 3. Perceptual significance is relatively uniform across each channel's range
+  // 4. Avoids edge cases with relative thresholds near zero values
+  var HUE_CHANGE_EPS = 1e-3;
+  var SV_CHANGE_EPS = 1e-3;
+  var ALPHA_CHANGE_EPS = 1e-5;
   // Math shorthands
   var log = Math.log,
     round = Math.round,
@@ -545,20 +634,67 @@
     /**
      * @desc Convert hsv object to rgb
      * @param hsv - hsv color object
+     *
+     * Converts HSV (Hue, Saturation, Value) to RGB using the standard algorithm.
+     * The hue wheel is divided into 6 sectors (60° each), and RGB values are
+     * calculated based on which sector the hue falls into.
+     *
+     * Variables explanation:
+     * - p = v * (1 - s): minimum RGB value
+     * - q = v * (1 - f * s): descending RGB value
+     * - t = v * (1 - (1 - f) * s): ascending RGB value
+     * - f: fractional part within the hue sector
      */;
     IroColor.hsvToRgb = function hsvToRgb(hsv) {
-      var h = hsv.h / 60;
+      // Normalize hue to [0, 360) range, handle NaN by treating as 0
+      var h0 = (hsv.h % 360 + 360) % 360;
+      if (Number.isNaN(h0)) {
+        h0 = 0;
+      }
+      var hs = h0 / 60;
       var s = hsv.s / 100;
       var v = hsv.v / 100;
-      var i = floor(h);
-      var f = h - i;
+      var i = Math.floor(hs);
+      var f = hs - i;
       var p = v * (1 - s);
       var q = v * (1 - f * s);
       var t = v * (1 - (1 - f) * s);
       var mod = i % 6;
-      var r = [v, q, p, p, t, v][mod];
-      var g = [t, v, v, q, p, p][mod];
-      var b = [p, p, t, v, v, q][mod];
+      // Direct calculation based on hue sector (0-5)
+      var r, g, b;
+      if (mod === 0) {
+        // Sector 0 (0° - 60°): Red to Yellow
+        r = v;
+        g = t;
+        b = p;
+      } else if (mod === 1) {
+        // Sector 1 (60° - 120°): Yellow to Green
+        r = q;
+        g = v;
+        b = p;
+      } else if (mod === 2) {
+        // Sector 2 (120° - 180°): Green to Cyan
+        r = p;
+        g = v;
+        b = t;
+      } else if (mod === 3) {
+        // Sector 3 (180° - 240°): Cyan to Blue
+        r = p;
+        g = q;
+        b = v;
+      } else if (mod === 4) {
+        // Sector 4 (240° - 300°): Blue to Magenta
+        r = t;
+        g = p;
+        b = v;
+      } else {
+        // Sector 5 (300° - 360°): Magenta to Red
+        r = v;
+        g = p;
+        b = q;
+      }
+      // clamp() serves as a safety net against floating-point rounding errors
+      // Theoretically redundant, but ensures values stay within [0, 255]
       return {
         r: clamp(r * 255, 0, 255),
         g: clamp(g * 255, 0, 255),
@@ -568,6 +704,13 @@
     /**
      * @desc Convert rgb object to hsv
      * @param rgb - rgb object
+     *
+     * Converts RGB to HSV (Hue, Saturation, Value) using the standard algorithm.
+     *
+     * Algorithm explanation:
+     * - Hue: Calculated based on which RGB component is dominant (max)
+     * - Saturation: delta / max (ratio of color purity), 0 when max is 0
+     * - Value: The maximum RGB component (brightness)
      */;
     IroColor.rgbToHsv = function rgbToHsv(rgb) {
       var r = rgb.r / 255;
@@ -576,13 +719,19 @@
       var max = Math.max(r, g, b);
       var min = Math.min(r, g, b);
       var delta = max - min;
+      // Early return for achromatic colors (delta < EPS, where EPS = 1e-7)
+      if (delta < EPS) {
+        return {
+          h: 0,
+          s: 0,
+          v: clamp(max * 100, 0, 100)
+        };
+      }
       var hue = 0;
       var value = max;
       var saturation = max === 0 ? 0 : delta / max;
+      // Calculate hue based on which color component is dominant
       switch (max) {
-        case min:
-          hue = 0; // achromatic
-          break;
         case r:
           hue = (g - b) / delta + (g < b ? 6 : 0);
           break;
@@ -593,8 +742,9 @@
           hue = (r - g) / delta + 4;
           break;
       }
+      var hDeg = hue * 60;
       return {
-        h: hue * 60 % 360,
+        h: (hDeg % 360 + 360) % 360,
         s: clamp(saturation * 100, 0, 100),
         v: clamp(value * 100, 0, 100)
       };
@@ -602,13 +752,27 @@
     /**
      * @desc Convert hsv object to hsl
      * @param hsv - hsv object
+     *
+     * Converts HSV to HSL using the standard algorithm:
+     * - L = V × (2 - S) [in range 0-2]
+     * - S_hsl = (S × V) / divisor, where divisor = min(L, 2-L)
+     * - Final L is scaled from [0-2] to [0-100] by multiplying by 50
      */;
     IroColor.hsvToHsl = function hsvToHsl(hsv) {
       var s = hsv.s / 100;
       var v = hsv.v / 100;
-      var l = (2 - s) * v;
+      // Early return for achromatic colors (s < EPS, where EPS = 1e-7)
+      if (s < EPS) {
+        return {
+          h: hsv.h,
+          s: 0,
+          l: clamp(v * 100, 0, 100)
+        };
+      }
+      // HSV→HSL formula: L = V × (2 - S), S_hsl = (S × V) / divisor
+      var l = v * (2 - s); // Lightness in [0, 2] range
       var divisor = l <= 1 ? l : 2 - l;
-      // Avoid division by zero when lightness is close to zero
+      // Division-by-zero protection: divisor < EPS (1e-7) ensures numerical stability
       var saturation = divisor < EPS ? 0 : s * v / divisor;
       return {
         h: hsv.h,
@@ -619,11 +783,28 @@
     /**
      * @desc Convert hsl object to hsv
      * @param hsl - hsl object
+     *
+     * Converts HSL to HSV using the standard algorithm:
+     * - L' = L × 2 [convert from 0-100 to 0-200]
+     * - S' = S × min(L', 200-L') / 100 (intermediate value)
+     * - S_hsv = 2 × S' / (L' + S') (HSV saturation)
+     * - V = (L' + S') / 2 (HSV value)
      */;
     IroColor.hslToHsv = function hslToHsv(hsl) {
-      var l = hsl.l * 2;
-      var s = hsl.s * (l <= 100 ? l : 200 - l) / 100;
-      // Avoid division by zero when l + s is near 0
+      // Early return for achromatic colors (s < EPS, where EPS = 1e-7)
+      if (hsl.s < EPS) {
+        return {
+          h: hsl.h,
+          s: 0,
+          v: clamp(hsl.l, 0, 100)
+        };
+      }
+      // HSL→HSV formula
+      var l = hsl.l * 2; // Convert from [0, 100] to [0, 200]
+      // Calculate intermediate value s: S × min(L', 200-L') / 100
+      // Math.min() is clearer than ternary operator and semantically identical
+      var s = hsl.s * Math.min(l, 200 - l) / 100;
+      // Division-by-zero protection: l+s < EPS (1e-7) ensures numerical stability
       var saturation = l + s < EPS ? 0 : 2 * s / (l + s);
       return {
         h: hsl.h,
@@ -663,14 +844,16 @@
       // Clamp inputs to minimal threshold to avoid division by zero
       r = Math.max(r, EPS);
       b = Math.max(b, EPS);
-      var eps = 0.4;
+      // Convergence threshold for binary search in Kelvin temperature
+      // 0.4K is sufficient precision for color temperature approximation
+      var KELVIN_CONVERGENCE_THRESHOLD = 0.4;
       var minTemp = KELVIN_MIN;
       var maxTemp = KELVIN_MAX;
       var temp = KELVIN_MIN;
       var iterations = 0;
       var maxIterations = 50;
       // Binary search with iteration cap
-      while (maxTemp - minTemp > eps && iterations < maxIterations) {
+      while (maxTemp - minTemp > KELVIN_CONVERGENCE_THRESHOLD && iterations < maxIterations) {
         temp = (maxTemp + minTemp) * 0.5;
         var testRgb = IroColor.kelvinToRgb(temp);
         var testR = Math.max(testRgb.r, EPS);
@@ -689,26 +872,63 @@
      * @param options - options object with silent flag
      */
     _proto.setGamutType = function setGamutType(value, options) {
-      var silent = (options == null ? void 0 : options.silent) || false;
+      var silent = !!(options != null && options.silent);
       // Guard clause: no change needed if same gamut
       if (value === this.gamut) { return; }
-      // Store current xy value with old gamut
-      var currentXy = this.xy;
+      // Capture old HSV state for accurate change detection
+      var old = _extends({}, this.$);
+      // Compute unclamped xy from current RGB before changing gamut
+      var rgb = this.rgb;
+      var xyNone = rgbToXy(rgb.r, rgb.g, rgb.b, "none");
+      // Store original brightness and alpha to preserve them after gamut conversion
+      var originalBrightness = this.$.v;
+      var originalAlpha = this.$.a;
+      // Suppress onChange during internal updates
+      var prevOnChange = this.onChange;
+      if (silent) { this.onChange = undefined; }
       // Update gamut
       this.gamut = value;
-      // Temporarily disable onChange if silent mode
-      var originalOnChange = this.onChange;
-      if (silent) {
-        this.onChange = undefined;
+      // For restrictive gamuts (A, B, C), re-apply xy to clamp to target gamut
+      if (value !== "none") {
+        // Check if the color is already within the target gamut
+        var targetTriangle = GAMUT_MAP[value];
+        var isInGamut = targetTriangle ? isPointInTriangle(xyNone, targetTriangle) : false;
+        // Only perform conversion if the color is outside the target gamut
+        // This prevents lossy RGB→xy→RGB conversions for colors already in gamut
+        if (!isInGamut) {
+          this.xy = xyNone; // clamps to target gamut via xyToRgb(..., this.gamut)
+          // Restore original brightness and alpha using the hsv setter (not direct mutation)
+          // This ensures proper internal state consistency
+          this.hsv = {
+            v: originalBrightness,
+            a: originalAlpha
+          };
+        }
       }
-      // Re-apply xy value, which will:
-      // - Clamp to new gamut via xyToRgb
-      // - Update internal HSV representation
-      // - Trigger onChange callback if registered (unless silent)
-      this.xy = currentXy;
-      // Restore onChange if silent mode
-      if (silent) {
-        this.onChange = originalOnChange;
+      // Restore onChange callback
+      if (silent) { this.onChange = prevOnChange; }
+      // If not in silent mode and onChange is registered, emit a single event
+      if (!silent && prevOnChange) {
+        // Compute changes using channel-specific epsilon comparison
+        var changes = {
+          h: false,
+          v: false,
+          s: false,
+          a: false
+        };
+        // Use channel-specific thresholds based on each channel's scale
+        var hDelta = Math.abs((this.$.h || 0) - (old.h || 0));
+        var sDelta = Math.abs((this.$.s || 0) - (old.s || 0));
+        var vDelta = Math.abs((this.$.v || 0) - (old.v || 0));
+        var aDelta = Math.abs((this.$.a || 0) - (old.a || 0));
+        changes.h = hDelta > HUE_CHANGE_EPS; // 0.001° threshold for hue
+        changes.s = sDelta > SV_CHANGE_EPS; // 0.001% threshold for saturation
+        changes.v = vDelta > SV_CHANGE_EPS; // 0.001% threshold for value
+        changes.a = aDelta > ALPHA_CHANGE_EPS; // 0.00001 threshold for alpha
+        // Only fire onChange if there were actual changes
+        if (changes.h || changes.s || changes.v || changes.a) {
+          prevOnChange(this, changes);
+        }
       }
     };
     return _createClass(IroColor, [{
@@ -728,17 +948,22 @@
         // If this Color is being watched for changes we need to compare the new and old values to check the difference
         // Otherwise we can just be lazy
         if (this.onChange) {
-          // Compute changed values with epsilon-based comparison to avoid event loops
+          // Compute changed values with channel-specific epsilon comparison to avoid event loops
           var changes = {
             h: false,
             v: false,
             s: false,
             a: false
           };
-          for (var key in oldValue) {
-            var delta = Math.abs((newValue[key] || 0) - (oldValue[key] || 0));
-            changes[key] = delta > EPS;
-          }
+          // Use channel-specific thresholds based on each channel's scale
+          var hDelta = Math.abs((newValue.h || 0) - (oldValue.h || 0));
+          var sDelta = Math.abs((newValue.s || 0) - (oldValue.s || 0));
+          var vDelta = Math.abs((newValue.v || 0) - (oldValue.v || 0));
+          var aDelta = Math.abs((newValue.a || 0) - (oldValue.a || 0));
+          changes.h = hDelta > HUE_CHANGE_EPS; // 0.001° threshold for hue
+          changes.s = sDelta > SV_CHANGE_EPS; // 0.001% threshold for saturation
+          changes.v = vDelta > SV_CHANGE_EPS; // 0.001% threshold for value
+          changes.a = aDelta > ALPHA_CHANGE_EPS; // 0.00001 threshold for alpha
           // Update the old value
           this.$ = newValue;
           // If the value has changed, call hook callback
@@ -961,27 +1186,57 @@
       get: function get() {
         var rgb = this.rgb;
         return "#" + intToHex(round(rgb.r)) + intToHex(round(rgb.g)) + intToHex(round(rgb.b));
-      },
+      }
+      /**
+       * @desc Parse and set color from hex string
+       *
+       * Supports multiple hex formats per CSS Color Module Level 3 specification:
+       * - 3-digit (#RGB): Each digit is expanded by multiplying by 17 (e.g., #F → #FF = 255)
+       * - 4-digit (#RGBA): Same as 3-digit, with alpha channel
+       * - 6-digit (#RRGGBB): Direct hex parsing (e.g., #FF = 255)
+       * - 8-digit (#RRGGBBAA): Same as 6-digit, with alpha channel
+       *
+       * Mathematical basis for the multiplication by 17:
+       * - Expands single hex digit (0x0-0xF / 0-15) to full 8-bit range (0-255)
+       * - Formula: value * 17 = value * 16 + value = (value << 4) | value
+       * - Examples: 0xF * 17 = 255, 0xA * 17 = 170, 0x5 * 17 = 85, 0x0 * 17 = 0
+       * - This creates uniform distribution: each step increases by 17 (0, 17, 34, ..., 255)
+       *
+       * Reference: CSS Color Module Level 3 (https://www.w3.org/TR/css-color-3/#rgb-color)
+       */,
       set: function set(value) {
         var match;
         var r = 0,
           g = 0,
           b = 0,
           a = 255;
+        // Helper function for expanding single hex digits (0-F) to full 8-bit values (0-255)
+        var expand = function expand(s) {
+          return parseHexInt(s) * 17;
+        };
         if (match = REGEX_HEX_3.exec(value)) {
-          r = parseHexInt(match[1]) * 17;
-          g = parseHexInt(match[2]) * 17;
-          b = parseHexInt(match[3]) * 17;
+          // 3-digit hex (#RGB): Expand each digit by multiplying by 17
+          // This converts single hex digits (0-15) to full 8-bit values (0-255)
+          // Example: #F00 → r=15*17=255, g=0*17=0, b=0*17=0 (pure red)
+          r = expand(match[1]);
+          g = expand(match[2]);
+          b = expand(match[3]);
         } else if (match = REGEX_HEX_4.exec(value)) {
-          r = parseHexInt(match[1]) * 17;
-          g = parseHexInt(match[2]) * 17;
-          b = parseHexInt(match[3]) * 17;
-          a = parseHexInt(match[4]) * 17;
+          // 4-digit hex (#RGBA): Same as 3-digit, with alpha channel
+          // Example: #F00A → r=255, g=0, b=0, a=170 (170/255 ≈ 0.67 alpha)
+          r = expand(match[1]);
+          g = expand(match[2]);
+          b = expand(match[3]);
+          a = expand(match[4]);
         } else if (match = REGEX_HEX_6.exec(value)) {
+          // 6-digit hex (#RRGGBB): Direct hex parsing, no expansion needed
+          // Example: #FF0000 → r=255, g=0, b=0
           r = parseHexInt(match[1]);
           g = parseHexInt(match[2]);
           b = parseHexInt(match[3]);
         } else if (match = REGEX_HEX_8.exec(value)) {
+          // 8-digit hex (#RRGGBBAA): Same as 6-digit, with alpha channel
+          // Example: #FF0000AA → r=255, g=0, b=0, a=170 (170/255 ≈ 0.67 alpha)
           r = parseHexInt(match[1]);
           g = parseHexInt(match[2]);
           b = parseHexInt(match[3]);
