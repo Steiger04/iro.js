@@ -44,6 +44,95 @@ function _toPropertyKey(t) {
   return "symbol" == typeof i ? i : i + "";
 }
 
+var EPS = 1e-7;
+function clamp(num, min, max) {
+  return Math.min(Math.max(num, min), max);
+}
+function hsvToRgb(hsv) {
+  var _hsv$h, _hsv$s, _hsv$v;
+  var h0 = (((_hsv$h = hsv.h) != null ? _hsv$h : 0) % 360 + 360) % 360;
+  if (Number.isNaN(h0)) {
+    h0 = 0;
+  }
+  var hs = h0 / 60;
+  var s = ((_hsv$s = hsv.s) != null ? _hsv$s : 0) / 100;
+  var v = ((_hsv$v = hsv.v) != null ? _hsv$v : 0) / 100;
+  var i = Math.floor(hs);
+  var f = hs - i;
+  var p = v * (1 - s);
+  var q = v * (1 - f * s);
+  var t = v * (1 - (1 - f) * s);
+  var mod = i % 6;
+  var r;
+  var g;
+  var b;
+  if (mod === 0) {
+    r = v;
+    g = t;
+    b = p;
+  } else if (mod === 1) {
+    r = q;
+    g = v;
+    b = p;
+  } else if (mod === 2) {
+    r = p;
+    g = v;
+    b = t;
+  } else if (mod === 3) {
+    r = p;
+    g = q;
+    b = v;
+  } else if (mod === 4) {
+    r = t;
+    g = p;
+    b = v;
+  } else {
+    r = v;
+    g = p;
+    b = q;
+  }
+  return {
+    r: clamp(r * 255, 0, 255),
+    g: clamp(g * 255, 0, 255),
+    b: clamp(b * 255, 0, 255)
+  };
+}
+function rgbToHsv(rgb) {
+  var r = rgb.r / 255;
+  var g = rgb.g / 255;
+  var b = rgb.b / 255;
+  var max = Math.max(r, g, b);
+  var min = Math.min(r, g, b);
+  var delta = max - min;
+  if (delta < EPS) {
+    return {
+      h: 0,
+      s: 0,
+      v: clamp(max * 100, 0, 100)
+    };
+  }
+  var hue = 0;
+  var value = max;
+  var saturation = max === 0 ? 0 : delta / max;
+  switch (max) {
+    case r:
+      hue = (g - b) / delta + (g < b ? 6 : 0);
+      break;
+    case g:
+      hue = (b - r) / delta + 2;
+      break;
+    case b:
+      hue = (r - g) / delta + 4;
+      break;
+  }
+  var hDeg = hue * 60;
+  return {
+    h: (hDeg % 360 + 360) % 360,
+    s: clamp(saturation * 100, 0, 100),
+    v: clamp(value * 100, 0, 100)
+  };
+}
+
 /**
  * Philips Hue Gamut Support for iro-core
  *
@@ -122,6 +211,8 @@ var GAMUT_MAP = {
  * - Row 2: Z coefficients [R, G, B]
  */
 var SRGB_TO_XYZ_D50 = [[0.4360747, 0.3850649, 0.1430804], [0.2225045, 0.7168786, 0.0606169], [0.0139322, 0.0971045, 0.7141733]];
+var SRGB_TO_XYZ_D50_NODEHUE_TYPO = [[0.4360747, 0.3850649, 0.0930804], [0.2225045, 0.7168786, 0.0406169], [0.0139322, 0.0971045, 0.7141733]];
+var SRGB_TO_XYZ_D65 = [[0.4124564, 0.3575761, 0.1804375], [0.2126729, 0.7151522, 0.072175], [0.0193339, 0.119192, 0.9503041]];
 /**
  * XYZ D50 to linear sRGB inverse transformation matrix (3x3)
  *
@@ -137,6 +228,39 @@ var SRGB_TO_XYZ_D50 = [[0.4360747, 0.3850649, 0.1430804], [0.2225045, 0.7168786,
  * - Row 2: B coefficients [X, Y, Z]
  */
 var XYZ_TO_SRGB_D50 = [[3.1338561, -1.6168667, -0.4906146], [-0.9787684, 1.9161415, 0.033454], [0.0719453, -0.2289914, 1.4052427]];
+var XYZ_TO_SRGB_D50_NODEHUE_TYPO = [[3.1427943618, -1.6453151387, -0.316036676], [-0.9795315544, 1.9185700456, 0.0185512693], [0.0718745467, -0.2287664989, 1.4038632842]];
+var XYZ_TO_SRGB_D65 = [[3.240454836, -1.5371388501, -0.4985315469], [-0.9692663899, 1.8760109288, 0.0415560823], [0.0556434196, -0.2040258543, 1.0572251625]];
+var MATRIX_PROFILES = {
+  nodehue_d50_typo: {
+    name: "nodehue_d50_typo",
+    whitePoint: "D50",
+    forward: SRGB_TO_XYZ_D50_NODEHUE_TYPO,
+    inverse: XYZ_TO_SRGB_D50_NODEHUE_TYPO
+  },
+  icc_d50_corrected: {
+    name: "icc_d50_corrected",
+    whitePoint: "D50",
+    forward: SRGB_TO_XYZ_D50,
+    inverse: XYZ_TO_SRGB_D50
+  },
+  srgb_d65: {
+    name: "srgb_d65",
+    whitePoint: "D65",
+    forward: SRGB_TO_XYZ_D65,
+    inverse: XYZ_TO_SRGB_D65
+  }
+};
+var DEFAULT_MATRIX_PROFILE = "nodehue_d50_typo";
+var WHITE_POINT_CACHE = new Map();
+function isMatrixProfileName(value) {
+  return typeof value === "string" && Object.prototype.hasOwnProperty.call(MATRIX_PROFILES, value);
+}
+function normalizeMatrixProfileName(profile) {
+  if (isMatrixProfileName(profile)) {
+    return profile;
+  }
+  return DEFAULT_MATRIX_PROFILE;
+}
 /**
  * Applies gamma correction (linearization) to an sRGB color channel
  *
@@ -154,34 +278,21 @@ function applyGammaCorrection(channel) {
   }
 }
 /**
- * Applies inverse gamma correction (display encoding) to a linear RGB channel
- *
- * This function converts linear RGB values back to sRGB, which is the
- * inverse operation of applyGammaCorrection().
- *
- * @param channel - Linear RGB channel value (0-1)
- * @returns Display-encoded sRGB channel value
- */
-function applyInverseGammaCorrection(channel) {
-  if (channel <= 0.0031308) {
-    return channel * 12.92;
-  } else {
-    return 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
-  }
-}
-/**
  * Color Space Notes:
  *
- * This implementation uses D50-adapted sRGB matrices (ICC Profile Connection Space)
- * instead of the native D65 sRGB matrices for compatibility with node-hue-api.
+ * The default implementation uses the node-hue-api D50 matrix (including the historical
+ * typo in the blue column) for interoperability with existing Hue installations.
+ * Both the corrected ICC D50 profile and the native sRGB D65 profile are also exposed
+ * for callers that need precise colorimetry.
  *
  * D50 vs D65:
  * - D65: Native sRGB white point (x=0.3127, y=0.3290) - daylight illuminant
  * - D50: ICC PCS white point (x=0.3457, y=0.3585) - used in ICC profiles
  *
  * The D50-adapted matrices apply Bradford chromatic adaptation to convert
- * sRGB primaries from D65 to D50, ensuring compatibility with the Philips Hue
- * ecosystem and node-hue-api library.
+ * sRGB primaries from D65 to D50. The node-hue-api variant contains the
+ * published blue-channel typo (0.0930804 and 0.0406169) while the ICC profile
+ * includes the corrected coefficients.
  *
  * For reference, the native D65 sRGB matrices would be:
  * RGB→XYZ: [[0.4124564, 0.3575761, 0.1804375],
@@ -207,9 +318,13 @@ function applyInverseGammaCorrection(channel) {
  * @param gamut - Optional gamut type for clamping ('none', 'A', 'B', 'C')
  * @returns xy chromaticity coordinates
  */
-function rgbToXy(r, g, b, gamut) {
+function rgbToXy(r, g, b, gamut, profile) {
+  var _MATRIX_PROFILES$prof;
   if (gamut === void 0) {
     gamut = "none";
+  }
+  if (profile === void 0) {
+    profile = DEFAULT_MATRIX_PROFILE;
   }
   // Step 1: Normalize RGB values from [0-255] to [0-1]
   var red = r / 255;
@@ -219,14 +334,12 @@ function rgbToXy(r, g, b, gamut) {
   red = applyGammaCorrection(red);
   green = applyGammaCorrection(green);
   blue = applyGammaCorrection(blue);
-  // Step 3: Convert linear RGB to CIE XYZ using D50-adapted sRGB transformation matrix
-  //
-  // Uses SRGB_TO_XYZ_D50 constant matrix for D50 white point adaptation
-  // (ICC Profile Connection Space standard) for compatibility with node-hue-api
-  // and Philips Hue ecosystem.
-  var X = red * SRGB_TO_XYZ_D50[0][0] + green * SRGB_TO_XYZ_D50[0][1] + blue * SRGB_TO_XYZ_D50[0][2];
-  var Y = red * SRGB_TO_XYZ_D50[1][0] + green * SRGB_TO_XYZ_D50[1][1] + blue * SRGB_TO_XYZ_D50[1][2];
-  var Z = red * SRGB_TO_XYZ_D50[2][0] + green * SRGB_TO_XYZ_D50[2][1] + blue * SRGB_TO_XYZ_D50[2][2];
+  var selectedProfile = (_MATRIX_PROFILES$prof = MATRIX_PROFILES[profile]) != null ? _MATRIX_PROFILES$prof : MATRIX_PROFILES[DEFAULT_MATRIX_PROFILE];
+  var forward = selectedProfile.forward;
+  // Step 3: Convert linear RGB to CIE XYZ using the selected transformation matrix
+  var X = red * forward[0][0] + green * forward[0][1] + blue * forward[0][2];
+  var Y = red * forward[1][0] + green * forward[1][1] + blue * forward[1][2];
+  var Z = red * forward[2][0] + green * forward[2][1] + blue * forward[2][2];
   // Step 4: Convert XYZ to xy chromaticity coordinates
   var sum = X + Y + Z;
   // Handle black point (divide by zero)
@@ -243,24 +356,19 @@ function rgbToXy(r, g, b, gamut) {
     return clampToGamut({
       x: x,
       y: y
-    }, gamut);
+    }, gamut, {
+      profile: profile
+    });
   }
   return {
     x: x,
     y: y
   };
 }
-/**
- * Clamps an xy chromaticity point to the specified Philips Hue gamut triangle
- *
- * If the point is outside the gamut, it will be projected to the closest
- * point on the gamut triangle boundary.
- *
- * @param point - xy chromaticity coordinates to clamp
- * @param gamut - Target gamut type ('A', 'B', 'C', or 'none')
- * @returns Clamped xy coordinates within the gamut
- */
-function clampToGamut(point, gamut) {
+function clampToGamut(point, gamut, options) {
+  if (options === void 0) {
+    options = {};
+  }
   // Get the gamut triangle
   var triangle = GAMUT_MAP[gamut];
   // If gamut is 'none' or no triangle found, return unchanged
@@ -268,8 +376,16 @@ function clampToGamut(point, gamut) {
     return point;
   }
   // Check if point is already inside the gamut
-  if (isPointInTriangle(point, triangle)) {
+  var profileName = options.profile && MATRIX_PROFILES[options.profile] ? options.profile : DEFAULT_MATRIX_PROFILE;
+  var pointInside = isPointInTriangle(point, triangle);
+  if (pointInside) {
     return point;
+  }
+  var whitePoint = getWhitePointForProfile(profileName);
+  var anchor = isPointInTriangle(whitePoint, triangle) ? whitePoint : getTriangleCentroid(triangle);
+  var radialPoint = getRadialIntersection(anchor, point, triangle);
+  if (radialPoint) {
+    return radialPoint;
   }
   // Find the closest point on the triangle boundary
   return getClosestPointOnTriangle(point, triangle);
@@ -336,6 +452,85 @@ function getClosestPointOnTriangle(p, triangle) {
     return pointOnCA;
   }
 }
+function getTriangleCentroid(triangle) {
+  var a = triangle[0],
+    b = triangle[1],
+    c = triangle[2];
+  return {
+    x: (a.x + b.x + c.x) / 3,
+    y: (a.y + b.y + c.y) / 3
+  };
+}
+function getWhitePointForProfile(profileName) {
+  var _MATRIX_PROFILES$prof2;
+  var cached = WHITE_POINT_CACHE.get(profileName);
+  if (cached) {
+    return cached;
+  }
+  var profile = (_MATRIX_PROFILES$prof2 = MATRIX_PROFILES[profileName]) != null ? _MATRIX_PROFILES$prof2 : MATRIX_PROFILES[DEFAULT_MATRIX_PROFILE];
+  var forward = profile.forward;
+  var X = forward[0][0] + forward[0][1] + forward[0][2];
+  var Y = forward[1][0] + forward[1][1] + forward[1][2];
+  var Z = forward[2][0] + forward[2][1] + forward[2][2];
+  var sum = X + Y + Z;
+  var whitePoint = sum === 0 ? {
+    x: 0,
+    y: 0
+  } : {
+    x: X / sum,
+    y: Y / sum
+  };
+  WHITE_POINT_CACHE.set(profileName, whitePoint);
+  return whitePoint;
+}
+var INTERSECTION_EPSILON = 1e-9;
+function getRadialIntersection(anchor, target, triangle) {
+  var a = triangle[0],
+    b = triangle[1],
+    c = triangle[2];
+  var edges = [[a, b], [b, c], [c, a]];
+  var closest = null;
+  for (var _i = 0, _edges = edges; _i < _edges.length; _i++) {
+    var _edges$_i = _edges[_i],
+      start = _edges$_i[0],
+      end = _edges$_i[1];
+    var intersection = getSegmentIntersection(anchor, target, start, end);
+    if (intersection && intersection.t > INTERSECTION_EPSILON && (closest === null || intersection.t < closest.t)) {
+      closest = intersection;
+    }
+  }
+  return closest ? closest.point : null;
+}
+function getSegmentIntersection(anchor, target, edgeStart, edgeEnd) {
+  var dirRayX = target.x - anchor.x;
+  var dirRayY = target.y - anchor.y;
+  if (Math.abs(dirRayX) < INTERSECTION_EPSILON && Math.abs(dirRayY) < INTERSECTION_EPSILON) {
+    return null;
+  }
+  var dirEdgeX = edgeEnd.x - edgeStart.x;
+  var dirEdgeY = edgeEnd.y - edgeStart.y;
+  var denominator = dirRayX * dirEdgeY - dirRayY * dirEdgeX;
+  if (Math.abs(denominator) < INTERSECTION_EPSILON) {
+    return null;
+  }
+  var dx = edgeStart.x - anchor.x;
+  var dy = edgeStart.y - anchor.y;
+  var t = (dx * dirEdgeY - dy * dirEdgeX) / denominator;
+  var u = (dx * dirRayY - dy * dirRayX) / denominator;
+  if (t <= INTERSECTION_EPSILON) {
+    return null;
+  }
+  if (u < -INTERSECTION_EPSILON || u > 1 + INTERSECTION_EPSILON) {
+    return null;
+  }
+  return {
+    point: {
+      x: anchor.x + t * dirRayX,
+      y: anchor.y + t * dirRayY
+    },
+    t: t
+  };
+}
 /**
  * Projects a point onto a line segment and returns the closest point
  *
@@ -375,82 +570,6 @@ function getDistance(p1, p2) {
   var dy = p2.y - p1.y;
   return Math.sqrt(dx * dx + dy * dy);
 }
-/**
- * Converts CIE 1931 xy chromaticity coordinates to RGB color values
- *
- * This is the inverse operation of rgbToXy() and follows the Philips Hue algorithm:
- * 1. Optionally clamp xy to specified gamut
- * 2. Convert xy + brightness to CIE XYZ color space
- * 3. Transform XYZ to linear RGB using sRGB D65 matrix
- * 4. Apply inverse gamma correction (display encoding)
- * 5. Scale to [0-255] and clamp
- *
- * @param x - x-coordinate in CIE 1931 xy chromaticity space (0-1)
- * @param y - y-coordinate in CIE 1931 xy chromaticity space (0-1)
- * @param brightness - Luminance/brightness value (0-1), corresponds to Y in XYZ. Default: 1
- * @param gamut - Optional gamut type for clamping before conversion
- * @returns RGB color object with r, g, b values (0-255)
- *
- * @example
- * // Convert Hue red (Gamut C) to RGB
- * const rgb = xyToRgb(0.692, 0.308, 1.0, 'C');
- * // Result: {r: 255, g: 0, b: 0} (approximately)
- */
-function xyToRgb(x, y, brightness, gamut) {
-  if (brightness === void 0) {
-    brightness = 1;
-  }
-  // Step 1: Gamut clamping (optional)
-  if (gamut && gamut !== "none") {
-    var clamped = clampToGamut({
-      x: x,
-      y: y
-    }, gamut);
-    x = clamped.x;
-    y = clamped.y;
-  }
-  // Step 2: xy + Brightness → XYZ transformation
-  var z = 1 - x - y;
-  // Handle division by zero (black point)
-  if (y < 1e-7) {
-    return {
-      r: 0,
-      g: 0,
-      b: 0
-    };
-  }
-  var Y = brightness;
-  var X = Y / y * x;
-  var Z = Y / y * z;
-  // Step 3: XYZ → Linear RGB (D50-adapted sRGB inverse transformation matrix)
-  //
-  // Uses XYZ_TO_SRGB_D50 constant matrix, which is the mathematically correct
-  // inverse of SRGB_TO_XYZ_D50.
-  var Rlin = X * XYZ_TO_SRGB_D50[0][0] + Y * XYZ_TO_SRGB_D50[0][1] + Z * XYZ_TO_SRGB_D50[0][2];
-  var Glin = X * XYZ_TO_SRGB_D50[1][0] + Y * XYZ_TO_SRGB_D50[1][1] + Z * XYZ_TO_SRGB_D50[1][2];
-  var Blin = X * XYZ_TO_SRGB_D50[2][0] + Y * XYZ_TO_SRGB_D50[2][1] + Z * XYZ_TO_SRGB_D50[2][2];
-  // Clamp negative values (can occur for colors outside sRGB gamut)
-  Rlin = Math.max(0, Rlin);
-  Glin = Math.max(0, Glin);
-  Blin = Math.max(0, Blin);
-  // Step 4: Linear RGB → Display RGB (sRGB gamma correction)
-  var r = applyInverseGammaCorrection(Rlin);
-  var g = applyInverseGammaCorrection(Glin);
-  var b = applyInverseGammaCorrection(Blin);
-  // Step 5: Scale to [0-255] and clamp
-  r = Math.round(r * 255);
-  g = Math.round(g * 255);
-  b = Math.round(b * 255);
-  r = Math.max(0, Math.min(255, r));
-  g = Math.max(0, Math.min(255, g));
-  b = Math.max(0, Math.min(255, b));
-  // Step 6: Return RGB object
-  return {
-    r: r,
-    g: g,
-    b: b
-  };
-}
 
 // https://www.w3.org/TR/css3-values/#integers
 var CSS_INTEGER = "[-\\+]?\\d+%?";
@@ -478,10 +597,7 @@ var REGEX_HEX_8 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_I
 // Kelvin temperature bounds
 var KELVIN_MIN = 2000;
 var KELVIN_MAX = 40000;
-// Epsilon for numerical stability in color conversions
-// 1e-7 is recommended for graphics/geometry applications with IEEE-754 doubles
-// Used for: achromatic color detection and division-by-zero protection
-var EPS = 1e-7;
+// Epsilon for numerical stability in color conversions (imported from colorMath)
 // Channel-specific epsilon thresholds for change detection in HSV color space
 // These absolute thresholds are chosen based on perceptual significance and
 // practical precision needs for each channel's scale:
@@ -510,15 +626,7 @@ var ALPHA_CHANGE_EPS = 1e-5;
 var log = Math.log,
   round = Math.round,
   floor = Math.floor;
-/**
- * @desc Clamp a number between a min and max value
- * @param num - input value
- * @param min - min allowed value
- * @param max - max allowed value
- */
-function clamp(num, min, max) {
-  return Math.min(Math.max(num, min), max);
-}
+// clamp utility re-exported from colorMath
 /**
  * @desc Parse a css unit string - either regular int or a percentage number
  * @param str - css unit string
@@ -543,14 +651,68 @@ function parseHexInt(str) {
 function intToHex(_int) {
   return _int.toString(16).padStart(2, "0");
 }
+function applyInverseGammaCorrection$1(channel) {
+  if (channel <= 0.0031308) {
+    return channel * 12.92;
+  }
+  return 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
+}
+function convertXyToRgbWithBrightness(point, brightness, gamut, profile) {
+  var _MATRIX_PROFILES$prof;
+  var normalizedBrightness = clamp(brightness, 0, 1);
+  var effectiveBrightness = normalizedBrightness === 0 ? 0.01 : normalizedBrightness;
+  var clampedPoint = gamut === "none" ? point : clampToGamut(point, gamut, {
+    profile: profile
+  });
+  var x = clampedPoint.x,
+    y = clampedPoint.y;
+  if (y < EPS) {
+    return {
+      r: 0,
+      g: 0,
+      b: 0
+    };
+  }
+  var z = 1 - x - y;
+  // Compute XYZ at full brightness (Y = 1)
+  var Y = 1;
+  var X = Y / y * x;
+  var Z = Y / y * z;
+  var selectedProfile = (_MATRIX_PROFILES$prof = MATRIX_PROFILES[profile]) != null ? _MATRIX_PROFILES$prof : MATRIX_PROFILES[DEFAULT_MATRIX_PROFILE];
+  var inverse = selectedProfile.inverse;
+  // Convert XYZ to linear RGB
+  var Rlin = X * inverse[0][0] + Y * inverse[0][1] + Z * inverse[0][2];
+  var Glin = X * inverse[1][0] + Y * inverse[1][1] + Z * inverse[1][2];
+  var Blin = X * inverse[2][0] + Y * inverse[2][1] + Z * inverse[2][2];
+  // Clamp negatives from out-of-gamut projections
+  Rlin = Math.max(0, Rlin);
+  Glin = Math.max(0, Glin);
+  Blin = Math.max(0, Blin);
+  // Apply brightness in linear space for precision
+  Rlin *= effectiveBrightness;
+  Glin *= effectiveBrightness;
+  Blin *= effectiveBrightness;
+  // Convert back to display RGB via inverse gamma and scale to 0-255
+  var r = applyInverseGammaCorrection$1(Rlin);
+  var g = applyInverseGammaCorrection$1(Glin);
+  var b = applyInverseGammaCorrection$1(Blin);
+  return {
+    r: Math.round(Math.max(0, Math.min(255, r * 255))),
+    g: Math.round(Math.max(0, Math.min(255, g * 255))),
+    b: Math.round(Math.max(0, Math.min(255, b * 255)))
+  };
+}
 var IroColor = /*#__PURE__*/function () {
   /**
    * @constructor Color object
    * @param value - initial color value
    */
-  function IroColor(value, onChange, gamut) {
+  function IroColor(value, onChange, gamut, matrixProfile) {
     if (gamut === void 0) {
       gamut = "none";
+    }
+    if (matrixProfile === void 0) {
+      matrixProfile = DEFAULT_MATRIX_PROFILE;
     }
     // The default Color value
     this.$ = {
@@ -560,6 +722,7 @@ var IroColor = /*#__PURE__*/function () {
       a: 1
     };
     this.gamut = gamut;
+    this.matrixProfileValue = normalizeMatrixProfileName(matrixProfile);
     if (value) { this.set(value); }
     // The watch callback function for this Color will be stored here
     this.onChange = onChange;
@@ -617,7 +780,7 @@ var IroColor = /*#__PURE__*/function () {
    * @desc make new Color instance with the same value as this one
    */;
   _proto.clone = function clone() {
-    return new IroColor(this, undefined, this.gamut);
+    return new IroColor(this, undefined, this.gamut, this.matrixProfileValue);
   }
   /**
    * @desc remove color onChange
@@ -639,61 +802,8 @@ var IroColor = /*#__PURE__*/function () {
    * - t = v * (1 - (1 - f) * s): ascending RGB value
    * - f: fractional part within the hue sector
    */;
-  IroColor.hsvToRgb = function hsvToRgb(hsv) {
-    // Normalize hue to [0, 360) range, handle NaN by treating as 0
-    var h0 = (hsv.h % 360 + 360) % 360;
-    if (Number.isNaN(h0)) {
-      h0 = 0;
-    }
-    var hs = h0 / 60;
-    var s = hsv.s / 100;
-    var v = hsv.v / 100;
-    var i = Math.floor(hs);
-    var f = hs - i;
-    var p = v * (1 - s);
-    var q = v * (1 - f * s);
-    var t = v * (1 - (1 - f) * s);
-    var mod = i % 6;
-    // Direct calculation based on hue sector (0-5)
-    var r, g, b;
-    if (mod === 0) {
-      // Sector 0 (0° - 60°): Red to Yellow
-      r = v;
-      g = t;
-      b = p;
-    } else if (mod === 1) {
-      // Sector 1 (60° - 120°): Yellow to Green
-      r = q;
-      g = v;
-      b = p;
-    } else if (mod === 2) {
-      // Sector 2 (120° - 180°): Green to Cyan
-      r = p;
-      g = v;
-      b = t;
-    } else if (mod === 3) {
-      // Sector 3 (180° - 240°): Cyan to Blue
-      r = p;
-      g = q;
-      b = v;
-    } else if (mod === 4) {
-      // Sector 4 (240° - 300°): Blue to Magenta
-      r = t;
-      g = p;
-      b = v;
-    } else {
-      // Sector 5 (300° - 360°): Magenta to Red
-      r = v;
-      g = p;
-      b = q;
-    }
-    // clamp() serves as a safety net against floating-point rounding errors
-    // Theoretically redundant, but ensures values stay within [0, 255]
-    return {
-      r: clamp(r * 255, 0, 255),
-      g: clamp(g * 255, 0, 255),
-      b: clamp(b * 255, 0, 255)
-    };
+  IroColor.hsvToRgb = function hsvToRgb$1(hsv) {
+    return hsvToRgb(hsv);
   }
   /**
    * @desc Convert rgb object to hsv
@@ -706,42 +816,8 @@ var IroColor = /*#__PURE__*/function () {
    * - Saturation: delta / max (ratio of color purity), 0 when max is 0
    * - Value: The maximum RGB component (brightness)
    */;
-  IroColor.rgbToHsv = function rgbToHsv(rgb) {
-    var r = rgb.r / 255;
-    var g = rgb.g / 255;
-    var b = rgb.b / 255;
-    var max = Math.max(r, g, b);
-    var min = Math.min(r, g, b);
-    var delta = max - min;
-    // Early return for achromatic colors (delta < EPS, where EPS = 1e-7)
-    if (delta < EPS) {
-      return {
-        h: 0,
-        s: 0,
-        v: clamp(max * 100, 0, 100)
-      };
-    }
-    var hue = 0;
-    var value = max;
-    var saturation = max === 0 ? 0 : delta / max;
-    // Calculate hue based on which color component is dominant
-    switch (max) {
-      case r:
-        hue = (g - b) / delta + (g < b ? 6 : 0);
-        break;
-      case g:
-        hue = (b - r) / delta + 2;
-        break;
-      case b:
-        hue = (r - g) / delta + 4;
-        break;
-    }
-    var hDeg = hue * 60;
-    return {
-      h: (hDeg % 360 + 360) % 360,
-      s: clamp(saturation * 100, 0, 100),
-      v: clamp(value * 100, 0, 100)
-    };
+  IroColor.rgbToHsv = function rgbToHsv$1(rgb) {
+    return rgbToHsv(rgb);
   }
   /**
    * @desc Convert hsv object to hsl
@@ -860,6 +936,21 @@ var IroColor = /*#__PURE__*/function () {
     }
     return temp;
   };
+  _proto.setMatrixProfile = function setMatrixProfile(value, options) {
+    var newProfile = normalizeMatrixProfileName(value);
+    if (newProfile === this.matrixProfileValue) {
+      return;
+    }
+    var silent = !!(options != null && options.silent);
+    var prevOnChange = this.onChange;
+    if (silent) {
+      this.onChange = undefined;
+    }
+    this.matrixProfileValue = newProfile;
+    if (silent) {
+      this.onChange = prevOnChange;
+    }
+  };
   /**
    * @desc Set the gamut type with optional silent mode
    * @param value - new gamut type
@@ -873,13 +964,13 @@ var IroColor = /*#__PURE__*/function () {
     var old = _extends({}, this.$);
     // Compute unclamped xy from current RGB before changing gamut
     var rgb = this.rgb;
-    var xyNone = rgbToXy(rgb.r, rgb.g, rgb.b, "none");
+    var xyNone = rgbToXy(rgb.r, rgb.g, rgb.b, "none", this.matrixProfileValue);
     // Store original brightness and alpha to preserve them after gamut conversion
     var originalBrightness = this.$.v;
     var originalAlpha = this.$.a;
     // Suppress onChange during internal updates
     var prevOnChange = this.onChange;
-    if (silent) { this.onChange = undefined; }
+    this.onChange = undefined;
     // Update gamut
     this.gamut = value;
     // For restrictive gamuts (A, B, C), re-apply xy to clamp to target gamut
@@ -890,17 +981,21 @@ var IroColor = /*#__PURE__*/function () {
       // Only perform conversion if the color is outside the target gamut
       // This prevents lossy RGB→xy→RGB conversions for colors already in gamut
       if (!isInGamut) {
+        // Temporarily set brightness to 100 for precise xy conversion
+        this.pendingBrightness = originalBrightness;
+        this.$ = _extends({}, this.$, {
+          v: 100
+        });
         this.xy = xyNone; // clamps to target gamut via xyToRgb(..., this.gamut)
-        // Restore original brightness and alpha using the hsv setter (not direct mutation)
-        // This ensures proper internal state consistency
-        this.hsv = {
+        // Restore original brightness and alpha
+        this.$ = _extends({}, this.$, {
           v: originalBrightness,
           a: originalAlpha
-        };
+        });
       }
     }
     // Restore onChange callback
-    if (silent) { this.onChange = prevOnChange; }
+    this.onChange = prevOnChange;
     // If not in silent mode and onChange is registered, emit a single event
     if (!silent && prevOnChange) {
       // Compute changes using channel-specific epsilon comparison
@@ -1026,12 +1121,16 @@ var IroColor = /*#__PURE__*/function () {
     key: "xy",
     get: function get() {
       var rgb = this.rgb;
-      return rgbToXy(rgb.r, rgb.g, rgb.b, this.gamut);
+      return rgbToXy(rgb.r, rgb.g, rgb.b, this.gamut, this.matrixProfileValue);
     },
     set: function set(value) {
-      // Preserve previous brightness or use minimal default to avoid losing brightness intention
-      var brightness = this.$.v === 0 ? 0.01 : this.$.v / 100;
-      var rgb = xyToRgb(value.x, value.y, brightness, this.gamut);
+      var _this$$$v;
+      // Convert xy using linear brightness scaling to preserve hue at low values
+      var rawBrightness = this.pendingBrightness !== undefined ? this.pendingBrightness : (_this$$$v = this.$.v) != null ? _this$$$v : 0;
+      var boundedBrightness = clamp(rawBrightness, 0, 100);
+      var brightnessRatio = boundedBrightness === 0 ? 0.01 : boundedBrightness / 100;
+      var rgb = convertXyToRgbWithBrightness(value, brightnessRatio, this.gamut, this.matrixProfileValue);
+      this.pendingBrightness = undefined;
       this.rgb = rgb;
     }
   }, {
@@ -1043,6 +1142,14 @@ var IroColor = /*#__PURE__*/function () {
       this.setGamutType(value, {
         silent: false
       });
+    }
+  }, {
+    key: "matrixProfile",
+    get: function get() {
+      return this.matrixProfileValue;
+    },
+    set: function set(value) {
+      this.setMatrixProfile(value);
     }
   }, {
     key: "red",
@@ -1862,8 +1969,12 @@ var iroColorPickerOptionDefaults = {
   sliderMargin: 12,
   boxHeight: null,
   gamut: "none",
+  matrixProfile: DEFAULT_MATRIX_PROFILE,
   preserveVisualHueOnWheelChange: true
 };
+function normalizeMatrixProfileOption(profile) {
+  return normalizeMatrixProfileName(profile != null ? profile : DEFAULT_MATRIX_PROFILE);
+}
 
 var SECONDARY_EVENTS = [
     "mousemove" /* MouseMove */,
@@ -2222,9 +2333,10 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
             : [props.color || "#fff"];
         colors.forEach(function (colorValue) { return this$1.addColor(colorValue); });
         this.setActiveColor(0);
+        var initialMatrixProfile = normalizeMatrixProfileOption(props.matrixProfile);
         // Pass all the props into the component's state,
         // Except we want to add the color object and make sure that refs aren't passed down to children
-        this.state = Object.assign(Object.assign({}, props), { color: this.color, colors: this.colors, layout: props.layout || "default" });
+        this.state = Object.assign(Object.assign({}, props), { matrixProfile: initialMatrixProfile, color: this.color, colors: this.colors, layout: props.layout || "default" });
     }
 
     if ( Component ) IroColorPicker.__proto__ = Component;
@@ -2243,6 +2355,19 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
                 : iroColorPickerOptionDefaults.gamut;
     };
     /**
+     * @desc Get the current matrix profile from state or props, normalized to a supported value
+     * @internal
+     */
+    IroColorPicker.prototype.getCurrentMatrixProfile = function getCurrentMatrixProfile () {
+        if (this.state && this.state.matrixProfile !== undefined) {
+            return normalizeMatrixProfileOption(this.state.matrixProfile);
+        }
+        if (this.props.matrixProfile !== undefined) {
+            return normalizeMatrixProfileOption(this.props.matrixProfile);
+        }
+        return normalizeMatrixProfileOption(undefined);
+    };
+    /**
      * @desc Add a color to the color picker
      * @param color new color to add
      * @param index optional color index
@@ -2254,7 +2379,8 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         // Also bind it to onColorChange, so whenever the color changes it updates the color picker
         // Use gamut from state if available, otherwise fall back to props or default
         var gamut = this.getCurrentGamut();
-        var newColor = new IroColor(color, this.onColorChange.bind(this), gamut);
+        var matrixProfile = this.getCurrentMatrixProfile();
+        var newColor = new IroColor(color, this.onColorChange.bind(this), gamut, matrixProfile);
         // Insert color @ the given index
         this.colors.splice(index, 0, newColor);
         // Reindex colors
@@ -2426,26 +2552,39 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         // Step 2: Check if gamut is being changed
         var gamutChanging = safeOptions.gamut !== undefined &&
             safeOptions.gamut !== this.getCurrentGamut();
-        // Step 3: Separate gamut from rest of options
+        var rawMatrixProfile = safeOptions.matrixProfile;
+        var normalizedMatrixProfile = rawMatrixProfile !== undefined
+            ? normalizeMatrixProfileOption(rawMatrixProfile)
+            : undefined;
+        var matrixProfileChanging = normalizedMatrixProfile !== undefined &&
+            normalizedMatrixProfile !== this.getCurrentMatrixProfile();
+        // Step 3: Separate gamut and matrixProfile from rest of options
         var gamut = safeOptions.gamut;
-        var rest = __rest(safeOptions, ["gamut"]);
-        // Step 4: Early return if only unchanged gamut is provided
-        if (gamut !== undefined &&
-            !gamutChanging &&
-            Object.keys(rest).length === 0) {
+        var rest = __rest(safeOptions, ["gamut", "matrixProfile"]);
+        // Step 4: Build base state update for remaining options
+        var baseStateUpdate = safeOptions.wheelAngle !== undefined ||
+            safeOptions.wheelDirection !== undefined
+            ? Object.assign(Object.assign({}, rest), { colors: this.colors }) : Object.assign({}, rest);
+        if (normalizedMatrixProfile !== undefined) {
+            baseStateUpdate.matrixProfile = normalizedMatrixProfile;
+        }
+        var hasStateUpdates = Object.keys(baseStateUpdate).length > 0;
+        // Step 5: Early return if no changes need to be applied
+        if (!gamutChanging && !matrixProfileChanging && !hasStateUpdates) {
             return;
         }
-        if (gamutChanging) {
-            // Step 5: Call setGamut with rest to batch updates and emit gamut:change once
-            this.setGamut(gamut, rest);
+        var stateHandled = false;
+        if (matrixProfileChanging) {
+            // Apply matrix profile first to avoid double-updating state when gamut also changes
+            this.setMatrixProfile(normalizedMatrixProfile, gamutChanging ? undefined : baseStateUpdate);
+            stateHandled = true;
         }
-        else {
-            // Step 6: Apply only non-gamut options to avoid passing unchanged gamut key
-            // Include transformed colors in state update if wheel parameters changed
-            var stateUpdate = safeOptions.wheelAngle !== undefined ||
-                safeOptions.wheelDirection !== undefined
-                ? Object.assign(Object.assign({}, rest), { colors: this.colors }) : rest;
-            this.setState(stateUpdate);
+        if (gamutChanging) {
+            this.setGamut(gamut, baseStateUpdate);
+            stateHandled = true;
+        }
+        if (!stateHandled && hasStateUpdates) {
+            this.setState(baseStateUpdate);
         }
     };
     /**
@@ -2521,6 +2660,20 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         this.setState(Object.assign({ gamut: newGamut, colors: this.colors }, extraState));
         // Emit aggregated gamut:change event once after all colors updated
         this.emit("gamut:change", newGamut);
+    };
+    /**
+     * @desc Set the matrix profile for all colors in the color picker
+     * @param newProfile - the new profile name to apply
+     * @param extraState - optional additional state to include in the batch update
+     * @emits matrixProfile:change - Fired once after all colors updated
+     */
+    IroColorPicker.prototype.setMatrixProfile = function setMatrixProfile (newProfile, extraState) {
+        var profile = normalizeMatrixProfileOption(newProfile);
+        this.colors.forEach(function (color) {
+            color.setMatrixProfile(profile, { silent: true });
+        });
+        this.setState(Object.assign({ matrixProfile: profile, colors: this.colors }, extraState));
+        this.emit("matrixProfile:change", profile);
     };
     /**
      * @desc Called by the createWidget wrapper when the element is mounted into the page

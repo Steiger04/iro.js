@@ -1,11 +1,12 @@
 import { h, Component } from "preact";
-import { IroColor, IroColorValue, IroColorPickerOptions, GamutType } from "@irojs/iro-core";
+import { IroColor, IroColorValue, IroColorPickerOptions, GamutType, MatrixProfileName } from "@irojs/iro-core";
 interface ColorPickerLayoutDefinition {
     component: any;
     options?: any;
 }
 declare type ColorPickerLayoutShorthand = "default";
 export interface ColorPickerProps extends IroColorPickerOptions {
+    matrixProfile?: MatrixProfileName;
     display?: string;
     id?: string;
     layout?: ColorPickerLayoutDefinition[] | ColorPickerLayoutShorthand;
@@ -36,6 +37,11 @@ export declare class IroColorPicker extends Component<ColorPickerProps, ColorPic
      * @internal
      */
     getCurrentGamut(): GamutType;
+    /**
+     * @desc Get the current matrix profile from state or props, normalized to a supported value
+     * @internal
+     */
+    getCurrentMatrixProfile(): MatrixProfileName;
     /**
      * @desc Add a color to the color picker
      * @param color new color to add
@@ -106,6 +112,13 @@ export declare class IroColorPicker extends Component<ColorPickerProps, ColorPic
      * @emits gamut:change - Fired once after all colors have been updated with the new gamut
      */
     setGamut(newGamut: GamutType, extraState?: Partial<ColorPickerState>): void;
+    /**
+     * @desc Set the matrix profile for all colors in the color picker
+     * @param newProfile - the new profile name to apply
+     * @param extraState - optional additional state to include in the batch update
+     * @emits matrixProfile:change - Fired once after all colors updated
+     */
+    setMatrixProfile(newProfile: MatrixProfileName, extraState?: Partial<ColorPickerState>): void;
     /**
      * @desc Called by the createWidget wrapper when the element is mounted into the page
      * @param container - the container element for this ColorPicker instance

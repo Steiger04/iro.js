@@ -5,6 +5,8 @@ import {
   IroColorPickerOptions,
   iroColorPickerOptionDefaults,
   GamutType,
+  MatrixProfileName,
+  normalizeMatrixProfileOption,
   translateWheelAngle,
 } from "@irojs/iro-core";
 
@@ -33,6 +35,7 @@ interface ColorPickerLayoutDefinition {
 type ColorPickerLayoutShorthand = "default";
 
 export interface ColorPickerProps extends IroColorPickerOptions {
+  matrixProfile?: MatrixProfileName;
   display?: string;
   id?: string;
   layout?: ColorPickerLayoutDefinition[] | ColorPickerLayoutShorthand;
@@ -81,10 +84,14 @@ export class IroColorPicker extends Component<
         : [props.color || "#fff"];
     colors.forEach((colorValue) => this.addColor(colorValue));
     this.setActiveColor(0);
+    const initialMatrixProfile = normalizeMatrixProfileOption(
+      props.matrixProfile
+    );
     // Pass all the props into the component's state,
     // Except we want to add the color object and make sure that refs aren't passed down to children
     this.state = {
       ...props,
+      matrixProfile: initialMatrixProfile,
       color: this.color,
       colors: this.colors,
       layout: props.layout || "default",
@@ -104,6 +111,22 @@ export class IroColorPicker extends Component<
       ? this.props.gamut
       : iroColorPickerOptionDefaults.gamut;
   }
+
+  /**
+   * @desc Get the current matrix profile from state or props, normalized to a supported value
+   * @internal
+   */
+  getCurrentMatrixProfile(): MatrixProfileName {
+    if (this.state && this.state.matrixProfile !== undefined) {
+      return normalizeMatrixProfileOption(this.state.matrixProfile);
+    }
+
+    if (this.props.matrixProfile !== undefined) {
+      return normalizeMatrixProfileOption(this.props.matrixProfile);
+    }
+
+    return normalizeMatrixProfileOption(undefined);
+  }
   /**
    * @desc Add a color to the color picker
    * @param color new color to add
@@ -114,7 +137,13 @@ export class IroColorPicker extends Component<
     // Also bind it to onColorChange, so whenever the color changes it updates the color picker
     // Use gamut from state if available, otherwise fall back to props or default
     const gamut = this.getCurrentGamut();
-    const newColor = new IroColor(color, this.onColorChange.bind(this), gamut);
+    const matrixProfile = this.getCurrentMatrixProfile();
+    const newColor = new IroColor(
+      color,
+      this.onColorChange.bind(this),
+      gamut,
+      matrixProfile
+    );
     // Insert color @ the given index
     this.colors.splice(index, 0, newColor);
     // Reindex colors
@@ -301,30 +330,58 @@ export class IroColorPicker extends Component<
       safeOptions.gamut !== undefined &&
       safeOptions.gamut !== this.getCurrentGamut();
 
-    // Step 3: Separate gamut from rest of options
-    const { gamut, ...rest } = safeOptions;
+    const rawMatrixProfile = safeOptions.matrixProfile;
+    const normalizedMatrixProfile =
+      rawMatrixProfile !== undefined
+        ? normalizeMatrixProfileOption(rawMatrixProfile)
+        : undefined;
+    const matrixProfileChanging =
+      normalizedMatrixProfile !== undefined &&
+      normalizedMatrixProfile !== this.getCurrentMatrixProfile();
 
-    // Step 4: Early return if only unchanged gamut is provided
-    if (
-      gamut !== undefined &&
-      !gamutChanging &&
-      Object.keys(rest).length === 0
-    ) {
+    // Step 3: Separate gamut and matrixProfile from rest of options
+    const {
+      gamut,
+      matrixProfile: _matrixProfileOmitted,
+      ...rest
+    } = safeOptions;
+
+    // Step 4: Build base state update for remaining options
+    const baseStateUpdate =
+      safeOptions.wheelAngle !== undefined ||
+      safeOptions.wheelDirection !== undefined
+        ? { ...rest, colors: this.colors }
+        : { ...rest };
+
+    if (normalizedMatrixProfile !== undefined) {
+      baseStateUpdate.matrixProfile = normalizedMatrixProfile;
+    }
+
+    const hasStateUpdates = Object.keys(baseStateUpdate).length > 0;
+
+    // Step 5: Early return if no changes need to be applied
+    if (!gamutChanging && !matrixProfileChanging && !hasStateUpdates) {
       return;
     }
 
+    let stateHandled = false;
+
+    if (matrixProfileChanging) {
+      // Apply matrix profile first to avoid double-updating state when gamut also changes
+      this.setMatrixProfile(
+        normalizedMatrixProfile!,
+        gamutChanging ? undefined : baseStateUpdate
+      );
+      stateHandled = true;
+    }
+
     if (gamutChanging) {
-      // Step 5: Call setGamut with rest to batch updates and emit gamut:change once
-      this.setGamut(gamut as GamutType, rest);
-    } else {
-      // Step 6: Apply only non-gamut options to avoid passing unchanged gamut key
-      // Include transformed colors in state update if wheel parameters changed
-      const stateUpdate =
-        safeOptions.wheelAngle !== undefined ||
-        safeOptions.wheelDirection !== undefined
-          ? { ...rest, colors: this.colors }
-          : rest;
-      this.setState(stateUpdate);
+      this.setGamut(gamut as GamutType, baseStateUpdate);
+      stateHandled = true;
+    }
+
+    if (!stateHandled && hasStateUpdates) {
+      this.setState(baseStateUpdate);
     }
   }
 
@@ -418,6 +475,31 @@ export class IroColorPicker extends Component<
 
     // Emit aggregated gamut:change event once after all colors updated
     this.emit("gamut:change", newGamut);
+  }
+
+  /**
+   * @desc Set the matrix profile for all colors in the color picker
+   * @param newProfile - the new profile name to apply
+   * @param extraState - optional additional state to include in the batch update
+   * @emits matrixProfile:change - Fired once after all colors updated
+   */
+  public setMatrixProfile(
+    newProfile: MatrixProfileName,
+    extraState?: Partial<ColorPickerState>
+  ) {
+    const profile = normalizeMatrixProfileOption(newProfile);
+
+    this.colors.forEach((color) => {
+      color.setMatrixProfile(profile, { silent: true });
+    });
+
+    this.setState({
+      matrixProfile: profile,
+      colors: this.colors,
+      ...extraState,
+    });
+
+    this.emit("matrixProfile:change", profile);
   }
 
   /**
