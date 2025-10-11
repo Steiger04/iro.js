@@ -5,97 +5,640 @@
  * github.com/jaames/iro.js
  */
 
-var n,u,t,i,r,o,f={},e=[],c=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|^--/i;function s(n,l){for(var u in l){ n[u]=l[u]; }return n}function a(n){var l=n.parentNode;l&&l.removeChild(n);}function h(n,l,u){var t,i,r,o,f=arguments;if(l=s({},l),arguments.length>3){ for(u=[u],t=3;t<arguments.length;t++){ u.push(f[t]); } }if(null!=u&&(l.children=u),null!=n&&null!=n.defaultProps){ for(i in n.defaultProps){ void 0===l[i]&&(l[i]=n.defaultProps[i]); } }return o=l.key,null!=(r=l.ref)&&delete l.ref,null!=o&&delete l.key,v(n,l,o,r)}function v(l,u,t,i){var r={type:l,props:u,key:t,ref:i,__k:null,__p:null,__b:0,__e:null,l:null,__c:null,constructor:void 0};return n.vnode&&n.vnode(r),r}function d(n){return n.children}function y(n){if(null==n||"boolean"==typeof n){ return null; }if("string"==typeof n||"number"==typeof n){ return v(null,n,null,null); }if(null!=n.__e||null!=n.__c){var l=v(n.type,n.props,n.key,null);return l.__e=n.__e,l}return n}function m(n,l){this.props=n,this.context=l;}function w(n,l){if(null==l){ return n.__p?w(n.__p,n.__p.__k.indexOf(n)+1):null; }for(var u;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){ return u.__e; } }return "function"==typeof n.type?w(n):null}function g(n){var l,u;if(null!=(n=n.__p)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break} }return g(n)}}function k(l){(!l.__d&&(l.__d=!0)&&1===u.push(l)||i!==n.debounceRendering)&&(i=n.debounceRendering,(n.debounceRendering||t)(_));}function _(){var n,l,t,i,r,o,f,e;for(u.sort(function(n,l){return l.__v.__b-n.__v.__b});n=u.pop();){ n.__d&&(t=void 0,i=void 0,o=(r=(l=n).__v).__e,f=l.__P,e=l.u,l.u=!1,f&&(t=[],i=$(f,r,s({},r),l.__n,void 0!==f.ownerSVGElement,null,t,e,null==o?w(r):o),j(t,r),i!=o&&g(r))); }}function b(n,l,u,t,i,r,o,c,s){var h,v,p,d,y,m,g,k=u&&u.__k||e,_=k.length;if(c==f&&(c=null!=r?r[0]:_?w(u,0):null),h=0,l.__k=x(l.__k,function(u){if(null!=u){if(u.__p=l,u.__b=l.__b+1,null===(p=k[h])||p&&u.key==p.key&&u.type===p.type){ k[h]=void 0; }else { for(v=0;v<_;v++){if((p=k[v])&&u.key==p.key&&u.type===p.type){k[v]=void 0;break}p=null;} }if(d=$(n,u,p=p||f,t,i,r,o,null,c,s),(v=u.ref)&&p.ref!=v&&(g||(g=[])).push(v,u.__c||d,u),null!=d){if(null==m&&(m=d),null!=u.l){ d=u.l,u.l=null; }else if(r==p||d!=c||null==d.parentNode){n:if(null==c||c.parentNode!==n){ n.appendChild(d); }else{for(y=c,v=0;(y=y.nextSibling)&&v<_;v+=2){ if(y==d){ break n; } }n.insertBefore(d,c);}"option"==l.type&&(n.value="");}c=d.nextSibling,"function"==typeof l.type&&(l.l=d);}}return h++,u}),l.__e=m,null!=r&&"function"!=typeof l.type){ for(h=r.length;h--;){ null!=r[h]&&a(r[h]); } }for(h=_;h--;){ null!=k[h]&&D(k[h],k[h]); }if(g){ for(h=0;h<g.length;h++){ A(g[h],g[++h],g[++h]); } }}function x(n,l,u){if(null==u&&(u=[]),null==n||"boolean"==typeof n){ l&&u.push(l(null)); }else if(Array.isArray(n)){ for(var t=0;t<n.length;t++){ x(n[t],l,u); } }else { u.push(l?l(y(n)):n); }return u}function C(n,l,u,t,i){var r;for(r in u){ r in l||N(n,r,null,u[r],t); }for(r in l){ i&&"function"!=typeof l[r]||"value"===r||"checked"===r||u[r]===l[r]||N(n,r,l[r],u[r],t); }}function P(n,l,u){"-"===l[0]?n.setProperty(l,u):n[l]="number"==typeof u&&!1===c.test(l)?u+"px":null==u?"":u;}function N(n,l,u,t,i){var r,o,f,e,c;if("key"===(l=i?"className"===l?"class":l:"class"===l?"className":l)||"children"===l);else if("style"===l){ if(r=n.style,"string"==typeof u){ r.cssText=u; }else{if("string"==typeof t&&(r.cssText="",t=null),t){ for(o in t){ u&&o in u||P(r,o,""); } }if(u){ for(f in u){ t&&u[f]===t[f]||P(r,f,u[f]); } }} }else{ "o"===l[0]&&"n"===l[1]?(e=l!==(l=l.replace(/Capture$/,"")),c=l.toLowerCase(),l=(c in n?c:l).slice(2),u?(t||n.addEventListener(l,T,e),(n.t||(n.t={}))[l]=u):n.removeEventListener(l,T,e)):"list"!==l&&"tagName"!==l&&"form"!==l&&!i&&l in n?n[l]=null==u?"":u:"function"!=typeof u&&"dangerouslySetInnerHTML"!==l&&(l!==(l=l.replace(/^xlink:?/,""))?null==u||!1===u?n.removeAttributeNS("http://www.w3.org/1999/xlink",l.toLowerCase()):n.setAttributeNS("http://www.w3.org/1999/xlink",l.toLowerCase(),u):null==u||!1===u?n.removeAttribute(l):n.setAttribute(l,u)); }}function T(l){return this.t[l.type](n.event?n.event(l):l)}function $(l,u,t,i,r,o,f,e,c,a){var h,v,p,y,w,g,k,_,C,P,N=u.type;if(void 0!==u.constructor){ return null; }(h=n.__b)&&h(u);try{n:if("function"==typeof N){if(_=u.props,C=(h=N.contextType)&&i[h.__c],P=h?C?C.props.value:h.__p:i,t.__c?k=(v=u.__c=t.__c).__p=v.__E:("prototype"in N&&N.prototype.render?u.__c=v=new N(_,P):(u.__c=v=new m(_,P),v.constructor=N,v.render=H),C&&C.sub(v),v.props=_,v.state||(v.state={}),v.context=P,v.__n=i,p=v.__d=!0,v.__h=[]),null==v.__s&&(v.__s=v.state),null!=N.getDerivedStateFromProps&&s(v.__s==v.state?v.__s=s({},v.__s):v.__s,N.getDerivedStateFromProps(_,v.__s)),p){ null==N.getDerivedStateFromProps&&null!=v.componentWillMount&&v.componentWillMount(),null!=v.componentDidMount&&f.push(v); }else{if(null==N.getDerivedStateFromProps&&null==e&&null!=v.componentWillReceiveProps&&v.componentWillReceiveProps(_,P),!e&&null!=v.shouldComponentUpdate&&!1===v.shouldComponentUpdate(_,v.__s,P)){for(v.props=_,v.state=v.__s,v.__d=!1,v.__v=u,u.__e=null!=c?c!==t.__e?c:t.__e:null,u.__k=t.__k,h=0;h<u.__k.length;h++){ u.__k[h]&&(u.__k[h].__p=u); }break n}null!=v.componentWillUpdate&&v.componentWillUpdate(_,v.__s,P);}for(y=v.props,w=v.state,v.context=P,v.props=_,v.state=v.__s,(h=n.__r)&&h(u),v.__d=!1,v.__v=u,v.__P=l,h=v.render(v.props,v.state,v.context),u.__k=x(null!=h&&h.type==d&&null==h.key?h.props.children:h),null!=v.getChildContext&&(i=s(s({},i),v.getChildContext())),p||null==v.getSnapshotBeforeUpdate||(g=v.getSnapshotBeforeUpdate(y,w)),b(l,u,t,i,r,o,f,c,a),v.base=u.__e;h=v.__h.pop();){ v.__s&&(v.state=v.__s),h.call(v); }p||null==y||null==v.componentDidUpdate||v.componentDidUpdate(y,w,g),k&&(v.__E=v.__p=null);}else { u.__e=z(t.__e,u,t,i,r,o,f,a); }(h=n.diffed)&&h(u);}catch(l){n.__e(l,u,t);}return u.__e}function j(l,u){for(var t;t=l.pop();){ try{t.componentDidMount();}catch(l){n.__e(l,t.__v);} }n.__c&&n.__c(u);}function z(n,l,u,t,i,r,o,c){var s,a,h,v,p=u.props,d=l.props;if(i="svg"===l.type||i,null==n&&null!=r){ for(s=0;s<r.length;s++){ if(null!=(a=r[s])&&(null===l.type?3===a.nodeType:a.localName===l.type)){n=a,r[s]=null;break} } }if(null==n){if(null===l.type){ return document.createTextNode(d); }n=i?document.createElementNS("http://www.w3.org/2000/svg",l.type):document.createElement(l.type),r=null;}return null===l.type?p!==d&&(null!=r&&(r[r.indexOf(n)]=null),n.data=d):l!==u&&(null!=r&&(r=e.slice.call(n.childNodes)),h=(p=u.props||f).dangerouslySetInnerHTML,v=d.dangerouslySetInnerHTML,c||(v||h)&&(v&&h&&v.__html==h.__html||(n.innerHTML=v&&v.__html||"")),C(n,d,p,i,c),l.__k=l.props.children,v||b(n,l,u,t,"foreignObject"!==l.type&&i,r,o,f,c),c||("value"in d&&void 0!==d.value&&d.value!==n.value&&(n.value=null==d.value?"":d.value),"checked"in d&&void 0!==d.checked&&d.checked!==n.checked&&(n.checked=d.checked))),n}function A(l,u,t){try{"function"==typeof l?l(u):l.current=u;}catch(l){n.__e(l,t);}}function D(l,u,t){var i,r,o;if(n.unmount&&n.unmount(l),(i=l.ref)&&A(i,null,u),t||"function"==typeof l.type||(t=null!=(r=l.__e)),l.__e=l.l=null,null!=(i=l.__c)){if(i.componentWillUnmount){ try{i.componentWillUnmount();}catch(l){n.__e(l,u);} }i.base=i.__P=null;}if(i=l.__k){ for(o=0;o<i.length;o++){ i[o]&&D(i[o],u,t); } }null!=r&&a(r);}function H(n,l,u){return this.constructor(n,u)}function I(l,u,t){var i,o,c;n.__p&&n.__p(l,u),o=(i=t===r)?null:t&&t.__k||u.__k,l=h(d,null,[l]),c=[],$(u,i?u.__k=l:(t||u).__k=l,o||f,f,void 0!==u.ownerSVGElement,t&&!i?[t]:o?null:e.slice.call(u.childNodes),c,!1,t||f,i),j(c,l);}n={},m.prototype.setState=function(n,l){var u=this.__s!==this.state&&this.__s||(this.__s=s({},this.state));("function"!=typeof n||(n=n(u,this.props)))&&s(u,n),null!=n&&this.__v&&(this.u=!1,l&&this.__h.push(l),k(this));},m.prototype.forceUpdate=function(n){this.__v&&(n&&this.__h.push(n),this.u=!0,k(this));},m.prototype.render=d,u=[],t="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,i=n.debounceRendering,n.__e=function(n,l,u){for(var t;l=l.__p;){ if((t=l.__c)&&!t.__p){ try{if(t.constructor&&null!=t.constructor.getDerivedStateFromError){ t.setState(t.constructor.getDerivedStateFromError(n)); }else{if(null==t.componentDidCatch){ continue; }t.componentDidCatch(n);}return k(t.__E=t)}catch(l){n=l;} } }throw n},r=f,o=0;
+var n,l,u,i,r,o,e,f,c,s,a,h,p={},v=[],y=/acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i,w=Array.isArray;function d(n,l){for(var u in l){ n[u]=l[u]; }return n}function g(n){n&&n.parentNode&&n.parentNode.removeChild(n);}function _(l,u,t){var i,r,o,e={};for(o in u){ "key"==o?i=u[o]:"ref"==o?r=u[o]:e[o]=u[o]; }if(arguments.length>2&&(e.children=arguments.length>3?n.call(arguments,2):t),"function"==typeof l&&null!=l.defaultProps){ for(o in l.defaultProps){ void 0===e[o]&&(e[o]=l.defaultProps[o]); } }return m(l,e,i,r,null)}function m(n,t,i,r,o){var e={type:n,props:t,key:i,ref:r,__k:null,__:null,__b:0,__e:null,__c:null,constructor:void 0,__v:null==o?++u:o,__i:-1,__u:0};return null==o&&null!=l.vnode&&l.vnode(e),e}function k(n){return n.children}function x(n,l){this.props=n,this.context=l;}function S(n,l){if(null==l){ return n.__?S(n.__,n.__i+1):null; }for(var u;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){ return u.__e; } }return "function"==typeof n.type?S(n):null}function C(n){var l,u;if(null!=(n=n.__)&&null!=n.__c){for(n.__e=n.__c.base=null,l=0;l<n.__k.length;l++){ if(null!=(u=n.__k[l])&&null!=u.__e){n.__e=n.__c.base=u.__e;break} }return C(n)}}function M(n){(!n.__d&&(n.__d=!0)&&i.push(n)&&!$.__r++||r!=l.debounceRendering)&&((r=l.debounceRendering)||o)($);}function $(){for(var n,u,t,r,o,f,c,s=1;i.length;){ i.length>s&&i.sort(e),n=i.shift(),s=i.length,n.__d&&(t=void 0,r=void 0,o=(r=(u=n).__v).__e,f=[],c=[],u.__P&&((t=d({},r)).__v=r.__v+1,l.vnode&&l.vnode(t),O(u.__P,t,r,u.__n,u.__P.namespaceURI,32&r.__u?[o]:null,f,null==o?S(r):o,!!(32&r.__u),c),t.__v=r.__v,t.__.__k[t.__i]=t,N(f,t,c),r.__e=r.__=null,t.__e!=o&&C(t))); }$.__r=0;}function I(n,l,u,t,i,r,o,e,f,c,s){var a,h,y,w,d,g,_,m=t&&t.__k||v,b=l.length;for(f=P(u,l,m,f,b),a=0;a<b;a++){ null!=(y=u.__k[a])&&(h=-1==y.__i?p:m[y.__i]||p,y.__i=a,g=O(n,y,h,i,r,o,e,f,c,s),w=y.__e,y.ref&&h.ref!=y.ref&&(h.ref&&B(h.ref,null,y),s.push(y.ref,y.__c||w,y)),null==d&&null!=w&&(d=w),(_=!!(4&y.__u))||h.__k===y.__k?f=A(y,f,n,_):"function"==typeof y.type&&void 0!==g?f=g:w&&(f=w.nextSibling),y.__u&=-7); }return u.__e=d,f}function P(n,l,u,t,i){var r,o,e,f,c,s=u.length,a=s,h=0;for(n.__k=new Array(i),r=0;r<i;r++){ null!=(o=l[r])&&"boolean"!=typeof o&&"function"!=typeof o?(f=r+h,(o=n.__k[r]="string"==typeof o||"number"==typeof o||"bigint"==typeof o||o.constructor==String?m(null,o,null,null,null):w(o)?m(k,{children:o},null,null,null):null==o.constructor&&o.__b>0?m(o.type,o.props,o.key,o.ref?o.ref:null,o.__v):o).__=n,o.__b=n.__b+1,e=null,-1!=(c=o.__i=L(o,u,f,a))&&(a--,(e=u[c])&&(e.__u|=2)),null==e||null==e.__v?(-1==c&&(i>s?h--:i<s&&h++),"function"!=typeof o.type&&(o.__u|=4)):c!=f&&(c==f-1?h--:c==f+1?h++:(c>f?h--:h++,o.__u|=4))):n.__k[r]=null; }if(a){ for(r=0;r<s;r++){ null!=(e=u[r])&&0==(2&e.__u)&&(e.__e==t&&(t=S(e)),D(e,e)); } }return t}function A(n,l,u,t){var i,r;if("function"==typeof n.type){for(i=n.__k,r=0;i&&r<i.length;r++){ i[r]&&(i[r].__=n,l=A(i[r],l,u,t)); }return l}n.__e!=l&&(t&&(l&&n.type&&!l.parentNode&&(l=S(n)),u.insertBefore(n.__e,l||null)),l=n.__e);do{l=l&&l.nextSibling;}while(null!=l&&8==l.nodeType);return l}function L(n,l,u,t){var i,r,o,e=n.key,f=n.type,c=l[u],s=null!=c&&0==(2&c.__u);if(null===c&&null==n.key||s&&e==c.key&&f==c.type){ return u; }if(t>(s?1:0)){ for(i=u-1,r=u+1;i>=0||r<l.length;){ if(null!=(c=l[o=i>=0?i--:r++])&&0==(2&c.__u)&&e==c.key&&f==c.type){ return o; } } }return -1}function T(n,l,u){"-"==l[0]?n.setProperty(l,null==u?"":u):n[l]=null==u?"":"number"!=typeof u||y.test(l)?u:u+"px";}function j(n,l,u,t,i){var r,o;n:if("style"==l){ if("string"==typeof u){ n.style.cssText=u; }else {if("string"==typeof t&&(n.style.cssText=t=""),t){ for(l in t){ u&&l in u||T(n.style,l,""); } }if(u){ for(l in u){ t&&u[l]==t[l]||T(n.style,l,u[l]); } }} }else if("o"==l[0]&&"n"==l[1]){ r=l!=(l=l.replace(f,"$1")),o=l.toLowerCase(),l=o in n||"onFocusOut"==l||"onFocusIn"==l?o.slice(2):l.slice(2),n.l||(n.l={}),n.l[l+r]=u,u?t?u.u=t.u:(u.u=c,n.addEventListener(l,r?a:s,r)):n.removeEventListener(l,r?a:s,r); }else {if("http://www.w3.org/2000/svg"==i){ l=l.replace(/xlink(H|:h)/,"h").replace(/sName$/,"s"); }else if("width"!=l&&"height"!=l&&"href"!=l&&"list"!=l&&"form"!=l&&"tabIndex"!=l&&"download"!=l&&"rowSpan"!=l&&"colSpan"!=l&&"role"!=l&&"popover"!=l&&l in n){ try{n[l]=null==u?"":u;break n}catch(n$1){} }"function"==typeof u||(null==u||!1===u&&"-"!=l[4]?n.removeAttribute(l):n.setAttribute(l,"popover"==l&&1==u?"":u));}}function F(n){return function(u){if(this.l){var t=this.l[u.type+n];if(null==u.t){ u.t=c++; }else if(u.t<t.u){ return; }return t(l.event?l.event(u):u)}}}function O(n,u,t,i,r,o,e,f,c,s){var a,h,p,v,y,_,m,b,S,C,M,$,P,A,H,L,T,j=u.type;if(null!=u.constructor){ return null; }128&t.__u&&(c=!!(32&t.__u),o=[f=u.__e=t.__e]),(a=l.__b)&&a(u);n:if("function"==typeof j){ try{if(b=u.props,S="prototype"in j&&j.prototype.render,C=(a=j.contextType)&&i[a.__c],M=a?C?C.props.value:a.__:i,t.__c?m=(h=u.__c=t.__c).__=h.__E:(S?u.__c=h=new j(b,M):(u.__c=h=new x(b,M),h.constructor=j,h.render=E),C&&C.sub(h),h.props=b,h.state||(h.state={}),h.context=M,h.__n=i,p=h.__d=!0,h.__h=[],h._sb=[]),S&&null==h.__s&&(h.__s=h.state),S&&null!=j.getDerivedStateFromProps&&(h.__s==h.state&&(h.__s=d({},h.__s)),d(h.__s,j.getDerivedStateFromProps(b,h.__s))),v=h.props,y=h.state,h.__v=u,p){ S&&null==j.getDerivedStateFromProps&&null!=h.componentWillMount&&h.componentWillMount(),S&&null!=h.componentDidMount&&h.__h.push(h.componentDidMount); }else {if(S&&null==j.getDerivedStateFromProps&&b!==v&&null!=h.componentWillReceiveProps&&h.componentWillReceiveProps(b,M),!h.__e&&null!=h.shouldComponentUpdate&&!1===h.shouldComponentUpdate(b,h.__s,M)||u.__v==t.__v){for(u.__v!=t.__v&&(h.props=b,h.state=h.__s,h.__d=!1),u.__e=t.__e,u.__k=t.__k,u.__k.some(function(n){n&&(n.__=u);}),$=0;$<h._sb.length;$++){ h.__h.push(h._sb[$]); }h._sb=[],h.__h.length&&e.push(h);break n}null!=h.componentWillUpdate&&h.componentWillUpdate(b,h.__s,M),S&&null!=h.componentDidUpdate&&h.__h.push(function(){h.componentDidUpdate(v,y,_);});}if(h.context=M,h.props=b,h.__P=n,h.__e=!1,P=l.__r,A=0,S){for(h.state=h.__s,h.__d=!1,P&&P(u),a=h.render(h.props,h.state,h.context),H=0;H<h._sb.length;H++){ h.__h.push(h._sb[H]); }h._sb=[];}else { do{h.__d=!1,P&&P(u),a=h.render(h.props,h.state,h.context),h.state=h.__s;}while(h.__d&&++A<25); }h.state=h.__s,null!=h.getChildContext&&(i=d(d({},i),h.getChildContext())),S&&!p&&null!=h.getSnapshotBeforeUpdate&&(_=h.getSnapshotBeforeUpdate(v,y)),L=a,null!=a&&a.type===k&&null==a.key&&(L=V(a.props.children)),f=I(n,w(L)?L:[L],u,t,i,r,o,e,f,c,s),h.base=u.__e,u.__u&=-161,h.__h.length&&e.push(h),m&&(h.__E=h.__=null);}catch(n$1){if(u.__v=null,c||null!=o){ if(n$1.then){for(u.__u|=c?160:128;f&&8==f.nodeType&&f.nextSibling;){ f=f.nextSibling; }o[o.indexOf(f)]=null,u.__e=f;}else {for(T=o.length;T--;){ g(o[T]); }z(u);} }else { u.__e=t.__e,u.__k=t.__k,n$1.then||z(u); }l.__e(n$1,u,t);} }else { null==o&&u.__v==t.__v?(u.__k=t.__k,u.__e=t.__e):f=u.__e=q(t.__e,u,t,i,r,o,e,c,s); }return (a=l.diffed)&&a(u),128&u.__u?void 0:f}function z(n){n&&n.__c&&(n.__c.__e=!0),n&&n.__k&&n.__k.forEach(z);}function N(n,u,t){for(var i=0;i<t.length;i++){ B(t[i],t[++i],t[++i]); }l.__c&&l.__c(u,n),n.some(function(u){try{n=u.__h,u.__h=[],n.some(function(n){n.call(u);});}catch(n$1){l.__e(n$1,u.__v);}});}function V(n){return "object"!=typeof n||null==n||n.__b&&n.__b>0?n:w(n)?n.map(V):d({},n)}function q(u,t,i,r,o,e,f,c,s){var a,h,v,y,d,_,m,b=i.props,k=t.props,x=t.type;if("svg"==x?o="http://www.w3.org/2000/svg":"math"==x?o="http://www.w3.org/1998/Math/MathML":o||(o="http://www.w3.org/1999/xhtml"),null!=e){ for(a=0;a<e.length;a++){ if((d=e[a])&&"setAttribute"in d==!!x&&(x?d.localName==x:3==d.nodeType)){u=d,e[a]=null;break} } }if(null==u){if(null==x){ return document.createTextNode(k); }u=document.createElementNS(o,x,k.is&&k),c&&(l.__m&&l.__m(t,e),c=!1),e=null;}if(null==x){ b===k||c&&u.data==k||(u.data=k); }else {if(e=e&&n.call(u.childNodes),b=i.props||p,!c&&null!=e){ for(b={},a=0;a<u.attributes.length;a++){ b[(d=u.attributes[a]).name]=d.value; } }for(a in b){ if(d=b[a],"children"==a);else if("dangerouslySetInnerHTML"==a){ v=d; }else if(!(a in k)){if("value"==a&&"defaultValue"in k||"checked"==a&&"defaultChecked"in k){ continue; }j(u,a,null,d,o);} }for(a in k){ d=k[a],"children"==a?y=d:"dangerouslySetInnerHTML"==a?h=d:"value"==a?_=d:"checked"==a?m=d:c&&"function"!=typeof d||b[a]===d||j(u,a,d,b[a],o); }if(h){ c||v&&(h.__html==v.__html||h.__html==u.innerHTML)||(u.innerHTML=h.__html),t.__k=[]; }else if(v&&(u.innerHTML=""),I("template"==t.type?u.content:u,w(y)?y:[y],t,i,r,"foreignObject"==x?"http://www.w3.org/1999/xhtml":o,e,f,e?e[0]:i.__k&&S(i,0),c,s),null!=e){ for(a=e.length;a--;){ g(e[a]); } }c||(a="value","progress"==x&&null==_?u.removeAttribute("value"):null!=_&&(_!==u[a]||"progress"==x&&!_||"option"==x&&_!=b[a])&&j(u,a,_,b[a],o),a="checked",null!=m&&m!=u[a]&&j(u,a,m,b[a],o));}return u}function B(n,u,t){try{if("function"==typeof n){var i="function"==typeof n.__u;i&&n.__u(),i&&null==u||(n.__u=n(u));}else { n.current=u; }}catch(n$1){l.__e(n$1,t);}}function D(n,u,t){var i,r;if(l.unmount&&l.unmount(n),(i=n.ref)&&(i.current&&i.current!=n.__e||B(i,null,u)),null!=(i=n.__c)){if(i.componentWillUnmount){ try{i.componentWillUnmount();}catch(n$1){l.__e(n$1,u);} }i.base=i.__P=null;}if(i=n.__k){ for(r=0;r<i.length;r++){ i[r]&&D(i[r],u,t||"function"!=typeof n.type); } }t||g(n.__e),n.__c=n.__=n.__e=void 0;}function E(n,l,u){return this.constructor(n,u)}function G(u,t,i){var r,o,e,f;t==document&&(t=document.documentElement),l.__&&l.__(u,t),o=(r="function"==typeof i)?null:i&&i.__k||t.__k,e=[],f=[],O(t,u=(!r&&i||t).__k=_(k,null,[u]),o||p,p,t.namespaceURI,!r&&i?[i]:o?null:t.firstChild?n.call(t.childNodes):null,e,!r&&i?i:o?o.__e:t.firstChild,r,f),N(e,u,f);}n=v.slice,l={__e:function(n,l,u,t){for(var i,r,o;l=l.__;){ if((i=l.__c)&&!i.__){ try{if((r=i.constructor)&&null!=r.getDerivedStateFromError&&(i.setState(r.getDerivedStateFromError(n)),o=i.__d),null!=i.componentDidCatch&&(i.componentDidCatch(n,t||{}),o=i.__d),o){ return i.__E=i }}catch(l$1){n=l$1;} } }throw n}},u=0,x.prototype.setState=function(n,l){var u;u=null!=this.__s&&this.__s!=this.state?this.__s:this.__s=d({},this.state),"function"==typeof n&&(n=n(d({},u),this.props)),n&&d(u,n),null!=n&&this.__v&&(l&&this._sb.push(l),M(this));},x.prototype.forceUpdate=function(n){this.__v&&(this.__e=!0,n&&this.__h.push(n),M(this));},x.prototype.render=k,i=[],o="function"==typeof Promise?Promise.prototype.then.bind(Promise.resolve()):setTimeout,e=function(n,l){return n.__v.__b-l.__v.__b},$.__r=0,f=/(PointerCapture)$|Capture$/i,c=0,s=F(!1),a=F(!0),h=0;
 
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) { descriptor.writable = true; }
-    Object.defineProperty(target, descriptor.key, descriptor);
+function _defineProperties(e, r) {
+  for (var t = 0; t < r.length; t++) {
+    var o = r[t];
+    o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o);
   }
 }
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) { _defineProperties(Constructor.prototype, protoProps); }
-  if (staticProps) { _defineProperties(Constructor, staticProps); }
-  return Constructor;
+function _createClass(e, r, t) {
+  return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", {
+    writable: !1
+  }), e;
 }
-
 function _extends() {
-  _extends = Object.assign || function (target) {
+  return _extends = Object.assign ? Object.assign.bind() : function (n) {
     var arguments$1 = arguments;
 
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments$1[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
+    for (var e = 1; e < arguments.length; e++) {
+      var t = arguments$1[e];
+      for (var r in t) { ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); }
     }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
+    return n;
+  }, _extends.apply(null, arguments);
+}
+function _toPrimitive(t, r) {
+  if ("object" != typeof t || !t) { return t; }
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != typeof i) { return i; }
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return ("string" === r ? String : Number)(t);
+}
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, "string");
+  return "symbol" == typeof i ? i : i + "";
 }
 
-// Some regular expressions for rgb() and hsl() Colors are borrowed from tinyColor
-// https://github.com/bgrins/TinyColor
-// Kelvin temperature math borrowed from Neil Barlett's implementation
-// from https://github.com/neilbartlett/color-temperature
-// https://www.w3.org/TR/css3-values/#integers
-var CSS_INTEGER = '[-\\+]?\\d+%?'; // http://www.w3.org/TR/css3-values/#number-value
-
-var CSS_NUMBER = '[-\\+]?\\d*\\.\\d+%?'; // Allow positive/negative integer/number. Don't capture the either/or, just the entire outcome
-
-var CSS_UNIT = '(?:' + CSS_NUMBER + ')|(?:' + CSS_INTEGER + ')'; // Parse function params
-// Parens and commas are optional, and this also allows for whitespace between numbers
-
-var PERMISSIVE_MATCH_3 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?';
-var PERMISSIVE_MATCH_4 = '[\\s|\\(]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')[,|\\s]+(' + CSS_UNIT + ')\\s*\\)?'; // Regex patterns for functional color strings
-
-var REGEX_FUNCTIONAL_RGB = new RegExp('rgb' + PERMISSIVE_MATCH_3);
-var REGEX_FUNCTIONAL_RGBA = new RegExp('rgba' + PERMISSIVE_MATCH_4);
-var REGEX_FUNCTIONAL_HSL = new RegExp('hsl' + PERMISSIVE_MATCH_3);
-var REGEX_FUNCTIONAL_HSLA = new RegExp('hsla' + PERMISSIVE_MATCH_4); // Color string parsing regex
-
-var HEX_START = '^(?:#?|0x?)';
-var HEX_INT_SINGLE = '([0-9a-fA-F]{1})';
-var HEX_INT_DOUBLE = '([0-9a-fA-F]{2})';
-var REGEX_HEX_3 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + '$');
-var REGEX_HEX_4 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + '$');
-var REGEX_HEX_6 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + '$');
-var REGEX_HEX_8 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + '$'); // Kelvin temperature bounds
-
-var KELVIN_MIN = 2000;
-var KELVIN_MAX = 40000; // Math shorthands
-
-var log = Math.log,
-    round = Math.round,
-    floor = Math.floor;
-/**
- * @desc Clamp a number between a min and max value
- * @param num - input value
- * @param min - min allowed value
- * @param max - max allowed value
- */
-
+var EPS = 1e-7;
 function clamp(num, min, max) {
   return Math.min(Math.max(num, min), max);
 }
+function hsvToRgb(hsv) {
+  var _hsv$h, _hsv$s, _hsv$v;
+  var h0 = (((_hsv$h = hsv.h) != null ? _hsv$h : 0) % 360 + 360) % 360;
+  if (Number.isNaN(h0)) {
+    h0 = 0;
+  }
+  var hs = h0 / 60;
+  var s = ((_hsv$s = hsv.s) != null ? _hsv$s : 0) / 100;
+  var v = ((_hsv$v = hsv.v) != null ? _hsv$v : 0) / 100;
+  var i = Math.floor(hs);
+  var f = hs - i;
+  var p = v * (1 - s);
+  var q = v * (1 - f * s);
+  var t = v * (1 - (1 - f) * s);
+  var mod = i % 6;
+  var r;
+  var g;
+  var b;
+  if (mod === 0) {
+    r = v;
+    g = t;
+    b = p;
+  } else if (mod === 1) {
+    r = q;
+    g = v;
+    b = p;
+  } else if (mod === 2) {
+    r = p;
+    g = v;
+    b = t;
+  } else if (mod === 3) {
+    r = p;
+    g = q;
+    b = v;
+  } else if (mod === 4) {
+    r = t;
+    g = p;
+    b = v;
+  } else {
+    r = v;
+    g = p;
+    b = q;
+  }
+  return {
+    r: clamp(r * 255, 0, 255),
+    g: clamp(g * 255, 0, 255),
+    b: clamp(b * 255, 0, 255)
+  };
+}
+function rgbToHsv(rgb) {
+  var r = rgb.r / 255;
+  var g = rgb.g / 255;
+  var b = rgb.b / 255;
+  var max = Math.max(r, g, b);
+  var min = Math.min(r, g, b);
+  var delta = max - min;
+  if (delta < EPS) {
+    return {
+      h: 0,
+      s: 0,
+      v: clamp(max * 100, 0, 100)
+    };
+  }
+  var hue = 0;
+  var value = max;
+  var saturation = max === 0 ? 0 : delta / max;
+  switch (max) {
+    case r:
+      hue = (g - b) / delta + (g < b ? 6 : 0);
+      break;
+    case g:
+      hue = (b - r) / delta + 2;
+      break;
+    case b:
+      hue = (r - g) / delta + 4;
+      break;
+  }
+  var hDeg = hue * 60;
+  return {
+    h: (hDeg % 360 + 360) % 360,
+    s: clamp(saturation * 100, 0, 100),
+    v: clamp(value * 100, 0, 100)
+  };
+}
+
+/**
+ * Philips Hue Gamut Support for iro-core
+ *
+ * This module provides functionality to convert RGB colors to CIE 1931 xy chromaticity coordinates
+ * and clamp them to Philips Hue gamut triangles (A, B, C).
+ *
+ * Based on the official Philips Hue RGB to xy conversion algorithm.
+ */
+/**
+ * Philips Hue Gamut A - Older generation bulbs
+ * Red, Green, Blue corner points in xy chromaticity space
+ */
+var GAMUT_A = [{
+  x: 0.704,
+  y: 0.296
+}, {
+  x: 0.2151,
+  y: 0.7106
+}, {
+  x: 0.138,
+  y: 0.08
+}];
+/**
+ * Philips Hue Gamut B - Mid-generation bulbs
+ * Red, Green, Blue corner points in xy chromaticity space
+ */
+var GAMUT_B = [{
+  x: 0.675,
+  y: 0.322
+}, {
+  x: 0.409,
+  y: 0.518
+}, {
+  x: 0.167,
+  y: 0.04
+}];
+/**
+ * Philips Hue Gamut C - Latest generation bulbs (extended gamut)
+ * Red, Green, Blue corner points in xy chromaticity space
+ */
+var GAMUT_C = [{
+  x: 0.692,
+  y: 0.308
+}, {
+  x: 0.17,
+  y: 0.7
+}, {
+  x: 0.153,
+  y: 0.048
+}];
+/**
+ * Maps gamut type names to their corresponding triangle definitions
+ */
+var GAMUT_MAP = {
+  none: null,
+  A: GAMUT_A,
+  B: GAMUT_B,
+  C: GAMUT_C
+};
+/**
+ * D50-adapted sRGB to XYZ transformation matrix (3x3)
+ *
+ * This matrix converts linear RGB (sRGB primaries) to CIE XYZ color space
+ * using D50 white point adaptation (ICC Profile Connection Space standard).
+ *
+ * Source: ICC sRGB Profile (IEC 61966-2-1 with Bradford chromatic adaptation to D50)
+ * Reference: https://alicevision.readthedocs.io/en/latest/group__colorConvertMatrices.html
+ *
+ * Note: node-hue-api v5.0.0-beta.16 contains typos in this matrix:
+ * - Row 1, Col 3: has 0.0930804 instead of correct 0.1430804
+ * - Row 2, Col 3: has 0.0406169 instead of correct 0.0606169
+ *
+ * Matrix format: [row][column]
+ * - Row 0: X coefficients [R, G, B]
+ * - Row 1: Y coefficients [R, G, B]
+ * - Row 2: Z coefficients [R, G, B]
+ */
+var SRGB_TO_XYZ_D50 = [[0.4360747, 0.3850649, 0.1430804], [0.2225045, 0.7168786, 0.0606169], [0.0139322, 0.0971045, 0.7141733]];
+var SRGB_TO_XYZ_D50_NODEHUE_TYPO = [[0.4360747, 0.3850649, 0.0930804], [0.2225045, 0.7168786, 0.0406169], [0.0139322, 0.0971045, 0.7141733]];
+var SRGB_TO_XYZ_D65 = [[0.4124564, 0.3575761, 0.1804375], [0.2126729, 0.7151522, 0.072175], [0.0193339, 0.119192, 0.9503041]];
+/**
+ * XYZ D50 to linear sRGB inverse transformation matrix (3x3)
+ *
+ * This is the mathematically correct inverse of SRGB_TO_XYZ_D50.
+ * Computed using standard matrix inversion with 7 decimal places precision.
+ *
+ * Source: ICC sRGB Profile inverse (D50 → linear sRGB)
+ * Reference: https://alicevision.readthedocs.io/en/latest/group__colorConvertMatrices.html
+ *
+ * Matrix format: [row][column]
+ * - Row 0: R coefficients [X, Y, Z]
+ * - Row 1: G coefficients [X, Y, Z]
+ * - Row 2: B coefficients [X, Y, Z]
+ */
+var XYZ_TO_SRGB_D50 = [[3.1338561, -1.6168667, -0.4906146], [-0.9787684, 1.9161415, 0.033454], [0.0719453, -0.2289914, 1.4052427]];
+var XYZ_TO_SRGB_D50_NODEHUE_TYPO = [[3.1427943618, -1.6453151387, -0.316036676], [-0.9795315544, 1.9185700456, 0.0185512693], [0.0718745467, -0.2287664989, 1.4038632842]];
+var XYZ_TO_SRGB_D65 = [[3.240454836, -1.5371388501, -0.4985315469], [-0.9692663899, 1.8760109288, 0.0415560823], [0.0556434196, -0.2040258543, 1.0572251625]];
+var MATRIX_PROFILES = {
+  nodehue_d50_typo: {
+    name: "nodehue_d50_typo",
+    whitePoint: "D50",
+    forward: SRGB_TO_XYZ_D50_NODEHUE_TYPO,
+    inverse: XYZ_TO_SRGB_D50_NODEHUE_TYPO
+  },
+  icc_d50_corrected: {
+    name: "icc_d50_corrected",
+    whitePoint: "D50",
+    forward: SRGB_TO_XYZ_D50,
+    inverse: XYZ_TO_SRGB_D50
+  },
+  srgb_d65: {
+    name: "srgb_d65",
+    whitePoint: "D65",
+    forward: SRGB_TO_XYZ_D65,
+    inverse: XYZ_TO_SRGB_D65
+  }
+};
+var DEFAULT_MATRIX_PROFILE = "nodehue_d50_typo";
+var WHITE_POINT_CACHE = new Map();
+function isMatrixProfileName(value) {
+  return typeof value === "string" && Object.prototype.hasOwnProperty.call(MATRIX_PROFILES, value);
+}
+/**
+ * Normalizes arbitrary input to a supported matrix profile name. Any unknown,
+ * null, or otherwise invalid handle is coerced to {@link DEFAULT_MATRIX_PROFILE}
+ * so that downstream conversions always operate with a known profile.
+ */
+function normalizeMatrixProfileName(profile) {
+  if (isMatrixProfileName(profile)) {
+    return profile;
+  }
+  return DEFAULT_MATRIX_PROFILE;
+}
+/**
+ * Applies gamma correction (linearization) to an sRGB color channel
+ *
+ * This function converts sRGB values to linear RGB, which is necessary
+ * for accurate color space transformations.
+ *
+ * @param channel - Normalized RGB channel value (0-1)
+ * @returns Linearized channel value
+ */
+function applyGammaCorrection(channel) {
+  if (channel > 0.04045) {
+    return Math.pow((channel + 0.055) / 1.055, 2.4);
+  } else {
+    return channel / 12.92;
+  }
+}
+/**
+ * Color Space Notes:
+ *
+ * The default implementation uses the node-hue-api D50 matrix (including the historical
+ * typo in the blue column) for interoperability with existing Hue installations.
+ * Both the corrected ICC D50 profile and the native sRGB D65 profile are also exposed
+ * for callers that need precise colorimetry.
+ *
+ * D50 vs D65:
+ * - D65: Native sRGB white point (x=0.3127, y=0.3290) - daylight illuminant
+ * - D50: ICC PCS white point (x=0.3457, y=0.3585) - used in ICC profiles
+ *
+ * The D50-adapted matrices apply Bradford chromatic adaptation to convert
+ * sRGB primaries from D65 to D50. The node-hue-api variant contains the
+ * published blue-channel typo (0.0930804 and 0.0406169) while the ICC profile
+ * includes the corrected coefficients.
+ *
+ * For reference, the native D65 sRGB matrices would be:
+ * RGB→XYZ: [[0.4124564, 0.3575761, 0.1804375],
+ *           [0.2126729, 0.7151522, 0.0721750],
+ *           [0.0193339, 0.1191920, 0.9503041]]
+ * XYZ→RGB: [[ 3.2404542, -1.5371385, -0.4985314],
+ *           [-0.9692660,  1.8760108,  0.0415560],
+ *           [ 0.0556434, -0.2040259,  1.0572252]]
+ */
+/**
+ * Converts RGB color values to CIE 1931 xy chromaticity coordinates
+ *
+ * This implementation follows the Philips Hue official algorithm:
+ * 1. Normalize RGB from [0-255] to [0-1]
+ * 2. Apply gamma correction (linearization)
+ * 3. Transform to CIE XYZ color space
+ * 4. Convert to xy chromaticity coordinates
+ * 5. Optionally clamp to specified gamut
+ *
+ * @param r - Red channel value (0-255)
+ * @param g - Green channel value (0-255)
+ * @param b - Blue channel value (0-255)
+ * @param gamut - Optional gamut type for clamping ('none', 'A', 'B', 'C')
+ * @returns xy chromaticity coordinates
+ */
+function rgbToXy(r, g, b, gamut, profile) {
+  var _MATRIX_PROFILES$prof;
+  if (gamut === void 0) {
+    gamut = "none";
+  }
+  if (profile === void 0) {
+    profile = DEFAULT_MATRIX_PROFILE;
+  }
+  // Step 1: Normalize RGB values from [0-255] to [0-1]
+  var red = r / 255;
+  var green = g / 255;
+  var blue = b / 255;
+  // Step 2: Apply gamma correction (sRGB to linear RGB)
+  red = applyGammaCorrection(red);
+  green = applyGammaCorrection(green);
+  blue = applyGammaCorrection(blue);
+  var selectedProfile = (_MATRIX_PROFILES$prof = MATRIX_PROFILES[profile]) != null ? _MATRIX_PROFILES$prof : MATRIX_PROFILES[DEFAULT_MATRIX_PROFILE];
+  var forward = selectedProfile.forward;
+  // Step 3: Convert linear RGB to CIE XYZ using the selected transformation matrix
+  var X = red * forward[0][0] + green * forward[0][1] + blue * forward[0][2];
+  var Y = red * forward[1][0] + green * forward[1][1] + blue * forward[1][2];
+  var Z = red * forward[2][0] + green * forward[2][1] + blue * forward[2][2];
+  // Step 4: Convert XYZ to xy chromaticity coordinates
+  var sum = X + Y + Z;
+  // Handle black point (divide by zero)
+  if (sum === 0) {
+    return {
+      x: 0,
+      y: 0
+    };
+  }
+  var x = X / sum;
+  var y = Y / sum;
+  // Step 5: Apply gamut clamping if requested
+  if (gamut !== "none") {
+    return clampToGamut({
+      x: x,
+      y: y
+    }, gamut, {
+      profile: profile
+    });
+  }
+  return {
+    x: x,
+    y: y
+  };
+}
+function clampToGamut(point, gamut, options) {
+  if (options === void 0) {
+    options = {};
+  }
+  // Get the gamut triangle
+  var triangle = GAMUT_MAP[gamut];
+  // If gamut is 'none' or no triangle found, return unchanged
+  if (gamut === "none" || triangle === null) {
+    return point;
+  }
+  // Check if point is already inside the gamut
+  var profileName = options.profile && MATRIX_PROFILES[options.profile] ? options.profile : DEFAULT_MATRIX_PROFILE;
+  var pointInside = isPointInTriangle(point, triangle);
+  if (pointInside) {
+    return point;
+  }
+  var whitePoint = getWhitePointForProfile(profileName);
+  var anchor = isPointInTriangle(whitePoint, triangle) ? whitePoint : getTriangleCentroid(triangle);
+  var radialPoint = getRadialIntersection(anchor, point, triangle);
+  if (radialPoint) {
+    return radialPoint;
+  }
+  // Find the closest point on the triangle boundary
+  return getClosestPointOnTriangle(point, triangle);
+}
+/**
+ * Tests if a point is inside a triangle using barycentric coordinates
+ *
+ * @param p - Point to test
+ * @param triangle - Triangle defined by three corner points
+ * @returns true if point is inside or on the triangle, false otherwise
+ */
+function isPointInTriangle(p, triangle) {
+  var a = triangle[0],
+    b = triangle[1],
+    c = triangle[2];
+  // Calculate vectors
+  var v0x = c.x - a.x;
+  var v0y = c.y - a.y;
+  var v1x = b.x - a.x;
+  var v1y = b.y - a.y;
+  var v2x = p.x - a.x;
+  var v2y = p.y - a.y;
+  // Calculate dot products
+  var dot00 = v0x * v0x + v0y * v0y;
+  var dot01 = v0x * v1x + v0y * v1y;
+  var dot02 = v0x * v2x + v0y * v2y;
+  var dot11 = v1x * v1x + v1y * v1y;
+  var dot12 = v1x * v2x + v1y * v2y;
+  // Calculate barycentric coordinates
+  var invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+  var u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+  var v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+  // Check if point is inside triangle
+  return u >= 0 && v >= 0 && u + v <= 1;
+}
+/**
+ * Finds the closest point on a triangle to a given point
+ *
+ * This function projects the point onto each edge of the triangle
+ * and returns the closest projection.
+ *
+ * @param p - Point to project
+ * @param triangle - Triangle to project onto
+ * @returns Closest point on the triangle
+ */
+function getClosestPointOnTriangle(p, triangle) {
+  var a = triangle[0],
+    b = triangle[1],
+    c = triangle[2];
+  // Calculate closest point on each edge
+  var pointOnAB = getClosestPointOnLine(p, a, b);
+  var pointOnBC = getClosestPointOnLine(p, b, c);
+  var pointOnCA = getClosestPointOnLine(p, c, a);
+  // Calculate distances
+  var distanceAB = getDistance(p, pointOnAB);
+  var distanceBC = getDistance(p, pointOnBC);
+  var distanceCA = getDistance(p, pointOnCA);
+  // Return the closest point
+  if (distanceAB <= distanceBC && distanceAB <= distanceCA) {
+    return pointOnAB;
+  } else if (distanceBC <= distanceCA) {
+    return pointOnBC;
+  } else {
+    return pointOnCA;
+  }
+}
+function getTriangleCentroid(triangle) {
+  var a = triangle[0],
+    b = triangle[1],
+    c = triangle[2];
+  return {
+    x: (a.x + b.x + c.x) / 3,
+    y: (a.y + b.y + c.y) / 3
+  };
+}
+function getWhitePointForProfile(profileName) {
+  var _MATRIX_PROFILES$prof2;
+  var cached = WHITE_POINT_CACHE.get(profileName);
+  if (cached) {
+    return cached;
+  }
+  var profile = (_MATRIX_PROFILES$prof2 = MATRIX_PROFILES[profileName]) != null ? _MATRIX_PROFILES$prof2 : MATRIX_PROFILES[DEFAULT_MATRIX_PROFILE];
+  var forward = profile.forward;
+  var X = forward[0][0] + forward[0][1] + forward[0][2];
+  var Y = forward[1][0] + forward[1][1] + forward[1][2];
+  var Z = forward[2][0] + forward[2][1] + forward[2][2];
+  var sum = X + Y + Z;
+  var whitePoint = sum === 0 ? {
+    x: 0,
+    y: 0
+  } : {
+    x: X / sum,
+    y: Y / sum
+  };
+  WHITE_POINT_CACHE.set(profileName, whitePoint);
+  return whitePoint;
+}
+var INTERSECTION_EPSILON = 1e-9;
+function getRadialIntersection(anchor, target, triangle) {
+  var a = triangle[0],
+    b = triangle[1],
+    c = triangle[2];
+  var edges = [[a, b], [b, c], [c, a]];
+  var closest = null;
+  for (var _i = 0, _edges = edges; _i < _edges.length; _i++) {
+    var _edges$_i = _edges[_i],
+      start = _edges$_i[0],
+      end = _edges$_i[1];
+    var intersection = getSegmentIntersection(anchor, target, start, end);
+    if (intersection && intersection.t > INTERSECTION_EPSILON && (closest === null || intersection.t < closest.t)) {
+      closest = intersection;
+    }
+  }
+  return closest ? closest.point : null;
+}
+function getSegmentIntersection(anchor, target, edgeStart, edgeEnd) {
+  var dirRayX = target.x - anchor.x;
+  var dirRayY = target.y - anchor.y;
+  if (Math.abs(dirRayX) < INTERSECTION_EPSILON && Math.abs(dirRayY) < INTERSECTION_EPSILON) {
+    return null;
+  }
+  var dirEdgeX = edgeEnd.x - edgeStart.x;
+  var dirEdgeY = edgeEnd.y - edgeStart.y;
+  var denominator = dirRayX * dirEdgeY - dirRayY * dirEdgeX;
+  if (Math.abs(denominator) < INTERSECTION_EPSILON) {
+    return null;
+  }
+  var dx = edgeStart.x - anchor.x;
+  var dy = edgeStart.y - anchor.y;
+  var t = (dx * dirEdgeY - dy * dirEdgeX) / denominator;
+  var u = (dx * dirRayY - dy * dirRayX) / denominator;
+  if (t <= INTERSECTION_EPSILON) {
+    return null;
+  }
+  if (u < -INTERSECTION_EPSILON || u > 1 + INTERSECTION_EPSILON) {
+    return null;
+  }
+  return {
+    point: {
+      x: anchor.x + t * dirRayX,
+      y: anchor.y + t * dirRayY
+    },
+    t: t
+  };
+}
+/**
+ * Projects a point onto a line segment and returns the closest point
+ *
+ * @param p - Point to project
+ * @param a - Start point of line segment
+ * @param b - End point of line segment
+ * @returns Closest point on the line segment
+ */
+function getClosestPointOnLine(p, a, b) {
+  // Vector from a to p
+  var apx = p.x - a.x;
+  var apy = p.y - a.y;
+  // Vector from a to b
+  var abx = b.x - a.x;
+  var aby = b.y - a.y;
+  // Calculate projection parameter t
+  var ab_dot_ab = abx * abx + aby * aby;
+  var ap_dot_ab = apx * abx + apy * aby;
+  var t = ap_dot_ab / ab_dot_ab;
+  // Clamp t to [0, 1] to stay within line segment
+  t = Math.max(0, Math.min(1, t));
+  // Return projected point
+  return {
+    x: a.x + t * abx,
+    y: a.y + t * aby
+  };
+}
+/**
+ * Calculates the Euclidean distance between two points
+ *
+ * @param p1 - First point
+ * @param p2 - Second point
+ * @returns Distance between the points
+ */
+function getDistance(p1, p2) {
+  var dx = p2.x - p1.x;
+  var dy = p2.y - p1.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+// https://www.w3.org/TR/css3-values/#integers
+var CSS_INTEGER = "[-\\+]?\\d+%?";
+// http://www.w3.org/TR/css3-values/#number-value
+var CSS_NUMBER = "[-\\+]?\\d*\\.\\d+%?";
+// Allow positive/negative integer/number. Don't capture the either/or, just the entire outcome
+var CSS_UNIT = "(?:" + CSS_NUMBER + ")|(?:" + CSS_INTEGER + ")";
+// Parse function params
+// Parens and commas are optional, and this also allows for whitespace between numbers
+var PERMISSIVE_MATCH_3 = "[\\s|\\(]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")\\s*\\)?";
+var PERMISSIVE_MATCH_4 = "[\\s|\\(]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")\\s*\\)?";
+// Regex patterns for functional color strings
+var REGEX_FUNCTIONAL_RGB = new RegExp("rgb" + PERMISSIVE_MATCH_3);
+var REGEX_FUNCTIONAL_RGBA = new RegExp("rgba" + PERMISSIVE_MATCH_4);
+var REGEX_FUNCTIONAL_HSL = new RegExp("hsl" + PERMISSIVE_MATCH_3);
+var REGEX_FUNCTIONAL_HSLA = new RegExp("hsla" + PERMISSIVE_MATCH_4);
+// Color string parsing regex
+var HEX_START = "^(?:#?|0x?)";
+var HEX_INT_SINGLE = "([0-9a-fA-F]{1})";
+var HEX_INT_DOUBLE = "([0-9a-fA-F]{2})";
+var REGEX_HEX_3 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + "$");
+var REGEX_HEX_4 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + "$");
+var REGEX_HEX_6 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + "$");
+var REGEX_HEX_8 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + "$");
+// Kelvin temperature bounds
+var KELVIN_MIN = 2000;
+var KELVIN_MAX = 40000;
+// Epsilon for numerical stability in color conversions (imported from colorMath)
+// Channel-specific epsilon thresholds for change detection in HSV color space
+// These absolute thresholds are chosen based on perceptual significance and
+// practical precision needs for each channel's scale:
+//
+// - Hue (0-360°): 1e-3 = 0.001° threshold
+//   Rationale: Sub-degree changes are imperceptible; prevents false positives
+//   from floating-point arithmetic while detecting meaningful color shifts
+//
+// - Saturation/Value (0-100): 1e-3 = 0.001% threshold
+//   Rationale: 0.001% change is imperceptible on 0-100 scale; balances
+//   precision with robustness against rounding errors
+//
+// - Alpha (0-1): 1e-5 = 0.00001 threshold
+//   Rationale: Alpha uses normalized 0-1 scale, so needs tighter threshold;
+//   0.00001 change is negligible while avoiding spurious onChange events
+//
+// Note: Absolute thresholds (vs relative) are used because:
+// 1. Simpler implementation without division
+// 2. HSV channels have well-defined ranges (not arbitrary magnitudes)
+// 3. Perceptual significance is relatively uniform across each channel's range
+// 4. Avoids edge cases with relative thresholds near zero values
+var HUE_CHANGE_EPS = 1e-3;
+var SV_CHANGE_EPS = 1e-3;
+var ALPHA_CHANGE_EPS = 1e-5;
+// Math shorthands
+var log = Math.log,
+  round = Math.round,
+  floor = Math.floor;
+// clamp utility re-exported from colorMath
 /**
  * @desc Parse a css unit string - either regular int or a percentage number
  * @param str - css unit string
  * @param max - max unit value, used for calculating percentages
  */
-
-
 function parseUnit(str, max) {
-  var isPercentage = str.indexOf('%') > -1;
+  var isPercentage = str.indexOf("%") > -1;
   var num = parseFloat(str);
   return isPercentage ? max / 100 * num : num;
 }
@@ -103,8 +646,6 @@ function parseUnit(str, max) {
  * @desc Parse hex str to an int
  * @param str - hex string to parse
  */
-
-
 function parseHexInt(str) {
   return parseInt(str, 16);
 }
@@ -112,20 +653,72 @@ function parseHexInt(str) {
  * @desc Convert nunber into to 2-digit hex
  * @param int - number to convert
  */
-
-
 function intToHex(_int) {
-  return _int.toString(16).padStart(2, '0');
+  return _int.toString(16).padStart(2, "0");
 }
-
-var IroColor =
-/*#__PURE__*/
-function () {
+function applyInverseGammaCorrection$1(channel) {
+  if (channel <= 0.0031308) {
+    return channel * 12.92;
+  }
+  return 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
+}
+function convertXyToRgbWithBrightness(point, brightness, gamut, profile) {
+  var _MATRIX_PROFILES$prof;
+  var normalizedBrightness = clamp(brightness, 0, 1);
+  var effectiveBrightness = normalizedBrightness === 0 ? 0.01 : normalizedBrightness;
+  var clampedPoint = gamut === "none" ? point : clampToGamut(point, gamut, {
+    profile: profile
+  });
+  var x = clampedPoint.x,
+    y = clampedPoint.y;
+  if (y < EPS) {
+    return {
+      r: 0,
+      g: 0,
+      b: 0
+    };
+  }
+  var z = 1 - x - y;
+  // Compute XYZ at full brightness (Y = 1)
+  var Y = 1;
+  var X = Y / y * x;
+  var Z = Y / y * z;
+  var selectedProfile = (_MATRIX_PROFILES$prof = MATRIX_PROFILES[profile]) != null ? _MATRIX_PROFILES$prof : MATRIX_PROFILES[DEFAULT_MATRIX_PROFILE];
+  var inverse = selectedProfile.inverse;
+  // Convert XYZ to linear RGB
+  var Rlin = X * inverse[0][0] + Y * inverse[0][1] + Z * inverse[0][2];
+  var Glin = X * inverse[1][0] + Y * inverse[1][1] + Z * inverse[1][2];
+  var Blin = X * inverse[2][0] + Y * inverse[2][1] + Z * inverse[2][2];
+  // Clamp negatives from out-of-gamut projections
+  Rlin = Math.max(0, Rlin);
+  Glin = Math.max(0, Glin);
+  Blin = Math.max(0, Blin);
+  // Apply brightness in linear space for precision
+  Rlin *= effectiveBrightness;
+  Glin *= effectiveBrightness;
+  Blin *= effectiveBrightness;
+  // Convert back to display RGB via inverse gamma and scale to 0-255
+  var r = applyInverseGammaCorrection$1(Rlin);
+  var g = applyInverseGammaCorrection$1(Glin);
+  var b = applyInverseGammaCorrection$1(Blin);
+  return {
+    r: Math.round(Math.max(0, Math.min(255, r * 255))),
+    g: Math.round(Math.max(0, Math.min(255, g * 255))),
+    b: Math.round(Math.max(0, Math.min(255, b * 255)))
+  };
+}
+var IroColor = /*#__PURE__*/function () {
   /**
-    * @constructor Color object
-    * @param value - initial color value
-  */
-  function IroColor(value, onChange) {
+   * @constructor Color object
+   * @param value - initial color value
+   */
+  function IroColor(value, onChange, gamut, matrixProfile) {
+    if (gamut === void 0) {
+      gamut = "none";
+    }
+    if (matrixProfile === void 0) {
+      matrixProfile = DEFAULT_MATRIX_PROFILE;
+    }
     // The default Color value
     this.$ = {
       h: 0,
@@ -133,21 +726,20 @@ function () {
       v: 0,
       a: 1
     };
-    if (value) { this.set(value); } // The watch callback function for this Color will be stored here
-
+    this.gamut = gamut;
+    this.matrixProfileValue = normalizeMatrixProfileName(matrixProfile);
+    if (value) { this.set(value); }
+    // The watch callback function for this Color will be stored here
     this.onChange = onChange;
     this.initialValue = _extends({}, this.$); // copy initial value
   }
   /**
-    * @desc Set the Color from any valid value
-    * @param value - new color value
-  */
-
-
+   * @desc Set the Color from any valid value
+   * @param value - new color value
+   */
   var _proto = IroColor.prototype;
-
   _proto.set = function set(value) {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       if (/^(?:#?|0x?)[0-9a-fA-F]{3,8}$/.test(value)) {
         this.hexString = value;
       } else if (/^rgba?/.test(value)) {
@@ -155,139 +747,108 @@ function () {
       } else if (/^hsla?/.test(value)) {
         this.hslString = value;
       }
-    } else if (typeof value === 'object') {
+    } else if (typeof value === "object") {
       if (value instanceof IroColor) {
         this.hsva = value.hsva;
-      } else if ('r' in value && 'g' in value && 'b' in value) {
+      } else if ("r" in value && "g" in value && "b" in value) {
         this.rgb = value;
-      } else if ('h' in value && 's' in value && 'v' in value) {
+      } else if ("h" in value && "s" in value && "v" in value) {
         this.hsv = value;
-      } else if ('h' in value && 's' in value && 'l' in value) {
+      } else if ("h" in value && "s" in value && "l" in value) {
         this.hsl = value;
-      } else if ('kelvin' in value) {
+      } else if ("kelvin" in value) {
         this.kelvin = value.kelvin;
+      } else if ("x" in value && "y" in value) {
+        this.xy = value;
       }
     } else {
-      throw new Error('Invalid color value');
+      throw new Error("Invalid color value");
     }
   }
   /**
-    * @desc Shortcut to set a specific channel value
-    * @param format - hsv | hsl | rgb
-    * @param channel - individual channel to set, for example if model = hsl, chanel = h | s | l
-    * @param value - new value for the channel
-  */
-  ;
-
+   * @desc Shortcut to set a specific channel value
+   * @param format - hsv | hsl | rgb
+   * @param channel - individual channel to set, for example if model = hsl, chanel = h | s | l
+   * @param value - new value for the channel
+   */;
   _proto.setChannel = function setChannel(format, channel, value) {
     var _extends2;
-
     this[format] = _extends({}, this[format], (_extends2 = {}, _extends2[channel] = value, _extends2));
   }
   /**
    * @desc Reset color back to its initial value
-   */
-  ;
-
+   */;
   _proto.reset = function reset() {
     this.hsva = this.initialValue;
   }
   /**
-    * @desc make new Color instance with the same value as this one
-  */
-  ;
-
+   * @desc make new Color instance with the same value as this one
+   */;
   _proto.clone = function clone() {
-    return new IroColor(this);
+    return new IroColor(this, undefined, this.gamut, this.matrixProfileValue);
   }
   /**
    * @desc remove color onChange
-   */
-  ;
-
+   */;
   _proto.unbind = function unbind() {
     this.onChange = undefined;
   }
   /**
-    * @desc Convert hsv object to rgb
-    * @param hsv - hsv color object
-  */
-  ;
-
-  IroColor.hsvToRgb = function hsvToRgb(hsv) {
-    var h = hsv.h / 60;
-    var s = hsv.s / 100;
-    var v = hsv.v / 100;
-    var i = floor(h);
-    var f = h - i;
-    var p = v * (1 - s);
-    var q = v * (1 - f * s);
-    var t = v * (1 - (1 - f) * s);
-    var mod = i % 6;
-    var r = [v, q, p, p, t, v][mod];
-    var g = [t, v, v, q, p, p][mod];
-    var b = [p, p, t, v, v, q][mod];
-    return {
-      r: clamp(r * 255, 0, 255),
-      g: clamp(g * 255, 0, 255),
-      b: clamp(b * 255, 0, 255)
-    };
+   * @desc Convert hsv object to rgb
+   * @param hsv - hsv color object
+   *
+   * Converts HSV (Hue, Saturation, Value) to RGB using the standard algorithm.
+   * The hue wheel is divided into 6 sectors (60° each), and RGB values are
+   * calculated based on which sector the hue falls into.
+   *
+   * Variables explanation:
+   * - p = v * (1 - s): minimum RGB value
+   * - q = v * (1 - f * s): descending RGB value
+   * - t = v * (1 - (1 - f) * s): ascending RGB value
+   * - f: fractional part within the hue sector
+   */;
+  IroColor.hsvToRgb = function hsvToRgb$1(hsv) {
+    return hsvToRgb(hsv);
   }
   /**
-    * @desc Convert rgb object to hsv
-    * @param rgb - rgb object
-  */
-  ;
-
-  IroColor.rgbToHsv = function rgbToHsv(rgb) {
-    var r = rgb.r / 255;
-    var g = rgb.g / 255;
-    var b = rgb.b / 255;
-    var max = Math.max(r, g, b);
-    var min = Math.min(r, g, b);
-    var delta = max - min;
-    var hue = 0;
-    var value = max;
-    var saturation = max === 0 ? 0 : delta / max;
-
-    switch (max) {
-      case min:
-        hue = 0; // achromatic
-
-        break;
-
-      case r:
-        hue = (g - b) / delta + (g < b ? 6 : 0);
-        break;
-
-      case g:
-        hue = (b - r) / delta + 2;
-        break;
-
-      case b:
-        hue = (r - g) / delta + 4;
-        break;
-    }
-
-    return {
-      h: hue * 60 % 360,
-      s: clamp(saturation * 100, 0, 100),
-      v: clamp(value * 100, 0, 100)
-    };
+   * @desc Convert rgb object to hsv
+   * @param rgb - rgb object
+   *
+   * Converts RGB to HSV (Hue, Saturation, Value) using the standard algorithm.
+   *
+   * Algorithm explanation:
+   * - Hue: Calculated based on which RGB component is dominant (max)
+   * - Saturation: delta / max (ratio of color purity), 0 when max is 0
+   * - Value: The maximum RGB component (brightness)
+   */;
+  IroColor.rgbToHsv = function rgbToHsv$1(rgb) {
+    return rgbToHsv(rgb);
   }
   /**
-    * @desc Convert hsv object to hsl
-    * @param hsv - hsv object
-  */
-  ;
-
+   * @desc Convert hsv object to hsl
+   * @param hsv - hsv object
+   *
+   * Converts HSV to HSL using the standard algorithm:
+   * - L = V × (2 - S) [in range 0-2]
+   * - S_hsl = (S × V) / divisor, where divisor = min(L, 2-L)
+   * - Final L is scaled from [0-2] to [0-100] by multiplying by 50
+   */;
   IroColor.hsvToHsl = function hsvToHsl(hsv) {
     var s = hsv.s / 100;
     var v = hsv.v / 100;
-    var l = (2 - s) * v;
-    var divisor = l <= 1 ? l : 2 - l; // Avoid division by zero when lightness is close to zero
-
-    var saturation = divisor < 1e-9 ? 0 : s * v / divisor;
+    // Early return for achromatic colors (s < EPS, where EPS = 1e-7)
+    if (s < EPS) {
+      return {
+        h: hsv.h,
+        s: 0,
+        l: clamp(v * 100, 0, 100)
+      };
+    }
+    // HSV→HSL formula: L = V × (2 - S), S_hsl = (S × V) / divisor
+    var l = v * (2 - s); // Lightness in [0, 2] range
+    var divisor = l <= 1 ? l : 2 - l;
+    // Division-by-zero protection: divisor < EPS (1e-7) ensures numerical stability
+    var saturation = divisor < EPS ? 0 : s * v / divisor;
     return {
       h: hsv.h,
       s: clamp(saturation * 100, 0, 100),
@@ -295,16 +856,31 @@ function () {
     };
   }
   /**
-    * @desc Convert hsl object to hsv
-    * @param hsl - hsl object
-  */
-  ;
-
+   * @desc Convert hsl object to hsv
+   * @param hsl - hsl object
+   *
+   * Converts HSL to HSV using the standard algorithm:
+   * - L' = L × 2 [convert from 0-100 to 0-200]
+   * - S' = S × min(L', 200-L') / 100 (intermediate value)
+   * - S_hsv = 2 × S' / (L' + S') (HSV saturation)
+   * - V = (L' + S') / 2 (HSV value)
+   */;
   IroColor.hslToHsv = function hslToHsv(hsl) {
-    var l = hsl.l * 2;
-    var s = hsl.s * (l <= 100 ? l : 200 - l) / 100; // Avoid division by zero when l + s is near 0
-
-    var saturation = l + s < 1e-9 ? 0 : 2 * s / (l + s);
+    // Early return for achromatic colors (s < EPS, where EPS = 1e-7)
+    if (hsl.s < EPS) {
+      return {
+        h: hsl.h,
+        s: 0,
+        v: clamp(hsl.l, 0, 100)
+      };
+    }
+    // HSL→HSV formula
+    var l = hsl.l * 2; // Convert from [0, 100] to [0, 200]
+    // Calculate intermediate value s: S × min(L', 200-L') / 100
+    // Math.min() is clearer than ternary operator and semantically identical
+    var s = hsl.s * Math.min(l, 200 - l) / 100;
+    // Division-by-zero protection: l+s < EPS (1e-7) ensures numerical stability
+    var saturation = l + s < EPS ? 0 : 2 * s / (l + s);
     return {
       h: hsl.h,
       s: clamp(saturation * 100, 0, 100),
@@ -312,15 +888,12 @@ function () {
     };
   }
   /**
-    * @desc Convert a kelvin temperature to an approx, RGB value
-    * @param kelvin - kelvin temperature
-  */
-  ;
-
+   * @desc Convert a kelvin temperature to an approx, RGB value
+   * @param kelvin - kelvin temperature
+   */;
   IroColor.kelvinToRgb = function kelvinToRgb(kelvin) {
     var temp = kelvin / 100;
     var r, g, b;
-
     if (temp < 66) {
       r = 255;
       g = -155.25485562709179 - 0.44596950469579133 * (g = temp - 2) + 104.49216199393888 * log(g);
@@ -330,7 +903,6 @@ function () {
       g = 325.4494125711974 + 0.07943456536662342 * (g = temp - 50) - 28.0852963507957 * log(g);
       b = 255;
     }
-
     return {
       r: clamp(floor(r), 0, 255),
       g: clamp(floor(g), 0, 255),
@@ -339,34 +911,136 @@ function () {
   }
   /**
    * @desc Convert an RGB color to an approximate kelvin temperature
+   *
+   * Performs a bounded binary search between {@link KELVIN_MIN} and {@link KELVIN_MAX}
+   * with a convergence threshold of roughly ±0.4&nbsp;K. Under normal conditions the
+   * routine converges within 50 iterations and returns the midpoint of the final
+   * search interval, yielding a result that is within the stated tolerance of the
+   * true color temperature.
+   *
+   * If the maximum iteration count is reached before the convergence threshold,
+   * the search stops early and the function still returns the most recent midpoint
+   * (`temp`). In that case the value remains clamped to the current Kelvin bounds
+   * and represents the closest estimate the algorithm could determine given the
+   * safeguards.
+   *
    * @param kelvin - kelvin temperature
-  */
-  ;
-
+   */;
   IroColor.rgbToKelvin = function rgbToKelvin(rgb) {
     var r = rgb.r,
-        b = rgb.b;
-    var eps = 0.4;
+      b = rgb.b;
+    // Clamp inputs to minimal threshold to avoid division by zero
+    r = Math.max(r, EPS);
+    b = Math.max(b, EPS);
+    // Convergence threshold for binary search in Kelvin temperature
+    // 0.4K is sufficient precision for color temperature approximation
+    var KELVIN_CONVERGENCE_THRESHOLD = 0.4;
     var minTemp = KELVIN_MIN;
     var maxTemp = KELVIN_MAX;
-    var temp;
-
-    while (maxTemp - minTemp > eps) {
+    var temp = KELVIN_MIN;
+    var iterations = 0;
+    var maxIterations = 50;
+    // Binary search with iteration cap
+    while (maxTemp - minTemp > KELVIN_CONVERGENCE_THRESHOLD && iterations < maxIterations) {
       temp = (maxTemp + minTemp) * 0.5;
-
-      var _rgb = IroColor.kelvinToRgb(temp);
-
-      if (_rgb.b / _rgb.r >= b / r) {
+      var testRgb = IroColor.kelvinToRgb(temp);
+      var testR = Math.max(testRgb.r, EPS);
+      if (testRgb.b / testR >= b / r) {
         maxTemp = temp;
       } else {
         minTemp = temp;
       }
+      iterations++;
     }
-
     return temp;
   };
-
-  _createClass(IroColor, [{
+  _proto.setMatrixProfile = function setMatrixProfile(value, options) {
+    var newProfile = normalizeMatrixProfileName(value);
+    if (newProfile === this.matrixProfileValue) {
+      return;
+    }
+    var silent = !!(options != null && options.silent);
+    var prevOnChange = this.onChange;
+    if (silent) {
+      this.onChange = undefined;
+    }
+    this.matrixProfileValue = newProfile;
+    if (silent) {
+      this.onChange = prevOnChange;
+    }
+  };
+  /**
+   * @desc Set the gamut type with optional silent mode
+   * @param value - new gamut type
+   * @param options - options object with silent flag
+   */
+  _proto.setGamutType = function setGamutType(value, options) {
+    var silent = !!(options != null && options.silent);
+    // Guard clause: no change needed if same gamut
+    if (value === this.gamut) { return; }
+    // Fast path: switching to unrestricted gamut requires only property update
+    if (value === "none") {
+      this.gamut = value;
+      return;
+    }
+    // Capture old HSV state for accurate change detection
+    var old = _extends({}, this.$);
+    // Compute unclamped xy from current RGB before changing gamut
+    var rgb = this.rgb;
+    var xyNone = rgbToXy(rgb.r, rgb.g, rgb.b, "none", this.matrixProfileValue);
+    // Store original brightness and alpha to preserve them after gamut conversion
+    var originalBrightness = this.$.v;
+    var originalAlpha = this.$.a;
+    // Suppress onChange during internal updates
+    var prevOnChange = this.onChange;
+    this.onChange = undefined;
+    // Update gamut
+    this.gamut = value;
+    // For restrictive gamuts (A, B, C), re-apply xy to clamp to target gamut
+    var targetTriangle = GAMUT_MAP[value];
+    var isInGamut = targetTriangle ? isPointInTriangle(xyNone, targetTriangle) : false;
+    // Only perform conversion if the color is outside the target gamut
+    // This prevents lossy RGB→xy→RGB conversions for colors already in gamut
+    if (!isInGamut) {
+      // Temporarily set brightness to 100 for precise xy conversion
+      this.pendingBrightness = originalBrightness;
+      this.$ = _extends({}, this.$, {
+        v: 100
+      });
+      this.xy = xyNone; // clamps to target gamut via xyToRgb(..., this.gamut)
+      // Restore original brightness and alpha
+      this.$ = _extends({}, this.$, {
+        v: originalBrightness,
+        a: originalAlpha
+      });
+    }
+    // Restore onChange callback
+    this.onChange = prevOnChange;
+    // If not in silent mode and onChange is registered, emit a single event
+    if (!silent && prevOnChange) {
+      // Compute changes using channel-specific epsilon comparison
+      var changes = {
+        h: false,
+        v: false,
+        s: false,
+        a: false
+      };
+      // Use channel-specific thresholds based on each channel's scale
+      var hDelta = Math.abs((this.$.h || 0) - (old.h || 0));
+      var sDelta = Math.abs((this.$.s || 0) - (old.s || 0));
+      var vDelta = Math.abs((this.$.v || 0) - (old.v || 0));
+      var aDelta = Math.abs((this.$.a || 0) - (old.a || 0));
+      changes.h = hDelta > HUE_CHANGE_EPS; // 0.001° threshold for hue
+      changes.s = sDelta > SV_CHANGE_EPS; // 0.001% threshold for saturation
+      changes.v = vDelta > SV_CHANGE_EPS; // 0.001% threshold for value
+      changes.a = aDelta > ALPHA_CHANGE_EPS; // 0.00001 threshold for alpha
+      // Only fire onChange if there were actual changes
+      if (changes.h || changes.s || changes.v || changes.a) {
+        prevOnChange(this, changes);
+      }
+    }
+  };
+  return _createClass(IroColor, [{
     key: "hsv",
     get: function get() {
       // value is cloned to allow changes to be made to the values before passing them back
@@ -379,24 +1053,29 @@ function () {
     },
     set: function set(newValue) {
       var oldValue = this.$;
-      newValue = _extends({}, oldValue, newValue); // If this Color is being watched for changes we need to compare the new and old values to check the difference
+      newValue = _extends({}, oldValue, newValue);
+      // If this Color is being watched for changes we need to compare the new and old values to check the difference
       // Otherwise we can just be lazy
-
       if (this.onChange) {
-        // Compute changed values
+        // Compute changed values with channel-specific epsilon comparison to avoid event loops
         var changes = {
           h: false,
           v: false,
           s: false,
           a: false
         };
-
-        for (var key in oldValue) {
-          changes[key] = newValue[key] != oldValue[key];
-        }
-
-        this.$ = newValue; // If the value has changed, call hook callback
-
+        // Use channel-specific thresholds based on each channel's scale
+        var hDelta = Math.abs((newValue.h || 0) - (oldValue.h || 0));
+        var sDelta = Math.abs((newValue.s || 0) - (oldValue.s || 0));
+        var vDelta = Math.abs((newValue.v || 0) - (oldValue.v || 0));
+        var aDelta = Math.abs((newValue.a || 0) - (oldValue.a || 0));
+        changes.h = hDelta > HUE_CHANGE_EPS; // 0.001° threshold for hue
+        changes.s = sDelta > SV_CHANGE_EPS; // 0.001% threshold for saturation
+        changes.v = vDelta > SV_CHANGE_EPS; // 0.001% threshold for value
+        changes.a = aDelta > ALPHA_CHANGE_EPS; // 0.00001 threshold for alpha
+        // Update the old value
+        this.$ = newValue;
+        // If the value has changed, call hook callback
         if (changes.h || changes.s || changes.v || changes.a) { this.onChange(this, changes); }
       } else {
         this.$ = newValue;
@@ -459,6 +1138,44 @@ function () {
       this.rgb = IroColor.kelvinToRgb(value);
     }
   }, {
+    key: "xy",
+    get: function get() {
+      var rgb = this.rgb;
+      return rgbToXy(rgb.r, rgb.g, rgb.b, this.gamut, this.matrixProfileValue);
+    },
+    set: function set(value) {
+      var _this$$$v;
+      // Convert xy using linear brightness scaling to preserve hue at low values
+      // NOTE: A minimum brightness ratio of 0.01 is applied when the current value (V)
+      //       is zero. This prevents the conversion from collapsing to true black and
+      //       keeps the chromaticity information intact for near-dark colors.
+      //       Callers that expect exact black can set V back to 0 after assignment.
+      var rawBrightness = this.pendingBrightness !== undefined ? this.pendingBrightness : (_this$$$v = this.$.v) != null ? _this$$$v : 0;
+      var boundedBrightness = clamp(rawBrightness, 0, 100);
+      var brightnessRatio = boundedBrightness === 0 ? 0.01 : boundedBrightness / 100;
+      var rgb = convertXyToRgbWithBrightness(value, brightnessRatio, this.gamut, this.matrixProfileValue);
+      this.pendingBrightness = undefined;
+      this.rgb = rgb;
+    }
+  }, {
+    key: "gamutType",
+    get: function get() {
+      return this.gamut;
+    },
+    set: function set(value) {
+      this.setGamutType(value, {
+        silent: false
+      });
+    }
+  }, {
+    key: "matrixProfile",
+    get: function get() {
+      return this.matrixProfileValue;
+    },
+    set: function set(value) {
+      this.setMatrixProfile(value);
+    }
+  }, {
     key: "red",
     get: function get() {
       var rgb = this.rgb;
@@ -495,14 +1212,13 @@ function () {
     key: "rgb",
     get: function get() {
       var _IroColor$hsvToRgb = IroColor.hsvToRgb(this.$),
-          r = _IroColor$hsvToRgb.r,
-          g = _IroColor$hsvToRgb.g,
-          b = _IroColor$hsvToRgb.b;
-
+        r = _IroColor$hsvToRgb.r,
+        g = _IroColor$hsvToRgb.g,
+        b = _IroColor$hsvToRgb.b;
       return {
-        r: round(r),
-        g: round(g),
-        b: round(b)
+        r: r,
+        g: g,
+        b: b
       };
     },
     set: function set(value) {
@@ -524,14 +1240,13 @@ function () {
     key: "hsl",
     get: function get() {
       var _IroColor$hsvToHsl = IroColor.hsvToHsl(this.$),
-          h = _IroColor$hsvToHsl.h,
-          s = _IroColor$hsvToHsl.s,
-          l = _IroColor$hsvToHsl.l;
-
+        h = _IroColor$hsvToHsl.h,
+        s = _IroColor$hsvToHsl.s,
+        l = _IroColor$hsvToHsl.l;
       return {
-        h: round(h),
-        s: round(s),
-        l: round(l)
+        h: h,
+        s: s,
+        l: l
       };
     },
     set: function set(value) {
@@ -553,15 +1268,14 @@ function () {
     key: "rgbString",
     get: function get() {
       var rgb = this.rgb;
-      return "rgb(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ")";
+      return "rgb(" + round(rgb.r) + ", " + round(rgb.g) + ", " + round(rgb.b) + ")";
     },
     set: function set(value) {
       var match;
-      var r,
-          g,
-          b,
-          a = 1;
-
+      var r = 0,
+        g = 0,
+        b = 0,
+        a = 1;
       if (match = REGEX_FUNCTIONAL_RGB.exec(value)) {
         r = parseUnit(match[1], 255);
         g = parseUnit(match[2], 255);
@@ -570,9 +1284,8 @@ function () {
         r = parseUnit(match[1], 255);
         g = parseUnit(match[2], 255);
         b = parseUnit(match[3], 255);
-        a = parseUnit(match[4], 1);
+        a = clamp(parseUnit(match[4], 1), 0, 1);
       }
-
       if (match) {
         this.rgb = {
           r: r,
@@ -581,14 +1294,14 @@ function () {
           a: a
         };
       } else {
-        throw new Error('Invalid rgb string');
+        throw new Error("Invalid rgb string");
       }
     }
   }, {
     key: "rgbaString",
     get: function get() {
       var rgba = this.rgba;
-      return "rgba(" + rgba.r + ", " + rgba.g + ", " + rgba.b + ", " + rgba.a + ")";
+      return "rgba(" + round(rgba.r) + ", " + round(rgba.g) + ", " + round(rgba.b) + ", " + rgba.a + ")";
     },
     set: function set(value) {
       this.rgbString = value;
@@ -597,35 +1310,63 @@ function () {
     key: "hexString",
     get: function get() {
       var rgb = this.rgb;
-      return "#" + intToHex(rgb.r) + intToHex(rgb.g) + intToHex(rgb.b);
-    },
+      return "#" + intToHex(round(rgb.r)) + intToHex(round(rgb.g)) + intToHex(round(rgb.b));
+    }
+    /**
+     * @desc Parse and set color from hex string
+     *
+     * Supports multiple hex formats per CSS Color Module Level 3 specification:
+     * - 3-digit (#RGB): Each digit is expanded by multiplying by 17 (e.g., #F → #FF = 255)
+     * - 4-digit (#RGBA): Same as 3-digit, with alpha channel
+     * - 6-digit (#RRGGBB): Direct hex parsing (e.g., #FF = 255)
+     * - 8-digit (#RRGGBBAA): Same as 6-digit, with alpha channel
+     *
+     * Mathematical basis for the multiplication by 17:
+     * - Expands single hex digit (0x0-0xF / 0-15) to full 8-bit range (0-255)
+     * - Formula: value * 17 = value * 16 + value = (value << 4) | value
+     * - Examples: 0xF * 17 = 255, 0xA * 17 = 170, 0x5 * 17 = 85, 0x0 * 17 = 0
+     * - This creates uniform distribution: each step increases by 17 (0, 17, 34, ..., 255)
+     *
+     * Reference: CSS Color Module Level 3 (https://www.w3.org/TR/css-color-3/#rgb-color)
+     */,
     set: function set(value) {
       var match;
-      var r,
-          g,
-          b,
-          a = 255;
-
+      var r = 0,
+        g = 0,
+        b = 0,
+        a = 255;
+      // Helper function for expanding single hex digits (0-F) to full 8-bit values (0-255)
+      var expand = function expand(s) {
+        return parseHexInt(s) * 17;
+      };
       if (match = REGEX_HEX_3.exec(value)) {
-        r = parseHexInt(match[1]) * 17;
-        g = parseHexInt(match[2]) * 17;
-        b = parseHexInt(match[3]) * 17;
+        // 3-digit hex (#RGB): Expand each digit by multiplying by 17
+        // This converts single hex digits (0-15) to full 8-bit values (0-255)
+        // Example: #F00 → r=15*17=255, g=0*17=0, b=0*17=0 (pure red)
+        r = expand(match[1]);
+        g = expand(match[2]);
+        b = expand(match[3]);
       } else if (match = REGEX_HEX_4.exec(value)) {
-        r = parseHexInt(match[1]) * 17;
-        g = parseHexInt(match[2]) * 17;
-        b = parseHexInt(match[3]) * 17;
-        a = parseHexInt(match[4]) * 17;
+        // 4-digit hex (#RGBA): Same as 3-digit, with alpha channel
+        // Example: #F00A → r=255, g=0, b=0, a=170 (170/255 ≈ 0.67 alpha)
+        r = expand(match[1]);
+        g = expand(match[2]);
+        b = expand(match[3]);
+        a = expand(match[4]);
       } else if (match = REGEX_HEX_6.exec(value)) {
+        // 6-digit hex (#RRGGBB): Direct hex parsing, no expansion needed
+        // Example: #FF0000 → r=255, g=0, b=0
         r = parseHexInt(match[1]);
         g = parseHexInt(match[2]);
         b = parseHexInt(match[3]);
       } else if (match = REGEX_HEX_8.exec(value)) {
+        // 8-digit hex (#RRGGBBAA): Same as 6-digit, with alpha channel
+        // Example: #FF0000AA → r=255, g=0, b=0, a=170 (170/255 ≈ 0.67 alpha)
         r = parseHexInt(match[1]);
         g = parseHexInt(match[2]);
         b = parseHexInt(match[3]);
         a = parseHexInt(match[4]);
       }
-
       if (match) {
         this.rgb = {
           r: r,
@@ -634,14 +1375,14 @@ function () {
           a: a / 255
         };
       } else {
-        throw new Error('Invalid hex string');
+        throw new Error("Invalid hex string");
       }
     }
   }, {
     key: "hex8String",
     get: function get() {
       var rgba = this.rgba;
-      return "#" + intToHex(rgba.r) + intToHex(rgba.g) + intToHex(rgba.b) + intToHex(floor(rgba.a * 255));
+      return "#" + intToHex(round(rgba.r)) + intToHex(round(rgba.g)) + intToHex(round(rgba.b)) + intToHex(round(rgba.a * 255));
     },
     set: function set(value) {
       this.hexString = value;
@@ -650,15 +1391,14 @@ function () {
     key: "hslString",
     get: function get() {
       var hsl = this.hsl;
-      return "hsl(" + hsl.h + ", " + hsl.s + "%, " + hsl.l + "%)";
+      return "hsl(" + round(hsl.h) + ", " + round(hsl.s) + "%, " + round(hsl.l) + "%)";
     },
     set: function set(value) {
       var match;
-      var h,
-          s,
-          l,
-          a = 1;
-
+      var h = 0,
+        s = 0,
+        l = 0,
+        a = 1;
       if (match = REGEX_FUNCTIONAL_HSL.exec(value)) {
         h = parseUnit(match[1], 360);
         s = parseUnit(match[2], 100);
@@ -667,9 +1407,8 @@ function () {
         h = parseUnit(match[1], 360);
         s = parseUnit(match[2], 100);
         l = parseUnit(match[3], 100);
-        a = parseUnit(match[4], 1);
+        a = clamp(parseUnit(match[4], 1), 0, 1);
       }
-
       if (match) {
         this.hsl = {
           h: h,
@@ -678,50 +1417,46 @@ function () {
           a: a
         };
       } else {
-        throw new Error('Invalid hsl string');
+        throw new Error("Invalid hsl string");
       }
     }
   }, {
     key: "hslaString",
     get: function get() {
       var hsla = this.hsla;
-      return "hsla(" + hsla.h + ", " + hsla.s + "%, " + hsla.l + "%, " + hsla.a + ")";
+      return "hsla(" + round(hsla.h) + ", " + round(hsla.s) + "%, " + round(hsla.l) + "%, " + hsla.a + ")";
     },
     set: function set(value) {
       this.hslString = value;
     }
   }]);
-
-  return IroColor;
 }();
 
 var sliderDefaultOptions = {
-  sliderShape: 'bar',
-  sliderType: 'value',
+  sliderShape: "bar",
+  sliderType: "value",
   minTemperature: 2200,
   maxTemperature: 11000
 };
 /**
  * @desc Get the bounding dimensions of the slider
  * @param props - slider props
+ * Note: sliderSize of null or undefined triggers auto-calculation based on padding, handleRadius, and borderWidth.
+ * A value of 0 is not supported as a fixed size.
  */
-
 function getSliderDimensions(props) {
-  var _sliderSize;
-
-  var width = props.width,
-      sliderSize = props.sliderSize,
-      borderWidth = props.borderWidth,
-      handleRadius = props.handleRadius,
-      padding = props.padding,
-      sliderShape = props.sliderShape;
-  var ishorizontal = props.layoutDirection === 'horizontal'; // automatically calculate sliderSize if its not defined
-
-  sliderSize = (_sliderSize = sliderSize) != null ? _sliderSize : padding * 2 + handleRadius * 2;
-
-  if (sliderShape === 'circle') {
+  var width = Number.isFinite(props.width) ? props.width : 0;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var handleRadius = Number.isFinite(props.handleRadius) ? props.handleRadius : 0;
+  var padding = Number.isFinite(props.padding) ? props.padding : 0;
+  var ishorizontal = props.layoutDirection === "horizontal";
+  var sliderSize = Number.isFinite(props.sliderSize) ? props.sliderSize : undefined;
+  var sliderShape = props.sliderShape;
+  // automatically calculate sliderSize if its not defined
+  sliderSize = sliderSize != null ? sliderSize : padding * 2 + handleRadius * 2 + borderWidth * 2;
+  if (sliderShape === "circle") {
     return {
-      handleStart: props.padding + props.handleRadius,
+      handleStart: padding + handleRadius,
       handleRange: width - padding * 2 - handleRadius * 2,
       width: width,
       height: width,
@@ -746,39 +1481,30 @@ function getSliderDimensions(props) {
  * @param props - slider props
  * @param color
  */
-
 function getCurrentSliderValue(props, color) {
   var hsva = color.hsva;
   var rgb = color.rgb;
-
   switch (props.sliderType) {
-    case 'red':
+    case "red":
       return rgb.r / 2.55;
-
-    case 'green':
+    case "green":
       return rgb.g / 2.55;
-
-    case 'blue':
+    case "blue":
       return rgb.b / 2.55;
-
-    case 'alpha':
+    case "alpha":
       return hsva.a * 100;
-
-    case 'kelvin':
+    case "kelvin":
       var minTemperature = props.minTemperature,
-          maxTemperature = props.maxTemperature;
+        maxTemperature = props.maxTemperature;
       var temperatureRange = maxTemperature - minTemperature;
-      var percent = (color.kelvin - minTemperature) / temperatureRange * 100; // clmap percentage
-
+      var percent = (color.kelvin - minTemperature) / temperatureRange * 100;
+      // clamp percentage to [0, 100]; assumes minTemperature < maxTemperature
       return Math.max(0, Math.min(percent, 100));
-
-    case 'hue':
-      return hsva.h /= 3.6;
-
-    case 'saturation':
+    case "hue":
+      return hsva.h / 3.6;
+    case "saturation":
       return hsva.s;
-
-    case 'value':
+    case "value":
     default:
       return hsva.v;
   }
@@ -789,42 +1515,37 @@ function getCurrentSliderValue(props, color) {
  * @param x - global input x position
  * @param y - global input y position
  */
-
 function getSliderValueFromInput(props, x, y) {
   var _getSliderDimensions = getSliderDimensions(props),
-      handleRange = _getSliderDimensions.handleRange,
-      handleStart = _getSliderDimensions.handleStart;
-
+    handleRange = _getSliderDimensions.handleRange,
+    handleStart = _getSliderDimensions.handleStart;
+  var safeHandleRange = Number.isFinite(handleRange) ? handleRange : 0;
+  var safeHandleStart = Number.isFinite(handleStart) ? handleStart : 0;
+  var safeX = Number.isFinite(x) ? x : safeHandleStart;
+  var safeY = Number.isFinite(y) ? y : safeHandleStart;
   var handlePos;
-
-  if (props.layoutDirection === 'horizontal') {
-    handlePos = -1 * y + handleRange + handleStart;
+  if (props.layoutDirection === "horizontal") {
+    handlePos = -1 * safeY + safeHandleRange + safeHandleStart;
   } else {
-    handlePos = x - handleStart;
-  } // clamp handle position
-
-
-  handlePos = Math.max(Math.min(handlePos, handleRange), 0);
-  var percent = Math.round(100 / handleRange * handlePos);
-
+    handlePos = safeX - safeHandleStart;
+  }
+  // clamp handle position
+  handlePos = Math.max(Math.min(handlePos, safeHandleRange), 0);
+  var percent = safeHandleRange > 0 ? Math.round(100 / safeHandleRange * handlePos) : 0;
   switch (props.sliderType) {
-    case 'kelvin':
-      var minTemperature = props.minTemperature,
-          maxTemperature = props.maxTemperature;
+    case "kelvin":
+      var minTemperature = Number.isFinite(props.minTemperature) ? props.minTemperature : 0;
+      var maxTemperature = Number.isFinite(props.maxTemperature) ? props.maxTemperature : minTemperature;
       var temperatureRange = maxTemperature - minTemperature;
       return minTemperature + temperatureRange * (percent / 100);
-
-    case 'alpha':
+    case "alpha":
       return percent / 100;
-
-    case 'hue':
+    case "hue":
       return percent * 3.6;
-
-    case 'red':
-    case 'blue':
-    case 'green':
+    case "red":
+    case "blue":
+    case "green":
       return percent * 2.55;
-
     default:
       return percent;
   }
@@ -834,23 +1555,24 @@ function getSliderValueFromInput(props, x, y) {
  * @param props - slider props
  * @param color
  */
-
 function getSliderHandlePosition(props, color) {
   var _getSliderDimensions2 = getSliderDimensions(props),
-      width = _getSliderDimensions2.width,
-      height = _getSliderDimensions2.height,
-      handleRange = _getSliderDimensions2.handleRange,
-      handleStart = _getSliderDimensions2.handleStart;
-
-  var ishorizontal = props.layoutDirection === 'horizontal';
+    width = _getSliderDimensions2.width,
+    height = _getSliderDimensions2.height,
+    handleRange = _getSliderDimensions2.handleRange,
+    handleStart = _getSliderDimensions2.handleStart;
+  var ishorizontal = props.layoutDirection === "horizontal";
   var sliderValue = getCurrentSliderValue(props, color);
-  var midPoint = ishorizontal ? width / 2 : height / 2;
-  var handlePos = handleStart + sliderValue / 100 * handleRange;
-
+  var safeWidth = Number.isFinite(width) ? width : 0;
+  var safeHeight = Number.isFinite(height) ? height : 0;
+  var safeHandleRange = Number.isFinite(handleRange) ? handleRange : 0;
+  var safeHandleStart = Number.isFinite(handleStart) ? handleStart : 0;
+  var safeSliderValue = Number.isFinite(sliderValue) ? sliderValue : 0;
+  var midPoint = ishorizontal ? safeWidth / 2 : safeHeight / 2;
+  var handlePos = safeHandleStart + safeSliderValue / 100 * safeHandleRange;
   if (ishorizontal) {
-    handlePos = -1 * handlePos + handleRange + handleStart * 2;
+    handlePos = -1 * handlePos + safeHandleRange + safeHandleStart * 2;
   }
-
   return {
     x: ishorizontal ? midPoint : handlePos,
     y: ishorizontal ? handlePos : midPoint
@@ -861,46 +1583,38 @@ function getSliderHandlePosition(props, color) {
  * @param props - slider props
  * @param color
  */
-
 function getSliderGradient(props, color) {
   var hsv = color.hsv;
   var rgb = color.rgb;
-
   switch (props.sliderType) {
-    case 'red':
+    case "red":
       return [[0, "rgb(" + 0 + "," + rgb.g + "," + rgb.b + ")"], [100, "rgb(" + 255 + "," + rgb.g + "," + rgb.b + ")"]];
-
-    case 'green':
+    case "green":
       return [[0, "rgb(" + rgb.r + "," + 0 + "," + rgb.b + ")"], [100, "rgb(" + rgb.r + "," + 255 + "," + rgb.b + ")"]];
-
-    case 'blue':
+    case "blue":
       return [[0, "rgb(" + rgb.r + "," + rgb.g + "," + 0 + ")"], [100, "rgb(" + rgb.r + "," + rgb.g + "," + 255 + ")"]];
-
-    case 'alpha':
+    case "alpha":
       return [[0, "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0)"], [100, "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")"]];
-
-    case 'kelvin':
+    case "kelvin":
       var stops = [];
       var min = props.minTemperature;
       var max = props.maxTemperature;
       var numStops = 8;
       var range = max - min;
-
-      for (var kelvin = min, stop = 0; kelvin < max; kelvin += range / numStops, stop += 1) {
+      // Generate stops including both min and max temperatures
+      for (var i = 0; i <= numStops; i++) {
+        var percent = 100 / numStops * i;
+        var kelvin = min + range / numStops * i;
         var _IroColor$kelvinToRgb = IroColor.kelvinToRgb(kelvin),
-            r = _IroColor$kelvinToRgb.r,
-            g = _IroColor$kelvinToRgb.g,
-            b = _IroColor$kelvinToRgb.b;
-
-        stops.push([100 / numStops * stop, "rgb(" + r + "," + g + "," + b + ")"]);
+          r = _IroColor$kelvinToRgb.r,
+          g = _IroColor$kelvinToRgb.g,
+          b = _IroColor$kelvinToRgb.b;
+        stops.push([percent, "rgb(" + r + "," + g + "," + b + ")"]);
       }
-
       return stops;
-
-    case 'hue':
-      return [[0, '#f00'], [16.666, '#ff0'], [33.333, '#0f0'], [50, '#0ff'], [66.666, '#00f'], [83.333, '#f0f'], [100, '#f00']];
-
-    case 'saturation':
+    case "hue":
+      return [[0, "#f00"], [16.666, "#ff0"], [33.333, "#0f0"], [50, "#0ff"], [66.666, "#00f"], [83.333, "#f0f"], [100, "#f00"]];
+    case "saturation":
       var noSat = IroColor.hsvToHsl({
         h: hsv.h,
         s: 0,
@@ -912,37 +1626,78 @@ function getSliderGradient(props, color) {
         v: hsv.v
       });
       return [[0, "hsl(" + noSat.h + "," + noSat.s + "%," + noSat.l + "%)"], [100, "hsl(" + fullSat.h + "," + fullSat.s + "%," + fullSat.l + "%)"]];
-
-    case 'value':
+    case "value":
     default:
       var hsl = IroColor.hsvToHsl({
         h: hsv.h,
         s: hsv.s,
         v: 100
       });
-      return [[0, '#000'], [100, "hsl(" + hsl.h + "," + hsl.s + "%," + hsl.l + "%)"]];
+      return [[0, "#000"], [100, "hsl(" + hsl.h + "," + hsl.s + "%," + hsl.l + "%)"]];
   }
 }
 
-var TAU = Math.PI * 2; // javascript's modulo operator doesn't produce positive numbers with negative input
-// https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
-
+/**
+ * Mathematical utility functions
+ */
+/**
+ * Tau constant (2π)
+ */
+var TAU = Math.PI * 2;
+/**
+ * Modulo operation that always returns positive numbers
+ * JavaScript's modulo operator doesn't produce positive numbers with negative input
+ * @see https://dev.to/maurobringolf/a-neat-trick-to-compute-modulo-of-negative-numbers-111e
+ */
 var mod = function mod(a, n) {
   return (a % n + n) % n;
-}; // distance between points (x, y) and (0, 0)
-
-
+};
+/**
+ * Calculate the Euclidean distance between point (x, y) and origin (0, 0)
+ */
 var dist = function dist(x, y) {
   return Math.sqrt(x * x + y * y);
 };
+
+/**
+ * COORDINATE SYSTEM CONVENTION:
+ *
+ * Mathematical Convention (internal calculations):
+ * - 0° = East (positive X-axis, right)
+ * - 90° = North (positive Y-axis, up in math, but down in DOM)
+ * - Positive rotation = counterclockwise
+ *
+ * HSV Hue Convention:
+ * - 0° = Red
+ * - 120° = Green
+ * - 240° = Blue
+ *
+ * DOM/CSS Convention:
+ * - Y-axis points downward (opposite of mathematical convention)
+ * - conic-gradient starts at 0° = North (12 o'clock position)
+ *
+ * wheelAngle:
+ * - Defines the visual rotation offset of the wheel
+ * - wheelAngle=0 means red (hue=0) appears at the default position
+ * - Positive wheelAngle rotates the wheel counterclockwise
+ *
+ * wheelDirection:
+ * - 'anticlockwise': hue increases counterclockwise (mathematical convention)
+ * - 'clockwise': hue increases clockwise (inverted)
+ */
 /**
  * @param props - wheel props
  * @internal
  */
-
-
 function getHandleRange(props) {
-  return props.width / 2 - props.padding - props.handleRadius - props.borderWidth;
+  var width = Number.isFinite(props.width) ? props.width : 0;
+  var padding = Number.isFinite(props.padding) ? props.padding : 0;
+  var handleRadius = Number.isFinite(props.handleRadius) ? props.handleRadius : 0;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var r = width / 2 - padding - handleRadius - borderWidth;
+  // Clamp to non-negative to prevent division by zero and inverted coordinates
+  // when padding + handleRadius + borderWidth >= width/2
+  return Math.max(0, r);
 }
 /**
  * Returns true if point (x, y) lands inside the wheel
@@ -950,90 +1705,151 @@ function getHandleRange(props) {
  * @param x
  * @param y
  */
-
-
 function isInputInsideWheel(props, x, y) {
   var _getWheelDimensions = getWheelDimensions(props),
-      cx = _getWheelDimensions.cx,
-      cy = _getWheelDimensions.cy;
-
-  var r = props.width / 2;
-  return dist(cx - x, cy - y) < r;
+    cx = _getWheelDimensions.cx,
+    cy = _getWheelDimensions.cy,
+    radius = _getWheelDimensions.radius;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var hitR = radius + borderWidth / 2;
+  var safeX = Number.isFinite(x) ? x : cx;
+  var safeY = Number.isFinite(y) ? y : cy;
+  return dist(cx - safeX, cy - safeY) < hitR;
 }
 /**
  * @desc Get the point as the center of the wheel
  * @param props - wheel props
  */
-
 function getWheelDimensions(props) {
-  var r = props.width / 2;
+  var width = Number.isFinite(props.width) ? props.width : 0;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var r = width / 2;
   return {
-    width: props.width,
-    radius: r - props.borderWidth,
+    width: width,
+    radius: r - borderWidth,
     cx: r,
     cy: r
   };
 }
 /**
- * @desc Translate an angle according to wheelAngle and wheelDirection
+ * Translate between HSV hue and visual wheel angle
+ *
  * @param props - wheel props
- * @param angle - input angle
+ * @param angle - input angle (visual angle if invert=false, hue if invert=true)
+ * @param invert - if false: visual angle → hue, if true: hue → visual angle
+ * @returns translated angle in degrees (0-360)
+ *
+ * Without invert: Converts from visual wheel position to HSV hue
+ * With invert: Converts from HSV hue to visual wheel position
+ *
+ * These transformations are mathematically bidirectional:
+ * translateWheelAngle(props, translateWheelAngle(props, angle, false), true) === angle
  */
-
 function translateWheelAngle(props, angle, invert) {
-  var wheelAngle = props.wheelAngle;
-  var wheelDirection = props.wheelDirection; // inverted and clockwisee
-
-  if (invert && wheelDirection === 'clockwise') { angle = wheelAngle + angle; } // clockwise (input handling)
-  else if (wheelDirection === 'clockwise') { angle = 360 - wheelAngle + angle; } // inverted and anticlockwise
-    else if (invert && wheelDirection === 'anticlockwise') { angle = wheelAngle + 180 - angle; } // anticlockwise (input handling)
-      else if (wheelDirection === 'anticlockwise') { angle = wheelAngle - angle; }
-  return mod(angle, 360);
+  // Default to 0 if wheelAngle is null or undefined (nullish coalescing)
+  var wheelAngle = Number.isFinite(props.wheelAngle) ? props.wheelAngle : 0;
+  // Normalize wheelDirection: only 'clockwise' is clockwise, everything else is 'anticlockwise'
+  var wd = props.wheelDirection === "clockwise" ? "clockwise" : "anticlockwise";
+  var processedAngle = Number.isFinite(angle) ? angle : 0;
+  if (invert) {
+    // HSV Hue → Visual Angle (inverse transformation)
+    if (wd === "anticlockwise") {
+      // visual angle = hue - wheelAngle
+      processedAngle = processedAngle - wheelAngle;
+    } else {
+      // clockwise: visual angle = wheelAngle - hue
+      processedAngle = wheelAngle - processedAngle;
+    }
+  } else {
+    // Visual Angle → HSV Hue (forward transformation)
+    if (wd === "anticlockwise") {
+      // hue = visual angle + wheelAngle
+      processedAngle = processedAngle + wheelAngle;
+    } else {
+      // clockwise: hue = wheelAngle - visual angle
+      processedAngle = wheelAngle - processedAngle;
+    }
+  }
+  return mod(processedAngle, 360);
 }
 /**
- * @desc Get the current handle position for a given color
+ * Calculate the handle position (x, y) for a given color
+ *
  * @param props - wheel props
- * @param color
+ * @param color - color object with HSV values
+ * @returns {x, y} coordinates in pixels relative to the wheel container
+ *
+ * The position is calculated by:
+ * 1. Converting HSV hue to visual angle using translateWheelAngle
+ * 2. Converting to Cartesian coordinates using trigonometry
+ * 3. Adjusting for DOM coordinate system (Y-axis points down)
  */
-
 function getWheelHandlePosition(props, color) {
   var hsv = color.hsv;
-
   var _getWheelDimensions2 = getWheelDimensions(props),
-      cx = _getWheelDimensions2.cx,
-      cy = _getWheelDimensions2.cy;
-
+    cx = _getWheelDimensions2.cx,
+    cy = _getWheelDimensions2.cy;
   var handleRange = getHandleRange(props);
-  var handleAngle = (180 + translateWheelAngle(props, hsv.h, true)) * (TAU / 360);
-  var handleDist = hsv.s / 100 * handleRange;
-  var direction = props.wheelDirection === 'clockwise' ? -1 : 1;
+  // If handleRange is zero or negative, return center to avoid inverted coordinates
+  if (handleRange <= 0) {
+    return {
+      x: cx,
+      y: cy
+    };
+  }
+  // Convert HSV hue to visual angle
+  var hue = Number.isFinite(hsv.h) ? hsv.h : 0;
+  var visualAngle = translateWheelAngle(props, hue, true);
+  // Convert to radians
+  var safeVisualAngle = Number.isFinite(visualAngle) ? visualAngle : 0;
+  var angleRad = safeVisualAngle * (TAU / 360);
+  // Calculate distance from center based on saturation
+  var saturation = Number.isFinite(hsv.s) ? hsv.s : 0;
+  var handleDist = saturation / 100 * handleRange;
+  // Convert polar to Cartesian coordinates
+  // Note: Y-axis in DOM points down, so we negate the sin component
   return {
-    x: cx + handleDist * Math.cos(handleAngle) * direction,
-    y: cy + handleDist * Math.sin(handleAngle) * direction
+    x: cx + handleDist * Math.cos(angleRad),
+    y: cy - handleDist * Math.sin(angleRad)
   };
 }
 /**
- * @desc Get the current wheel value from user input
+ * Calculate HSV values from user input coordinates
+ *
  * @param props - wheel props
- * @param x - global input x position
- * @param y - global input y position
+ * @param x - input x position in pixels
+ * @param y - input y position in pixels
+ * @returns {h, s} - hue (0-360) and saturation (0-100)
+ *
+ * The values are calculated by:
+ * 1. Converting input coordinates to polar coordinates (angle, distance)
+ * 2. Converting visual angle to HSV hue using translateWheelAngle
+ * 3. Converting distance to saturation percentage
  */
-
 function getWheelValueFromInput(props, x, y) {
   var _getWheelDimensions3 = getWheelDimensions(props),
-      cx = _getWheelDimensions3.cx,
-      cy = _getWheelDimensions3.cy;
-
+    cx = _getWheelDimensions3.cx,
+    cy = _getWheelDimensions3.cy;
   var handleRange = getHandleRange(props);
-  x = cx - x;
-  y = cy - y; // Calculate the hue by converting the angle to radians
-
-  var hue = translateWheelAngle(props, Math.atan2(-y, -x) * (360 / TAU)); // Find the point's distance from the center of the wheel
-  // This is used to show the saturation level
-
-  var handleDist = Math.min(dist(x, y), handleRange);
+  // Calculate relative position from center
+  var dx = Number.isFinite(x - cx) ? x - cx : 0;
+  var dy = Number.isFinite(cy - y) ? cy - y : 0; // Note: cy - y because DOM Y-axis points down
+  // Calculate angle in mathematical convention (0° = East, positive = CCW)
+  var visualAngle = Math.atan2(dy, dx) * (360 / TAU);
+  // Convert visual angle to HSV hue (translateWheelAngle will normalize)
+  var hue = translateWheelAngle(props, visualAngle, false);
+  // If handleRange is zero or negative, saturation is always 0
+  // (entire wheel is collapsed to a point)
+  if (handleRange <= 0) {
+    return {
+      h: mod(Math.round(Number.isFinite(hue) ? hue : 0), 360),
+      s: 0
+    };
+  }
+  // Calculate distance from center for saturation
+  var handleDist = Math.min(dist(dx, dy), handleRange);
   return {
-    h: Math.round(hue),
+    h: mod(Math.round(Number.isFinite(hue) ? hue : 0), 360),
     s: Math.round(100 / handleRange * handleDist)
   };
 }
@@ -1041,12 +1857,11 @@ function getWheelValueFromInput(props, x, y) {
  * @desc Get the bounding dimensions of the box
  * @param props - box props
  */
-
 function getBoxDimensions(props) {
   var width = props.width,
-      boxHeight = props.boxHeight,
-      padding = props.padding,
-      handleRadius = props.handleRadius;
+    boxHeight = props.boxHeight,
+    padding = props.padding,
+    handleRadius = props.handleRadius;
   return {
     width: width,
     height: boxHeight != null ? boxHeight : width,
@@ -1059,13 +1874,11 @@ function getBoxDimensions(props) {
  * @param x - global input x position
  * @param y - global input y position
  */
-
 function getBoxValueFromInput(props, x, y) {
   var _getBoxDimensions = getBoxDimensions(props),
-      width = _getBoxDimensions.width,
-      height = _getBoxDimensions.height,
-      radius = _getBoxDimensions.radius;
-
+    width = _getBoxDimensions.width,
+    height = _getBoxDimensions.height,
+    radius = _getBoxDimensions.radius;
   var handleStart = radius;
   var handleRangeX = width - radius * 2;
   var handleRangeY = height - radius * 2;
@@ -1081,13 +1894,11 @@ function getBoxValueFromInput(props, x, y) {
  * @param props - box props
  * @param color
  */
-
 function getBoxHandlePosition(props, color) {
   var _getBoxDimensions2 = getBoxDimensions(props),
-      width = _getBoxDimensions2.width,
-      height = _getBoxDimensions2.height,
-      radius = _getBoxDimensions2.radius;
-
+    width = _getBoxDimensions2.width,
+    height = _getBoxDimensions2.height,
+    radius = _getBoxDimensions2.radius;
   var hsv = color.hsv;
   var handleStart = radius;
   var handleRangeX = width - radius * 2;
@@ -1102,11 +1913,12 @@ function getBoxHandlePosition(props, color) {
  * @param props - box props
  * @param color
  */
-
 function getBoxGradients(props, color) {
   var hue = color.hue;
-  return [// saturation gradient
-  [[0, '#fff'], [100, "hsl(" + hue + ",100%,50%)"]], // lightness gradient
+  return [
+  // saturation gradient
+  [[0, '#fff'], [100, "hsl(" + hue + ",100%,50%)"]],
+  // lightness gradient
   [[0, 'rgba(0,0,0,0)'], [100, '#000']]];
 }
 
@@ -1126,15 +1938,21 @@ var BASE_ELEMENTS;
  * https://github.com/jaames/iro.js/pull/89
  * @props url - SVG reference URL
  */
-
 function resolveSvgUrl(url) {
-  if (!BASE_ELEMENTS) { BASE_ELEMENTS = document.getElementsByTagName('base'); } // Sniff useragent string to check if the user is running Safari
-
-  var ua = window.navigator.userAgent;
-  var isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-  var isIos = /iPhone|iPod|iPad/i.test(ua);
-  var location = window.location;
-  return (isSafari || isIos) && BASE_ELEMENTS.length > 0 ? location.protocol + "//" + location.host + location.pathname + location.search + url : url;
+  if (!BASE_ELEMENTS) { BASE_ELEMENTS = document.getElementsByTagName("base"); }
+  // If there's a <base> tag, use URL API to resolve the URL properly
+  // This avoids UA sniffing and works with all browsers
+  if (BASE_ELEMENTS.length > 0) {
+    try {
+      // Use URL API with document.baseURI for proper resolution
+      return new URL(url, document.baseURI).toString();
+    } catch (e) {
+      // Fallback if URL API fails
+      var location = window.location;
+      return location.protocol + "//" + location.host + location.pathname + location.search + url;
+    }
+  }
+  return url;
 }
 /**
  * @desc Given a specifc (x, y) position, test if there's a handle there and return its index, else return null.
@@ -1143,18 +1961,22 @@ function resolveSvgUrl(url) {
  * @props y - point y position
  * @props handlePositions - array of {x, y} coords for each handle
  */
-
 function getHandleAtPoint(props, x, y, handlePositions) {
+  var _props$handleRadius;
+  var radius = (_props$handleRadius = props.handleRadius) != null ? _props$handleRadius : 0;
+  var safeX = Number.isFinite(x) ? x : 0;
+  var safeY = Number.isFinite(y) ? y : 0;
   for (var i = 0; i < handlePositions.length; i++) {
-    var dX = handlePositions[i].x - x;
-    var dY = handlePositions[i].y - y;
+    var handleX = Number.isFinite(handlePositions[i].x) ? handlePositions[i].x : 0;
+    var handleY = Number.isFinite(handlePositions[i].y) ? handlePositions[i].y : 0;
+    var dX = handleX - safeX;
+    var dY = handleY - safeY;
     var dist = Math.sqrt(dX * dX + dY * dY);
-
-    if (dist < props.handleRadius) {
+    // Use <= to include clicks exactly on the radius edge, with 0.5px fuzz for pixel rounding
+    if (dist <= radius + 0.5) {
       return i;
     }
   }
-
   return null;
 }
 
@@ -1167,7 +1989,7 @@ function cssBorderStyles(props) {
 function cssGradient(type, direction, stops) {
   return type + "-gradient(" + direction + ", " + stops.map(function (_ref) {
     var o = _ref[0],
-        col = _ref[1];
+      col = _ref[1];
     return col + " " + o + "%";
   }).join(',') + ")";
 }
@@ -1179,11 +2001,11 @@ function cssValue(value) {
 var iroColorPickerOptionDefaults = {
   width: 300,
   height: 300,
-  color: '#fff',
+  color: "#fff",
   colors: [],
   padding: 6,
-  layoutDirection: 'vertical',
-  borderColor: '#fff',
+  layoutDirection: "vertical",
+  borderColor: "#fff",
   borderWidth: 0,
   handleRadius: 8,
   activeHandleRadius: null,
@@ -1194,18 +2016,34 @@ var iroColorPickerOptionDefaults = {
   },
   wheelLightness: true,
   wheelAngle: 0,
-  wheelDirection: 'anticlockwise',
+  wheelDirection: "anticlockwise",
   sliderSize: null,
   sliderMargin: 12,
-  boxHeight: null
+  boxHeight: null,
+  gamut: "none",
+  matrixProfile: DEFAULT_MATRIX_PROFILE,
+  preserveVisualHueOnWheelChange: true
 };
+/**
+ * Normalizes the user-supplied matrix profile option. Any unknown, null, or
+ * otherwise invalid value is coerced to {@link DEFAULT_MATRIX_PROFILE} to
+ * ensure downstream conversions always have a valid profile handle.
+ */
+function normalizeMatrixProfileOption(profile) {
+  return normalizeMatrixProfileName(profile != null ? profile : DEFAULT_MATRIX_PROFILE);
+}
 
-var SECONDARY_EVENTS = ["mousemove" /* MouseMove */, "touchmove" /* TouchMove */, "mouseup" /* MouseUp */, "touchend" /* TouchEnd */];
+var SECONDARY_EVENTS = [
+    "mousemove" /* MouseMove */,
+    "touchmove" /* TouchMove */,
+    "mouseup" /* MouseUp */,
+    "touchend" ];
 // Base component class for iro UI components
 // This extends the Preact component class to allow them to react to mouse/touch input events by themselves
 var IroComponentWrapper = /*@__PURE__*/(function (Component) {
     function IroComponentWrapper(props) {
         Component.call(this, props);
+        this.isDragging = false;
         // Generate unique ID for the component
         // This can be used to generate unique IDs for gradients, etc
         this.uid = (Math.random() + 1).toString(36).substring(5);
@@ -1222,17 +2060,19 @@ var IroComponentWrapper = /*@__PURE__*/(function (Component) {
             // https://github.com/preactjs/preact/issues/2113#issuecomment-553408767
             ontouchstart: eventHandler,
         };
-        var isHorizontal = props.layoutDirection === 'horizontal';
+        var isHorizontal = props.layoutDirection === "horizontal";
         var margin = props.margin === null ? props.sliderMargin : props.margin;
         var rootStyles = {
-            overflow: 'visible',
-            display: isHorizontal ? 'inline-block' : 'block'
+            overflow: "visible",
+            display: isHorizontal ? "inline-block" : "block",
+            // Set touch-action: none during dragging to prevent browser touch gestures
+            touchAction: this.isDragging ? "none" : "auto",
         };
         // first component shouldn't have any margin
         if (props.index > 0) {
-            rootStyles[isHorizontal ? 'marginLeft' : 'marginTop'] = margin;
+            rootStyles[isHorizontal ? "marginLeft" : "marginTop"] = margin;
         }
-        return (h(d, null, props.children(this.uid, rootProps, rootStyles)));
+        return _(k, null, props.children(this.uid, rootProps, rootStyles));
     };
     // More info on handleEvent:
     // https://medium.com/@WebReflection/dom-handleevent-a-cross-platform-standard-since-year-2000-5bf17287fd38
@@ -1243,8 +2083,6 @@ var IroComponentWrapper = /*@__PURE__*/(function (Component) {
         var inputHandler = this.props.onInput;
         // Get the screen position of the component
         var bounds = this.base.getBoundingClientRect();
-        // Prefect default browser action
-        e.preventDefault();
         // Detect if the event is a touch event by checking if it has the `touches` property
         // If it is a touch event, use the first touch input
         var point = e.touches ? e.changedTouches[0] : e;
@@ -1255,6 +2093,9 @@ var IroComponentWrapper = /*@__PURE__*/(function (Component) {
             case "touchstart" /* TouchStart */:
                 var result = inputHandler(x, y, 0 /* Start */);
                 if (result !== false) {
+                    // Prevent default only after drag has been initiated
+                    e.preventDefault();
+                    this.isDragging = true;
                     SECONDARY_EVENTS.forEach(function (event) {
                         document.addEventListener(event, this$1, { passive: false });
                     });
@@ -1262,48 +2103,57 @@ var IroComponentWrapper = /*@__PURE__*/(function (Component) {
                 break;
             case "mousemove" /* MouseMove */:
             case "touchmove" /* TouchMove */:
+                // Prevent default only while dragging
+                if (this.isDragging) {
+                    e.preventDefault();
+                }
                 inputHandler(x, y, 1 /* Move */);
                 break;
             case "mouseup" /* MouseUp */:
             case "touchend" /* TouchEnd */:
+                if (this.isDragging) {
+                    e.preventDefault();
+                    this.isDragging = false;
+                }
                 inputHandler(x, y, 2 /* End */);
                 SECONDARY_EVENTS.forEach(function (event) {
-                    document.removeEventListener(event, this$1, { passive: false });
+                    document.removeEventListener(event, this$1, {
+                        passive: false,
+                    });
                 });
                 break;
         }
     };
 
     return IroComponentWrapper;
-}(m));
+}(x));
 
 function IroHandle(props) {
     var radius = props.r;
     var url = props.url;
     var cx = radius;
     var cy = radius;
-    return (h("svg", { className: ("IroHandle IroHandle--" + (props.index) + " " + (props.isActive ? 'IroHandle--isActive' : '')), style: {
-            '-webkit-tap-highlight-color': 'rgba(0, 0, 0, 0);',
+    return (_("svg", { className: ("IroHandle IroHandle--" + (props.index) + " " + (props.isActive ? "IroHandle--isActive" : "")), style: {
             transform: ("translate(" + (cssValue(props.x)) + ", " + (cssValue(props.y)) + ")"),
-            willChange: 'transform',
+            willChange: "transform",
             top: cssValue(-radius),
             left: cssValue(-radius),
             width: cssValue(radius * 2),
             height: cssValue(radius * 2),
-            position: 'absolute',
-            overflow: 'visible'
+            position: "absolute",
+            overflow: "visible",
         } },
-        url && (h("use", Object.assign({ xlinkHref: resolveSvgUrl(url) }, props.props))),
-        !url && (h("circle", { cx: cx, cy: cy, r: radius, fill: "none", "stroke-width": 2, stroke: "#000" })),
-        !url && (h("circle", { cx: cx, cy: cy, r: radius - 2, fill: props.fill, "stroke-width": 2, stroke: "#fff" }))));
+        url && _("use", Object.assign({ xlinkHref: resolveSvgUrl(url) }, props.props)),
+        !url && (_("circle", { cx: cx, cy: cy, r: radius, fill: "none", strokeWidth: 2, stroke: "#000" })),
+        !url && (_("circle", { cx: cx, cy: cy, r: radius - 2, fill: props.fill, strokeWidth: 2, stroke: "#fff" }))));
 }
 IroHandle.defaultProps = {
-    fill: 'none',
+    fill: "none",
     x: 0,
     y: 0,
     r: 8,
     url: null,
-    props: { x: 0, y: 0 }
+    props: { x: 0, y: 0 },
 };
 
 function IroSlider(props) {
@@ -1321,23 +2171,11 @@ function IroSlider(props) {
         activeColor[props.sliderType] = value;
         props.onInput(type, props.id);
     }
-    return (h(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (h("div", Object.assign({}, rootProps, { className: "IroSlider", style: Object.assign({}, {position: 'relative',
-            width: cssValue(width),
-            height: cssValue(height),
-            borderRadius: cssValue(radius),
+    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroSlider", style: Object.assign({ position: 'relative', width: cssValue(width), height: cssValue(height), borderRadius: cssValue(radius), 
             // checkered bg to represent alpha
-            background: "conic-gradient(#ccc 25%, #fff 0 50%, #ccc 0 75%, #fff 0)",
-            backgroundSize: '8px 8px'},
-            rootStyles) }),
-        h("div", { className: "IroSliderGradient", style: Object.assign({}, {position: 'absolute',
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                borderRadius: cssValue(radius),
-                background: cssGradient('linear', props.layoutDirection === 'horizontal' ? 'to top' : 'to right', gradient)},
-                cssBorderStyles(props)) }),
-        h(IroHandle, { isActive: true, index: activeColor.index, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePos.x, y: handlePos.y }))); }));
+            background: "conic-gradient(#ccc 25%, #fff 0 50%, #ccc 0 75%, #fff 0)", backgroundSize: '8px 8px' }, rootStyles) }),
+        _("div", { className: "IroSliderGradient", style: Object.assign({ position: 'absolute', top: 0, left: 0, width: "100%", height: "100%", borderRadius: cssValue(radius), background: cssGradient('linear', props.layoutDirection === 'horizontal' ? 'to top' : 'to right', gradient) }, cssBorderStyles(props)) }),
+        _(IroHandle, { isActive: true, index: activeColor.index, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePos.x, y: handlePos.y }))); }));
 }
 IroSlider.defaultProps = Object.assign({}, sliderDefaultOptions);
 
@@ -1375,51 +2213,56 @@ function IroBox(props) {
         // let the color picker fire input:start, input:move or input:end events
         props.onInput(inputType, props.id);
     }
-    return (h(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (h("div", Object.assign({}, rootProps, { className: "IroBox", style: Object.assign({}, {width: cssValue(width),
-            height: cssValue(height),
-            position: 'relative'},
-            rootStyles) }),
-        h("div", { className: "IroBox", style: Object.assign({}, {width: '100%',
-                height: '100%',
-                borderRadius: cssValue(radius)},
-                cssBorderStyles(props),
-                {background: cssGradient('linear', 'to bottom', gradients[1])
+    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroBox", style: Object.assign({ width: cssValue(width), height: cssValue(height), position: 'relative' }, rootStyles) }),
+        _("div", { className: "IroBox", style: Object.assign(Object.assign({ width: '100%', height: '100%', borderRadius: cssValue(radius) }, cssBorderStyles(props)), { background: cssGradient('linear', 'to bottom', gradients[1])
                     + ',' +
-                    cssGradient('linear', 'to right', gradients[0])}) }),
-        colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (h(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
-        h(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+                    cssGradient('linear', 'to right', gradients[0]) }) }),
+        colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
+        _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
 }
 
-var HUE_GRADIENT_CLOCKWISE = 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)';
-var HUE_GRADIENT_ANTICLOCKWISE = 'conic-gradient(red, magenta, blue, aqua, lime, yellow, red)';
+var HUE_GRADIENT_CLOCKWISE = "conic-gradient(red, yellow, lime, aqua, blue, magenta, red)";
+var HUE_GRADIENT_ANTICLOCKWISE = "conic-gradient(red, magenta, blue, aqua, lime, yellow, red)";
+// Base rotation to convert from math convention (0°=East) to CSS (0°=North)
+var BASE_ROT_DEG = 90;
 function IroWheel(props) {
-    var ref = getWheelDimensions(props);
-    var width = ref.width;
+    var _a;
     var colors = props.colors;
     var borderWidth = props.borderWidth;
+    // Default to 0 if wheelAngle is null or undefined (nullish coalescing)
+    var wheelAngle = (_a = props.wheelAngle) !== null && _a !== void 0 ? _a : 0;
+    // Normalize wheelDirection: only 'clockwise' is clockwise, everything else is 'anticlockwise'
+    var wd = (props.wheelDirection === "clockwise" ? "clockwise" : "anticlockwise");
+    // Create props object with default values for core functions
+    var propsWithDefaults = Object.assign(Object.assign({}, props), { wheelAngle: wheelAngle, wheelDirection: wd });
+    var ref = getWheelDimensions(propsWithDefaults);
+    var width = ref.width;
+    // Calculate hue rotation: BASE_ROT_DEG converts from math to CSS coordinates
+    // For clockwise: subtract wheelAngle, for anticlockwise: add wheelAngle
+    var hueRotation = wd === "clockwise" ? BASE_ROT_DEG - wheelAngle : BASE_ROT_DEG + wheelAngle;
     var colorPicker = props.parent;
     var activeColor = props.color;
     var hsv = activeColor.hsv;
-    var handlePositions = colors.map(function (color) { return getWheelHandlePosition(props, color); });
+    var handlePositions = colors.map(function (color) { return getWheelHandlePosition(propsWithDefaults, color); });
     var circleStyles = {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
-        borderRadius: '50%',
-        boxSizing: 'border-box'
+        width: "100%",
+        height: "100%",
+        borderRadius: "50%",
+        boxSizing: "border-box",
     };
     function handleInput(x, y, inputType) {
         if (inputType === 0 /* Start */) {
-            // input hitbox is a square, 
+            // input hitbox is a square,
             // so we want to ignore any initial clicks outside the circular shape of the wheel
-            if (!isInputInsideWheel(props, x, y)) {
+            if (!isInputInsideWheel(propsWithDefaults, x, y)) {
                 // returning false will cease all event handling for this interaction
                 return false;
             }
             // getHandleAtPoint() returns the index for the handle if the point 'hits' it, or null otherwise
-            var activeHandle = getHandleAtPoint(props, x, y, handlePositions);
+            var activeHandle = getHandleAtPoint(propsWithDefaults, x, y, handlePositions);
             // If the input hit a handle, set it as the active handle, but don't update the color
             if (activeHandle !== null) {
                 colorPicker.setActiveColor(activeHandle);
@@ -1427,54 +2270,108 @@ function IroWheel(props) {
             // If the input didn't hit a handle, set the currently active handle to that position
             else {
                 colorPicker.inputActive = true;
-                activeColor.hsv = getWheelValueFromInput(props, x, y);
+                activeColor.hsv = getWheelValueFromInput(propsWithDefaults, x, y);
                 props.onInput(inputType, props.id);
             }
         }
         // move is fired when the user has started dragging
         else if (inputType === 1 /* Move */) {
             colorPicker.inputActive = true;
-            activeColor.hsv = getWheelValueFromInput(props, x, y);
+            activeColor.hsv = getWheelValueFromInput(propsWithDefaults, x, y);
         }
         // let the color picker fire input:start, input:move or input:end events
         props.onInput(inputType, props.id);
     }
-    return (h(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (h("div", Object.assign({}, rootProps, { className: "IroWheel", style: Object.assign({}, {width: cssValue(width),
-            height: cssValue(width),
-            position: 'relative'},
-            rootStyles) }),
-        h("div", { className: "IroWheelHue", style: Object.assign({}, circleStyles,
-                {transform: ("rotateZ(" + (props.wheelAngle + 90) + "deg)"),
-                background: props.wheelDirection === 'clockwise' ? HUE_GRADIENT_CLOCKWISE : HUE_GRADIENT_ANTICLOCKWISE}) }),
-        h("div", { className: "IroWheelSaturation", style: Object.assign({}, circleStyles,
-                {background: 'radial-gradient(circle closest-side, #fff, transparent)'}) }),
-        props.wheelLightness && (h("div", { className: "IroWheelLightness", style: Object.assign({}, circleStyles,
-                {background: '#000',
-                opacity: 1 - hsv.v / 100}) })),
-        h("div", { className: "IroWheelBorder", style: Object.assign({}, circleStyles,
-                cssBorderStyles(props)) }),
-        colors.filter(function (color) { return color !== activeColor; }).map(function (color) { return (h(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
-        h(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+    return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroWheel", style: Object.assign({ width: cssValue(width), height: cssValue(width), position: "relative" }, rootStyles) }),
+        _("div", { className: "IroWheelHue", style: Object.assign(Object.assign({}, circleStyles), { transform: ("rotateZ(" + hueRotation + "deg)"), background: wd === "clockwise"
+                    ? HUE_GRADIENT_CLOCKWISE
+                    : HUE_GRADIENT_ANTICLOCKWISE }) }),
+        _("div", { className: "IroWheelSaturation", style: Object.assign(Object.assign({}, circleStyles), { background: "radial-gradient(circle closest-side, #fff, transparent)" }) }),
+        props.wheelLightness && (_("div", { className: "IroWheelLightness", style: Object.assign(Object.assign({}, circleStyles), { background: "#000", opacity: 1 - hsv.v / 100 }) })),
+        _("div", { className: "IroWheelBorder", style: Object.assign(Object.assign({}, circleStyles), cssBorderStyles(props)) }),
+        colors
+            .filter(function (color) { return color !== activeColor; })
+            .map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
+        _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+}
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) { if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        { t[p] = s[p]; } }
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        { for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                { t[p[i]] = s[p[i]]; }
+        } }
+    return t;
 }
 
 function createWidget(WidgetComponent) {
     var widgetFactory = function (parent, props) {
-        var widget; // will become an instance of the widget component class
-        var widgetRoot = document.createElement('div');
+        if ( props === void 0 ) props = {};
+
+        var widget = null; // will become an instance of the widget component class
+        var widgetRoot = document.createElement("div");
+        var retries = 0;
+        var maxRetries = 60;
+        var retryWarned = false;
         // Render widget into a temp DOM node
-        I(h(WidgetComponent, Object.assign({}, {ref: function (ref) { return widget = ref; }},
-            props)), widgetRoot);
+        G(_(WidgetComponent, Object.assign({ ref: function (ref) { return (widget = ref); } }, (props || {}))), widgetRoot);
         function mountWidget() {
             var container = parent instanceof Element ? parent : document.querySelector(parent);
+            if (!container) {
+                // Warn if selector not found
+                if (typeof parent === "string") {
+                    console.warn(("[iro.js] Selector \"" + parent + "\" not found in document"));
+                }
+                return;
+            }
+            // Guard against missing widget.base before appending
+            if (!widget.base) {
+                console.warn("[iro.js] Widget base element not ready, retrying...");
+                // Retry on next frame
+                if (retries > maxRetries) {
+                    if (!retryWarned) {
+                        console.warn(("[iro.js] Widget base element not ready after " + maxRetries + " retries. Aborting mount."));
+                        retryWarned = true;
+                    }
+                    return;
+                }
+                retries++;
+                requestAnimationFrame(mountWidget);
+                return;
+            }
             container.appendChild(widget.base);
-            widget.onMount(container);
+            // Only call onMount if container is an HTMLElement (not SVG or other Element types)
+            if (container instanceof HTMLElement) {
+                widget.onMount(container);
+            }
         }
         // Mount it into the DOM when the page document is ready
-        if (document.readyState !== 'loading') {
+        var isElementParent = parent instanceof Element;
+        if (isElementParent || document.readyState !== "loading") {
             mountWidget();
         }
         else {
-            document.addEventListener('DOMContentLoaded', mountWidget);
+            document.addEventListener("DOMContentLoaded", mountWidget, {
+                once: true,
+            });
         }
         return widget;
     };
@@ -1487,6 +2384,7 @@ function createWidget(WidgetComponent) {
     return widgetFactory;
 }
 
+var DEFERABLE_EVENTS = new Set(["mount", "color:init"]);
 var IroColorPicker = /*@__PURE__*/(function (Component) {
     function IroColorPicker(props) {
         var this$1 = this;
@@ -1497,16 +2395,17 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         this.events = {};
         this.activeEvents = {};
         this.deferredEvents = {};
-        this.id = props.id;
-        var colors = props.colors.length > 0 ? props.colors : [props.color];
+        this.suppressColorEvents = false;
+        this.id = props.id || "";
+        var colors = props.colors && props.colors.length > 0
+            ? props.colors
+            : [props.color || "#fff"];
         colors.forEach(function (colorValue) { return this$1.addColor(colorValue); });
         this.setActiveColor(0);
+        var initialMatrixProfile = normalizeMatrixProfileOption(props.matrixProfile);
         // Pass all the props into the component's state,
         // Except we want to add the color object and make sure that refs aren't passed down to children
-        this.state = Object.assign({}, props,
-            {color: this.color,
-            colors: this.colors,
-            layout: props.layout});
+        this.state = Object.assign(Object.assign({}, props), { matrixProfile: initialMatrixProfile, color: this.color, colors: this.colors, layout: props.layout || "default" });
     }
 
     if ( Component ) IroColorPicker.__proto__ = Component;
@@ -1514,47 +2413,80 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
     IroColorPicker.prototype.constructor = IroColorPicker;
     // Plubic multicolor API
     /**
-    * @desc Add a color to the color picker
-    * @param color new color to add
-    * @param index optional color index
-    */
+     * @desc Get the current gamut type from state or props
+     * @internal
+     */
+    IroColorPicker.prototype.getCurrentGamut = function getCurrentGamut () {
+        return this.state && this.state.gamut !== undefined
+            ? this.state.gamut
+            : this.props.gamut !== undefined
+                ? this.props.gamut
+                : iroColorPickerOptionDefaults.gamut;
+    };
+    /**
+     * @desc Get the current matrix profile from state or props, normalized to a supported value
+     * @internal
+     */
+    IroColorPicker.prototype.getCurrentMatrixProfile = function getCurrentMatrixProfile () {
+        if (this.state && this.state.matrixProfile !== undefined) {
+            return normalizeMatrixProfileOption(this.state.matrixProfile);
+        }
+        if (this.props.matrixProfile !== undefined) {
+            return normalizeMatrixProfileOption(this.props.matrixProfile);
+        }
+        return normalizeMatrixProfileOption(undefined);
+    };
+    /**
+     * @desc Add a color to the color picker
+     * @param color new color to add
+     * @param index optional color index
+     */
     IroColorPicker.prototype.addColor = function addColor (color, index) {
         if ( index === void 0 ) index = this.colors.length;
 
         // Create a new iro.Color
         // Also bind it to onColorChange, so whenever the color changes it updates the color picker
-        var newColor = new IroColor(color, this.onColorChange.bind(this));
+        // Use gamut from state if available, otherwise fall back to props or default
+        var gamut = this.getCurrentGamut();
+        var matrixProfile = this.getCurrentMatrixProfile();
+        var newColor = new IroColor(color, this.onColorChange.bind(this), gamut, matrixProfile);
         // Insert color @ the given index
         this.colors.splice(index, 0, newColor);
         // Reindex colors
-        this.colors.forEach(function (color, index) { return color.index = index; });
+        this.colors.forEach(function (color, index) { return (color.index = index); });
         // Update picker state if necessary
         if (this.state) {
             this.setState({ colors: this.colors });
         }
         // Fire color init event
-        this.deferredEmit('color:init', newColor);
+        this.deferredEmit("color:init", newColor);
     };
     /**
      * @desc Remove a color from the color picker
      * @param index color index
      */
     IroColorPicker.prototype.removeColor = function removeColor (index) {
-        var color = this.colors.splice(index, 1)[0];
+        var color = this.colors[index];
+        var wasActive = color === this.color;
+        // Remove the color
+        this.colors.splice(index, 1);
         // Destroy the color object -- this unbinds it from the color picker
         color.unbind();
         // Reindex colors
-        this.colors.forEach(function (color, index) { return color.index = index; });
+        this.colors.forEach(function (color, index) { return (color.index = index); });
         // Update picker state if necessary
         if (this.state) {
             this.setState({ colors: this.colors });
         }
-        // If the active color was removed, default active color to 0
-        if (color.index === this.color.index) {
-            this.setActiveColor(0);
+        // If the active color was removed, set active to the same index (clamped), or 0 if list is empty
+        if (wasActive) {
+            if (this.colors.length > 0) {
+                this.setActiveColor(Math.min(index, this.colors.length - 1));
+            }
+            // Handle empty state if needed
         }
         // Fire color remove event
-        this.emit('color:remove', color);
+        this.emit("color:remove", color);
     };
     /**
      * @desc Set the currently active color
@@ -1566,7 +2498,7 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
             this.setState({ color: this.color });
         }
         // Fire color switch event
-        this.emit('color:setActive', this.color);
+        this.emit("color:setActive", this.color);
     };
     /**
      * @desc Replace all of the current colorPicker colors
@@ -1584,7 +2516,7 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         newColorValues.forEach(function (colorValue) { return this$1.addColor(colorValue); });
         // Reset active color
         this.setActiveColor(activeColorIndex);
-        this.emit('color:setAll', this.colors);
+        this.emit("color:setAll", this.colors);
     };
     // Public ColorPicker events API
     /**
@@ -1637,7 +2569,9 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
 
         var activeEvents = this.activeEvents;
-        var isEventActive = activeEvents.hasOwnProperty(eventType) ? activeEvents[eventType] : false;
+        var isEventActive = activeEvents.hasOwnProperty(eventType)
+            ? activeEvents[eventType]
+            : false;
         // Prevent event callbacks from firing if the event is already active
         // This stops infinite loops if something in an event callback causes the same event to be fired again
         // (e.g. setting the color inside a color:change callback)
@@ -1659,11 +2593,70 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
         var deferredEvents = this.deferredEvents;
         (ref = this).emit.apply(ref, [ eventType ].concat( args ));
-        (deferredEvents[eventType] || (deferredEvents[eventType] = [])).push(args);
+        if (DEFERABLE_EVENTS.has(eventType)) {
+            deferredEvents[eventType] = [args];
+        }
     };
     // Public utility methods
     IroColorPicker.prototype.setOptions = function setOptions (newOptions) {
-        this.setState(newOptions);
+        var _a, _b, _c, _d, _e, _f;
+        // Step 1: Filter out internal state fields that shouldn't be set from outsidea
+        var _g = newOptions;
+        var color = _g.color;
+        var colors = _g.colors;
+        var safeOptions = __rest(_g, ["color", "colors"]);
+        // Step 1a: Check if wheelAngle or wheelDirection are being changed
+        var preserveVisualHue = (_b = (_a = safeOptions.preserveVisualHueOnWheelChange) !== null && _a !== void 0 ? _a : this.props.preserveVisualHueOnWheelChange) !== null && _b !== void 0 ? _b : true;
+        if (preserveVisualHue &&
+            (safeOptions.wheelAngle !== undefined ||
+                safeOptions.wheelDirection !== undefined)) {
+            var oldWheelAngle = (_c = this.state.wheelAngle) !== null && _c !== void 0 ? _c : iroColorPickerOptionDefaults.wheelAngle;
+            var oldWheelDirection = (_d = this.state.wheelDirection) !== null && _d !== void 0 ? _d : iroColorPickerOptionDefaults.wheelDirection;
+            var newWheelAngle = (_e = safeOptions.wheelAngle) !== null && _e !== void 0 ? _e : oldWheelAngle;
+            var newWheelDirection = (_f = safeOptions.wheelDirection) !== null && _f !== void 0 ? _f : oldWheelDirection;
+            // Only transform if values actually changed
+            if (oldWheelAngle !== newWheelAngle ||
+                oldWheelDirection !== newWheelDirection) {
+                this.transformColorsForWheelChange(oldWheelAngle, oldWheelDirection, newWheelAngle, newWheelDirection);
+            }
+        }
+        // Step 2: Check if gamut is being changed
+        var gamutChanging = safeOptions.gamut !== undefined &&
+            safeOptions.gamut !== this.getCurrentGamut();
+        var rawMatrixProfile = safeOptions.matrixProfile;
+        var normalizedMatrixProfile = rawMatrixProfile !== undefined
+            ? normalizeMatrixProfileOption(rawMatrixProfile)
+            : undefined;
+        var matrixProfileChanging = normalizedMatrixProfile !== undefined &&
+            normalizedMatrixProfile !== this.getCurrentMatrixProfile();
+        // Step 3: Separate gamut and matrixProfile from rest of options
+        var gamut = safeOptions.gamut;
+        var rest = __rest(safeOptions, ["gamut", "matrixProfile"]);
+        // Step 4: Build base state update for remaining options
+        var baseStateUpdate = safeOptions.wheelAngle !== undefined ||
+            safeOptions.wheelDirection !== undefined
+            ? Object.assign(Object.assign({}, rest), { colors: this.colors }) : Object.assign({}, rest);
+        if (normalizedMatrixProfile !== undefined) {
+            baseStateUpdate.matrixProfile = normalizedMatrixProfile;
+        }
+        var hasStateUpdates = Object.keys(baseStateUpdate).length > 0;
+        // Step 5: Early return if no changes need to be applied
+        if (!gamutChanging && !matrixProfileChanging && !hasStateUpdates) {
+            return;
+        }
+        var stateHandled = false;
+        if (matrixProfileChanging) {
+            // Apply matrix profile first to avoid double-updating state when gamut also changes
+            this.setMatrixProfile(normalizedMatrixProfile, gamutChanging ? undefined : baseStateUpdate);
+            stateHandled = true;
+        }
+        if (gamutChanging) {
+            this.setGamut(gamut, baseStateUpdate);
+            stateHandled = true;
+        }
+        if (!stateHandled && hasStateUpdates) {
+            this.setState(baseStateUpdate);
+        }
     };
     /**
      * @desc Resize the color picker
@@ -1680,12 +2673,88 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         this.setState({ colors: this.colors });
     };
     /**
+     * @desc Transform colors when wheelAngle or wheelDirection changes
+     * Transforms colors to preserve their visual position when wheel parameters change.
+     * @param oldWheelAngle - the current wheelAngle value
+     * @param oldWheelDirection - the current wheelDirection value
+     * @param newWheelAngle - the new wheelAngle value
+     * @param newWheelDirection - the new wheelDirection value
+     * @emits wheel:transform - Fired once after all colors have been transformed
+     */
+    IroColorPicker.prototype.transformColorsForWheelChange = function transformColorsForWheelChange (oldWheelAngle, oldWheelDirection, newWheelAngle, newWheelDirection) {
+        var oldProps = {
+            wheelAngle: oldWheelAngle,
+            wheelDirection: oldWheelDirection,
+        };
+        var newProps = {
+            wheelAngle: newWheelAngle,
+            wheelDirection: newWheelDirection,
+        };
+        try {
+            // Suppress color:change events during transformation to avoid event storm
+            this.suppressColorEvents = true;
+            this.colors.forEach(function (color) {
+                // Step 1: Calculate visual angle with old parameters (HSV Hue → Visual Angle)
+                var visualAngle = translateWheelAngle(oldProps, color.hsv.h, true);
+                // Step 2: Calculate new hue at that visual position with new parameters (Visual Angle → HSV Hue)
+                var rawHue = translateWheelAngle(newProps, visualAngle, false);
+                var normalizedHue = ((rawHue % 360) + 360) % 360;
+                var newHue = Math.round(normalizedHue);
+                // Step 3: Update the color with new hue, keeping saturation and value unchanged
+                color.hsv = { h: newHue, s: color.hsv.s, v: color.hsv.v };
+            });
+        }
+        finally {
+            // Always restore event handling
+            this.suppressColorEvents = false;
+        }
+        // Update state with transformed colors
+        this.setState({ colors: this.colors });
+        // Emit single aggregated event after all transformations
+        this.emit("wheel:transform", {
+            oldWheelAngle: oldWheelAngle,
+            oldWheelDirection: oldWheelDirection,
+            newWheelAngle: newWheelAngle,
+            newWheelDirection: newWheelDirection,
+        });
+    };
+    /**
+     * @desc Set the gamut for all colors in the color picker
+     * @param newGamut - the new gamut type to apply
+     * @param extraState - optional additional state to update in the same batch
+     * @emits gamut:change - Fired once after all colors have been updated with the new gamut
+     */
+    IroColorPicker.prototype.setGamut = function setGamut (newGamut, extraState) {
+        // Update all colors with new gamut in silent mode to avoid multiple onChange callbacks
+        this.colors.forEach(function (color) {
+            color.setGamutType(newGamut, { silent: true });
+        });
+        // Comment 1 & 3: Update state in single batch with gamut and any extra options
+        this.setState(Object.assign({ gamut: newGamut, colors: this.colors }, extraState));
+        // Emit aggregated gamut:change event once after all colors updated
+        this.emit("gamut:change", newGamut);
+    };
+    /**
+     * @desc Set the matrix profile for all colors in the color picker
+     * @param newProfile - the new profile name to apply
+     * @param extraState - optional additional state to include in the batch update
+     * @emits matrixProfile:change - Fired once after all colors updated
+     */
+    IroColorPicker.prototype.setMatrixProfile = function setMatrixProfile (newProfile, extraState) {
+        var profile = normalizeMatrixProfileOption(newProfile);
+        this.colors.forEach(function (color) {
+            color.setMatrixProfile(profile, { silent: true });
+        });
+        this.setState(Object.assign({ matrixProfile: profile, colors: this.colors }, extraState));
+        this.emit("matrixProfile:change", profile);
+    };
+    /**
      * @desc Called by the createWidget wrapper when the element is mounted into the page
      * @param container - the container element for this ColorPicker instance
      */
     IroColorPicker.prototype.onMount = function onMount (container) {
         this.el = container;
-        this.deferredEmit('mount', this);
+        this.deferredEmit("mount", this);
     };
     // Internal methods
     /**
@@ -1694,12 +2763,23 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
      * @param changes - shows which h,s,v,a color channels changed
      */
     IroColorPicker.prototype.onColorChange = function onColorChange (color, changes) {
-        this.setState({ color: this.color });
+        // Early return if color events are suppressed (e.g., during wheel transformation)
+        if (this.suppressColorEvents) {
+            // Still update state.color if this is the active color
+            if (color === this.color) {
+                this.setState({ color: this.color });
+            }
+            return;
+        }
+        // Only update state if this is the active color
+        if (color === this.color) {
+            this.setState({ color: this.color });
+        }
         if (this.inputActive) {
             this.inputActive = false;
-            this.emit('input:change', color, changes);
+            this.emit("input:change", color, changes);
         }
-        this.emit('color:change', color, changes);
+        this.emit("color:change", color, changes);
     };
     /**
      * @desc Handle input from a UI control element
@@ -1707,56 +2787,59 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
      */
     IroColorPicker.prototype.emitInputEvent = function emitInputEvent (type, originId) {
         if (type === 0 /* Start */) {
-            this.emit('input:start', this.color, originId);
+            this.emit("input:start", this.color, originId);
         }
         else if (type === 1 /* Move */) {
-            this.emit('input:move', this.color, originId);
+            this.emit("input:move", this.color, originId);
         }
         else if (type === 2 /* End */) {
-            this.emit('input:end', this.color, originId);
+            this.emit("input:end", this.color, originId);
         }
     };
+    // Note: render signature uses 'any' to match Preact's Component base class
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     IroColorPicker.prototype.render = function render (props, state) {
         var this$1 = this;
 
-        var layout = state.layout;
+        var actualState = state || this.state;
+        var layout = actualState.layout;
         // use layout shorthands
         if (!Array.isArray(layout)) {
             switch (layout) {
                 // TODO: implement some?
                 default:
-                    layout = [
-                        { component: IroWheel },
-                        { component: IroSlider } ];
+                    layout = [{ component: IroWheel }, { component: IroSlider }];
             }
             // add transparency slider to the layout
-            if (state.transparency) {
+            if (actualState.transparency) {
                 layout.push({
                     component: IroSlider,
                     options: {
-                        sliderType: 'alpha'
-                    }
+                        sliderType: "alpha",
+                    },
                 });
             }
         }
-        return (h("div", { class: "IroColorPicker", id: state.id, style: {
-                display: state.display
+        return (_("div", { class: "iro__colorPicker", id: actualState.id, style: {
+                display: actualState.display,
             } }, layout.map(function (ref, componentIndex) {
                 var UiComponent = ref.component;
                 var options = ref.options;
 
-                return (h(UiComponent, Object.assign({}, state, options, { ref: undefined, onInput: this$1.emitInputEvent.bind(this$1), parent: this$1, index: componentIndex })));
+                return (_(UiComponent, Object.assign({}, actualState, options, { ref: undefined, onInput: this$1.emitInputEvent.bind(this$1), parent: this$1, index: componentIndex })));
         })));
     };
 
     return IroColorPicker;
-}(m));
-IroColorPicker.defaultProps = Object.assign({}, iroColorPickerOptionDefaults,
-    {colors: [],
-    display: 'block',
-    id: null,
-    layout: 'default',
-    margin: null});
+}(x));
+IroColorPicker.defaultProps = {
+    colors: [],
+    display: "block",
+    id: undefined,
+    layout: "default",
+    margin: 0,
+    preserveVisualHueOnWheelChange: true,
+};
 var IroColorPickerWidget = createWidget(IroColorPicker);
 
 var iro;
@@ -1766,7 +2849,7 @@ var iro;
     iro.ColorPicker = IroColorPickerWidget;
     var ui;
     (function (ui) {
-        ui.h = h;
+        ui.h = _;
         ui.ComponentBase = IroComponentWrapper;
         ui.Handle = IroHandle;
         ui.Slider = IroSlider;
