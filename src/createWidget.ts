@@ -20,6 +20,9 @@ export function createWidget<C extends Widget, P>(
   ): C {
     let widget: C = null!; // will become an instance of the widget component class
     const widgetRoot = document.createElement("div");
+    let retries = 0;
+    const maxRetries = 60;
+    let retryWarned = false;
 
     // Render widget into a temp DOM node
     render(
@@ -44,6 +47,16 @@ export function createWidget<C extends Widget, P>(
       if (!widget.base) {
         console.warn("[iro.js] Widget base element not ready, retrying...");
         // Retry on next frame
+        if (retries > maxRetries) {
+          if (!retryWarned) {
+            console.warn(
+              `[iro.js] Widget base element not ready after ${maxRetries} retries. Aborting mount.`
+            );
+            retryWarned = true;
+          }
+          return;
+        }
+        retries++;
         requestAnimationFrame(mountWidget);
         return;
       }

@@ -36,21 +36,21 @@
 
 ## Features
 
- * Work with colors in hex, RGB, HSV and HSL formats (plus kelvin temperatures!) in one simple, frictionless API
- * Add multiple colors to the same color picker for selecting color harmonies and themes
- * Create the perfect color picker from a selection of pre-built UI components
- * All of iro.js can run from a single script - no extra CSS, images, or third-party libraries required!
- * [~9kb](https://bundlephobia.com/result?p=@jaames/iro) minified and gzipped
- * Licenced under MPL 2.0 - 100% free for personal and commercial use
+- Work with colors in hex, RGB, HSV and HSL formats (plus kelvin temperatures!) in one simple, frictionless API
+- Add multiple colors to the same color picker for selecting color harmonies and themes
+- Create the perfect color picker from a selection of pre-built UI components
+- All of iro.js can run from a single script - no extra CSS, images, or third-party libraries required!
+- [~9kb](https://bundlephobia.com/result?p=@jaames/iro) minified and gzipped
+- Licenced under MPL 2.0 - 100% free for personal and commercial use
 
 <img height="16" height="888" src="https://raw.githubusercontent.com/jaames/iro.js/master/assets/break.png"/>
 
 ## Codepen Demos
 
- * [Basic introduction](https://codepen.io/rakujira/pen/WZOeNq)
- * [Multicolor](https://codepen.io/rakujira/pen/bGddRyq)
- * [Components / alternate layouts](https://codepen.io/rakujira/pen/XWbgwYm)
- * [Custom handle SVGs](https://codepen.io/rakujira/pen/vbeENp)
+- [Basic introduction](https://codepen.io/rakujira/pen/WZOeNq)
+- [Multicolor](https://codepen.io/rakujira/pen/bGddRyq)
+- [Components / alternate layouts](https://codepen.io/rakujira/pen/XWbgwYm)
+- [Custom handle SVGs](https://codepen.io/rakujira/pen/vbeENp)
 
 <img height="16" height="888" src="https://raw.githubusercontent.com/jaames/iro.js/master/assets/break.png"/>
 
@@ -60,30 +60,37 @@
 
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/install.sh) -->
 <!-- The below code snippet is automatically added from ./examples/readme/install.sh -->
+
 ```sh
 npm install @jaames/iro --save
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
-If you are using a module bundler like Webpack or Rollup, import iro.js into your project: 
+If you are using a module bundler like Webpack or Rollup, import iro.js into your project:
+
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/install.js) -->
 <!-- The below code snippet is automatically added from ./examples/readme/install.js -->
+
 ```js
 // Using ES6 module syntax
-import iro from '@jaames/iro';
+import iro from "@jaames/iro";
 
 // Using CommonJS modules
-const iro = require('@jaames/iro');
+const iro = require("@jaames/iro");
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### Using the jsDelivr CDN
 
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/install.html) -->
 <!-- The below code snippet is automatically added from ./examples/readme/install.html -->
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
 When you manually include the library like this, iro.js will be made globally available on window.iro.
@@ -123,7 +130,7 @@ First, we need a HTML element with a unique identifier (like an `id` attribute) 
 Then use JavaScript to create a new iro.ColorPicker with a CSS selector that matches your container element:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker');
+var colorPicker = new iro.ColorPicker("#picker");
 ```
 
 You can also use a DOM object instead of a CSS selector here -- this might be more suitable if you're integrating iro.js into an application built with a framework such as Vue, React, etc.
@@ -136,14 +143,16 @@ The color picker can be customized by passing a set of options to the second `ir
 
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/colorPickerOptions.js) -->
 <!-- The below code snippet is automatically added from ./examples/readme/colorPickerOptions.js -->
+
 ```js
 var colorPicker = new iro.ColorPicker("#picker", {
-    // Set the size of the color picker
-    width: 320,
-    // Set the initial color to pure red
-    color: "#f00"
+  // Set the size of the color picker
+  width: 320,
+  // Set the initial color to pure red
+  color: "#f00",
 });
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### Available Options
@@ -233,45 +242,51 @@ The color picker's [`on`](https://iro.js.org/colorPicker_api.html#on) method can
 
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/colorPickerEventsExample1.js) -->
 <!-- The below code snippet is automatically added from ./examples/readme/colorPickerEventsExample1.js -->
+
 ```js
 // listen to a color picker's color:change event
 // color:change callbacks receive the current color
-colorPicker.on('color:change', function(color) {
-    // log the current color as a HEX string
-    console.log(color.hexString);
+colorPicker.on("color:change", function (color) {
+  // log the current color as a HEX string
+  console.log(color.hexString);
 });
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
 The [`on`](https://iro.js.org/colorPicker_api.html#on) method can also take an array of event names, in case you want to listen to multiple events with one function:
 
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/colorPickerEventsExample2.js) -->
 <!-- The below code snippet is automatically added from ./examples/readme/colorPickerEventsExample2.js -->
+
 ```js
 // listen to a color picker's color:init and color:change events
-colorPicker.on(['color:init', 'color:change'], function(color) {
-    // log the current color as a HEX string
-    console.log(color.hexString);
+colorPicker.on(["color:init", "color:change"], function (color) {
+  // log the current color as a HEX string
+  console.log(color.hexString);
 });
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
 Event listeners can also be removed at any time by passing the same function to the color picker's [`off`](https://iro.js.org/colorPicker_api.html#off) method:
 
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/colorPickerEventsExample3.js) -->
 <!-- The below code snippet is automatically added from ./examples/readme/colorPickerEventsExample3.js -->
+
 ```js
 // create a callback function
 function onColorChange(color) {
-    console.log(color.hexString);
+  console.log(color.hexString);
 }
-  
+
 // add color:change listener
-colorPicker.on('color:change', onColorChange);
-  
+colorPicker.on("color:change", onColorChange);
+
 // later, if we want to stop listening to color:change...
-colorPicker.off('color:change', onColorChange);
+colorPicker.off("color:change", onColorChange);
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### Available Events
@@ -280,26 +295,28 @@ colorPicker.off('color:change', onColorChange);
 
 Fired whenever the selected color changes -- either when the user interacts with the color picker, or when the color is updated by your own code. This event's callback functions will recieve two values:
 
-* `color`: the [currently selected color](#working-with-colors)
-* `changes`: an object showing which HSV channels have changed since the last time the event was fired
+- `color`: the [currently selected color](#working-with-colors)
+- `changes`: an object showing which HSV channels have changed since the last time the event was fired
 
 It is safe to modify the `color` object within callbacks for this event. This can be helpful if you want to limit the range or a certain color channel, for example:
 
 <!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/readme/colorChange.js) -->
 <!-- The below code snippet is automatically added from ./examples/readme/colorChange.js -->
+
 ```js
-colorPicker.on('color:change', function(color) {
-    // don't let the color saturation fall below 50!
-    if (color.saturation < 50) {
-      color.saturation = 50;
-    }
+colorPicker.on("color:change", function (color) {
+  // don't let the color saturation fall below 50!
+  if (color.saturation < 50) {
+    color.saturation = 50;
+  }
 });
 ```
+
 <!-- MARKDOWN-AUTO-DOCS:END -->
 
 ##### `input:change`
 
-Similar to `color:change`, except this event is only fired when the color is changed with the user's **mouse or touch input**. 
+Similar to `color:change`, except this event is only fired when the color is changed with the user's **mouse or touch input**.
 
 Callbacks for this event recieve the same values as `color:change`, and it is also safe to modify the `color` object within callbacks for this event.
 
@@ -333,6 +350,12 @@ Fired when the colorPicker's UI has been mounted to the DOM and is ready for use
 
 <img height="16" height="888" src="https://raw.githubusercontent.com/jaames/iro.js/master/assets/break.png"/>
 
+## Testing
+
+The Jest suites in `tests/color.test.ts` and `tests/colorPicker.test.ts` were intentionally slimmed down in 2024 and now provide smoke coverage for the most critical parsing, conversion, and widget interactions.
+
+<img height="16" height="888" src="https://raw.githubusercontent.com/jaames/iro.js/master/assets/break.png"/>
+
 ## Special Thanks
 
 Thank you to the following people for their support and contributions!
@@ -342,6 +365,6 @@ Thank you to the following people for their support and contributions!
 
 <img height="16" height="888" src="https://raw.githubusercontent.com/jaames/iro.js/master/assets/break.png"/>
 
-[Website](//iro.js.org) |  [Forum](https://github.com/jaames/iro.js/discussions) | [Codepen Demo](//codepen.io/rakujira/pen/WZOeNq?editors=0010) | [Contribution Guide](CONTRIBUTING.md) | [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XS9R3QTLZYAXQ&source=url) | [Changelog](CHANGELOG.md) | [License](LICENSE.txt)
+[Website](//iro.js.org) | [Forum](https://github.com/jaames/iro.js/discussions) | [Codepen Demo](//codepen.io/rakujira/pen/WZOeNq?editors=0010) | [Contribution Guide](CONTRIBUTING.md) | [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XS9R3QTLZYAXQ&source=url) | [Changelog](CHANGELOG.md) | [License](LICENSE.txt)
 
 &copy; [James Daniel](//github.com/jaames)

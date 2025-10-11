@@ -15,6 +15,8 @@ import { IroWheel } from "./Wheel";
 import { IroSlider } from "./Slider";
 import { createWidget } from "./createWidget";
 
+const DEFERABLE_EVENTS = new Set(["mount", "color:init"]);
+
 interface ColorPickerEvents {
   [key: string]: Function[];
 }
@@ -284,7 +286,9 @@ export class IroColorPicker extends Component<
   public deferredEmit(eventType: string, ...args: any) {
     const deferredEvents = this.deferredEvents;
     this.emit(eventType, ...args);
-    (deferredEvents[eventType] || (deferredEvents[eventType] = [])).push(args);
+    if (DEFERABLE_EVENTS.has(eventType)) {
+      deferredEvents[eventType] = [args];
+    }
   }
 
   // Public utility methods
@@ -434,9 +438,9 @@ export class IroColorPicker extends Component<
         const visualAngle = translateWheelAngle(oldProps, color.hsv.h, true);
 
         // Step 2: Calculate new hue at that visual position with new parameters (Visual Angle → HSV Hue)
-        const newHue = Math.round(
-          translateWheelAngle(newProps, visualAngle, false)
-        );
+        const rawHue = translateWheelAngle(newProps, visualAngle, false);
+        const normalizedHue = ((rawHue % 360) + 360) % 360;
+        const newHue = Math.round(normalizedHue);
 
         // Step 3: Update the color with new hue, keeping saturation and value unchanged
         color.hsv = { h: newHue, s: color.hsv.s, v: color.hsv.v };

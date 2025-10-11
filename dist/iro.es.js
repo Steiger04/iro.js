@@ -255,6 +255,11 @@ var WHITE_POINT_CACHE = new Map();
 function isMatrixProfileName(value) {
   return typeof value === "string" && Object.prototype.hasOwnProperty.call(MATRIX_PROFILES, value);
 }
+/**
+ * Normalizes arbitrary input to a supported matrix profile name. Any unknown,
+ * null, or otherwise invalid handle is coerced to {@link DEFAULT_MATRIX_PROFILE}
+ * so that downstream conversions always operate with a known profile.
+ */
 function normalizeMatrixProfileName(profile) {
   if (isMatrixProfileName(profile)) {
     return profile;
@@ -906,6 +911,19 @@ var IroColor = /*#__PURE__*/function () {
   }
   /**
    * @desc Convert an RGB color to an approximate kelvin temperature
+   *
+   * Performs a bounded binary search between {@link KELVIN_MIN} and {@link KELVIN_MAX}
+   * with a convergence threshold of roughly ±0.4&nbsp;K. Under normal conditions the
+   * routine converges within 50 iterations and returns the midpoint of the final
+   * search interval, yielding a result that is within the stated tolerance of the
+   * true color temperature.
+   *
+   * If the maximum iteration count is reached before the convergence threshold,
+   * the search stops early and the function still returns the most recent midpoint
+   * (`temp`). In that case the value remains clamped to the current Kelvin bounds
+   * and represents the closest estimate the algorithm could determine given the
+   * safeguards.
+   *
    * @param kelvin - kelvin temperature
    */;
   IroColor.rgbToKelvin = function rgbToKelvin(rgb) {
@@ -960,6 +978,11 @@ var IroColor = /*#__PURE__*/function () {
     var silent = !!(options != null && options.silent);
     // Guard clause: no change needed if same gamut
     if (value === this.gamut) { return; }
+    // Fast path: switching to unrestricted gamut requires only property update
+    if (value === "none") {
+      this.gamut = value;
+      return;
+    }
     // Capture old HSV state for accurate change detection
     var old = _extends({}, this.$);
     // Compute unclamped xy from current RGB before changing gamut
@@ -974,25 +997,22 @@ var IroColor = /*#__PURE__*/function () {
     // Update gamut
     this.gamut = value;
     // For restrictive gamuts (A, B, C), re-apply xy to clamp to target gamut
-    if (value !== "none") {
-      // Check if the color is already within the target gamut
-      var targetTriangle = GAMUT_MAP[value];
-      var isInGamut = targetTriangle ? isPointInTriangle(xyNone, targetTriangle) : false;
-      // Only perform conversion if the color is outside the target gamut
-      // This prevents lossy RGB→xy→RGB conversions for colors already in gamut
-      if (!isInGamut) {
-        // Temporarily set brightness to 100 for precise xy conversion
-        this.pendingBrightness = originalBrightness;
-        this.$ = _extends({}, this.$, {
-          v: 100
-        });
-        this.xy = xyNone; // clamps to target gamut via xyToRgb(..., this.gamut)
-        // Restore original brightness and alpha
-        this.$ = _extends({}, this.$, {
-          v: originalBrightness,
-          a: originalAlpha
-        });
-      }
+    var targetTriangle = GAMUT_MAP[value];
+    var isInGamut = targetTriangle ? isPointInTriangle(xyNone, targetTriangle) : false;
+    // Only perform conversion if the color is outside the target gamut
+    // This prevents lossy RGB→xy→RGB conversions for colors already in gamut
+    if (!isInGamut) {
+      // Temporarily set brightness to 100 for precise xy conversion
+      this.pendingBrightness = originalBrightness;
+      this.$ = _extends({}, this.$, {
+        v: 100
+      });
+      this.xy = xyNone; // clamps to target gamut via xyToRgb(..., this.gamut)
+      // Restore original brightness and alpha
+      this.$ = _extends({}, this.$, {
+        v: originalBrightness,
+        a: originalAlpha
+      });
     }
     // Restore onChange callback
     this.onChange = prevOnChange;
@@ -1126,6 +1146,10 @@ var IroColor = /*#__PURE__*/function () {
     set: function set(value) {
       var _this$$$v;
       // Convert xy using linear brightness scaling to preserve hue at low values
+      // NOTE: A minimum brightness ratio of 0.01 is applied when the current value (V)
+      //       is zero. This prevents the conversion from collapsing to true black and
+      //       keeps the chromaticity information intact for near-dark colors.
+      //       Callers that expect exact black can set V back to 0 after assignment.
       var rawBrightness = this.pendingBrightness !== undefined ? this.pendingBrightness : (_this$$$v = this.$.v) != null ? _this$$$v : 0;
       var boundedBrightness = clamp(rawBrightness, 0, 100);
       var brightnessRatio = boundedBrightness === 0 ? 0.01 : boundedBrightness / 100;
@@ -1421,18 +1445,18 @@ var sliderDefaultOptions = {
  * A value of 0 is not supported as a fixed size.
  */
 function getSliderDimensions(props) {
-  var width = props.width,
-    sliderSize = props.sliderSize,
-    borderWidth = props.borderWidth,
-    handleRadius = props.handleRadius,
-    padding = props.padding,
-    sliderShape = props.sliderShape;
+  var width = Number.isFinite(props.width) ? props.width : 0;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var handleRadius = Number.isFinite(props.handleRadius) ? props.handleRadius : 0;
+  var padding = Number.isFinite(props.padding) ? props.padding : 0;
   var ishorizontal = props.layoutDirection === "horizontal";
+  var sliderSize = Number.isFinite(props.sliderSize) ? props.sliderSize : undefined;
+  var sliderShape = props.sliderShape;
   // automatically calculate sliderSize if its not defined
-  sliderSize = sliderSize != null ? sliderSize : padding * 2 + handleRadius * 2 + (borderWidth || 0) * 2;
+  sliderSize = sliderSize != null ? sliderSize : padding * 2 + handleRadius * 2 + borderWidth * 2;
   if (sliderShape === "circle") {
     return {
-      handleStart: props.padding + props.handleRadius,
+      handleStart: padding + handleRadius,
       handleRange: width - padding * 2 - handleRadius * 2,
       width: width,
       height: width,
@@ -1474,7 +1498,7 @@ function getCurrentSliderValue(props, color) {
         maxTemperature = props.maxTemperature;
       var temperatureRange = maxTemperature - minTemperature;
       var percent = (color.kelvin - minTemperature) / temperatureRange * 100;
-      // clmap percentage
+      // clamp percentage to [0, 100]; assumes minTemperature < maxTemperature
       return Math.max(0, Math.min(percent, 100));
     case "hue":
       return hsva.h / 3.6;
@@ -1495,19 +1519,23 @@ function getSliderValueFromInput(props, x, y) {
   var _getSliderDimensions = getSliderDimensions(props),
     handleRange = _getSliderDimensions.handleRange,
     handleStart = _getSliderDimensions.handleStart;
+  var safeHandleRange = Number.isFinite(handleRange) ? handleRange : 0;
+  var safeHandleStart = Number.isFinite(handleStart) ? handleStart : 0;
+  var safeX = Number.isFinite(x) ? x : safeHandleStart;
+  var safeY = Number.isFinite(y) ? y : safeHandleStart;
   var handlePos;
   if (props.layoutDirection === "horizontal") {
-    handlePos = -1 * y + handleRange + handleStart;
+    handlePos = -1 * safeY + safeHandleRange + safeHandleStart;
   } else {
-    handlePos = x - handleStart;
+    handlePos = safeX - safeHandleStart;
   }
   // clamp handle position
-  handlePos = Math.max(Math.min(handlePos, handleRange), 0);
-  var percent = Math.round(100 / handleRange * handlePos);
+  handlePos = Math.max(Math.min(handlePos, safeHandleRange), 0);
+  var percent = safeHandleRange > 0 ? Math.round(100 / safeHandleRange * handlePos) : 0;
   switch (props.sliderType) {
     case "kelvin":
-      var minTemperature = props.minTemperature,
-        maxTemperature = props.maxTemperature;
+      var minTemperature = Number.isFinite(props.minTemperature) ? props.minTemperature : 0;
+      var maxTemperature = Number.isFinite(props.maxTemperature) ? props.maxTemperature : minTemperature;
       var temperatureRange = maxTemperature - minTemperature;
       return minTemperature + temperatureRange * (percent / 100);
     case "alpha":
@@ -1535,10 +1563,15 @@ function getSliderHandlePosition(props, color) {
     handleStart = _getSliderDimensions2.handleStart;
   var ishorizontal = props.layoutDirection === "horizontal";
   var sliderValue = getCurrentSliderValue(props, color);
-  var midPoint = ishorizontal ? width / 2 : height / 2;
-  var handlePos = handleStart + sliderValue / 100 * handleRange;
+  var safeWidth = Number.isFinite(width) ? width : 0;
+  var safeHeight = Number.isFinite(height) ? height : 0;
+  var safeHandleRange = Number.isFinite(handleRange) ? handleRange : 0;
+  var safeHandleStart = Number.isFinite(handleStart) ? handleStart : 0;
+  var safeSliderValue = Number.isFinite(sliderValue) ? sliderValue : 0;
+  var midPoint = ishorizontal ? safeWidth / 2 : safeHeight / 2;
+  var handlePos = safeHandleStart + safeSliderValue / 100 * safeHandleRange;
   if (ishorizontal) {
-    handlePos = -1 * handlePos + handleRange + handleStart * 2;
+    handlePos = -1 * handlePos + safeHandleRange + safeHandleStart * 2;
   }
   return {
     x: ishorizontal ? midPoint : handlePos,
@@ -1657,7 +1690,11 @@ var dist = function dist(x, y) {
  * @internal
  */
 function getHandleRange(props) {
-  var r = props.width / 2 - props.padding - props.handleRadius - props.borderWidth;
+  var width = Number.isFinite(props.width) ? props.width : 0;
+  var padding = Number.isFinite(props.padding) ? props.padding : 0;
+  var handleRadius = Number.isFinite(props.handleRadius) ? props.handleRadius : 0;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var r = width / 2 - padding - handleRadius - borderWidth;
   // Clamp to non-negative to prevent division by zero and inverted coordinates
   // when padding + handleRadius + borderWidth >= width/2
   return Math.max(0, r);
@@ -1671,19 +1708,25 @@ function getHandleRange(props) {
 function isInputInsideWheel(props, x, y) {
   var _getWheelDimensions = getWheelDimensions(props),
     cx = _getWheelDimensions.cx,
-    cy = _getWheelDimensions.cy;
-  var r = props.width / 2;
-  return dist(cx - x, cy - y) < r;
+    cy = _getWheelDimensions.cy,
+    radius = _getWheelDimensions.radius;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var hitR = radius + borderWidth / 2;
+  var safeX = Number.isFinite(x) ? x : cx;
+  var safeY = Number.isFinite(y) ? y : cy;
+  return dist(cx - safeX, cy - safeY) < hitR;
 }
 /**
  * @desc Get the point as the center of the wheel
  * @param props - wheel props
  */
 function getWheelDimensions(props) {
-  var r = props.width / 2;
+  var width = Number.isFinite(props.width) ? props.width : 0;
+  var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+  var r = width / 2;
   return {
-    width: props.width,
-    radius: r - props.borderWidth,
+    width: width,
+    radius: r - borderWidth,
     cx: r,
     cy: r
   };
@@ -1703,31 +1746,31 @@ function getWheelDimensions(props) {
  * translateWheelAngle(props, translateWheelAngle(props, angle, false), true) === angle
  */
 function translateWheelAngle(props, angle, invert) {
-  var _props$wheelAngle;
   // Default to 0 if wheelAngle is null or undefined (nullish coalescing)
-  var wheelAngle = (_props$wheelAngle = props.wheelAngle) != null ? _props$wheelAngle : 0;
+  var wheelAngle = Number.isFinite(props.wheelAngle) ? props.wheelAngle : 0;
   // Normalize wheelDirection: only 'clockwise' is clockwise, everything else is 'anticlockwise'
   var wd = props.wheelDirection === "clockwise" ? "clockwise" : "anticlockwise";
+  var processedAngle = Number.isFinite(angle) ? angle : 0;
   if (invert) {
     // HSV Hue → Visual Angle (inverse transformation)
     if (wd === "anticlockwise") {
       // visual angle = hue - wheelAngle
-      angle = angle - wheelAngle;
+      processedAngle = processedAngle - wheelAngle;
     } else {
       // clockwise: visual angle = wheelAngle - hue
-      angle = wheelAngle - angle;
+      processedAngle = wheelAngle - processedAngle;
     }
   } else {
     // Visual Angle → HSV Hue (forward transformation)
     if (wd === "anticlockwise") {
       // hue = visual angle + wheelAngle
-      angle = angle + wheelAngle;
+      processedAngle = processedAngle + wheelAngle;
     } else {
       // clockwise: hue = wheelAngle - visual angle
-      angle = wheelAngle - angle;
+      processedAngle = wheelAngle - processedAngle;
     }
   }
-  return mod(angle, 360);
+  return mod(processedAngle, 360);
 }
 /**
  * Calculate the handle position (x, y) for a given color
@@ -1755,11 +1798,14 @@ function getWheelHandlePosition(props, color) {
     };
   }
   // Convert HSV hue to visual angle
-  var visualAngle = translateWheelAngle(props, hsv.h, true);
+  var hue = Number.isFinite(hsv.h) ? hsv.h : 0;
+  var visualAngle = translateWheelAngle(props, hue, true);
   // Convert to radians
-  var angleRad = visualAngle * (TAU / 360);
+  var safeVisualAngle = Number.isFinite(visualAngle) ? visualAngle : 0;
+  var angleRad = safeVisualAngle * (TAU / 360);
   // Calculate distance from center based on saturation
-  var handleDist = hsv.s / 100 * handleRange;
+  var saturation = Number.isFinite(hsv.s) ? hsv.s : 0;
+  var handleDist = saturation / 100 * handleRange;
   // Convert polar to Cartesian coordinates
   // Note: Y-axis in DOM points down, so we negate the sin component
   return {
@@ -1786,8 +1832,8 @@ function getWheelValueFromInput(props, x, y) {
     cy = _getWheelDimensions3.cy;
   var handleRange = getHandleRange(props);
   // Calculate relative position from center
-  var dx = x - cx;
-  var dy = cy - y; // Note: cy - y because DOM Y-axis points down
+  var dx = Number.isFinite(x - cx) ? x - cx : 0;
+  var dy = Number.isFinite(cy - y) ? cy - y : 0; // Note: cy - y because DOM Y-axis points down
   // Calculate angle in mathematical convention (0° = East, positive = CCW)
   var visualAngle = Math.atan2(dy, dx) * (360 / TAU);
   // Convert visual angle to HSV hue (translateWheelAngle will normalize)
@@ -1796,14 +1842,14 @@ function getWheelValueFromInput(props, x, y) {
   // (entire wheel is collapsed to a point)
   if (handleRange <= 0) {
     return {
-      h: mod(Math.round(hue), 360),
+      h: mod(Math.round(Number.isFinite(hue) ? hue : 0), 360),
       s: 0
     };
   }
   // Calculate distance from center for saturation
   var handleDist = Math.min(dist(dx, dy), handleRange);
   return {
-    h: mod(Math.round(hue), 360),
+    h: mod(Math.round(Number.isFinite(hue) ? hue : 0), 360),
     s: Math.round(100 / handleRange * handleDist)
   };
 }
@@ -1916,12 +1962,18 @@ function resolveSvgUrl(url) {
  * @props handlePositions - array of {x, y} coords for each handle
  */
 function getHandleAtPoint(props, x, y, handlePositions) {
+  var _props$handleRadius;
+  var radius = (_props$handleRadius = props.handleRadius) != null ? _props$handleRadius : 0;
+  var safeX = Number.isFinite(x) ? x : 0;
+  var safeY = Number.isFinite(y) ? y : 0;
   for (var i = 0; i < handlePositions.length; i++) {
-    var dX = handlePositions[i].x - x;
-    var dY = handlePositions[i].y - y;
+    var handleX = Number.isFinite(handlePositions[i].x) ? handlePositions[i].x : 0;
+    var handleY = Number.isFinite(handlePositions[i].y) ? handlePositions[i].y : 0;
+    var dX = handleX - safeX;
+    var dY = handleY - safeY;
     var dist = Math.sqrt(dX * dX + dY * dY);
     // Use <= to include clicks exactly on the radius edge, with 0.5px fuzz for pixel rounding
-    if (dist <= props.handleRadius + 0.5) {
+    if (dist <= radius + 0.5) {
       return i;
     }
   }
@@ -1972,6 +2024,11 @@ var iroColorPickerOptionDefaults = {
   matrixProfile: DEFAULT_MATRIX_PROFILE,
   preserveVisualHueOnWheelChange: true
 };
+/**
+ * Normalizes the user-supplied matrix profile option. Any unknown, null, or
+ * otherwise invalid value is coerced to {@link DEFAULT_MATRIX_PROFILE} to
+ * ensure downstream conversions always have a valid profile handle.
+ */
 function normalizeMatrixProfileOption(profile) {
   return normalizeMatrixProfileName(profile != null ? profile : DEFAULT_MATRIX_PROFILE);
 }
@@ -2271,6 +2328,9 @@ function createWidget(WidgetComponent) {
 
         var widget = null; // will become an instance of the widget component class
         var widgetRoot = document.createElement("div");
+        var retries = 0;
+        var maxRetries = 60;
+        var retryWarned = false;
         // Render widget into a temp DOM node
         G(_(WidgetComponent, Object.assign({ ref: function (ref) { return (widget = ref); } }, (props || {}))), widgetRoot);
         function mountWidget() {
@@ -2286,6 +2346,14 @@ function createWidget(WidgetComponent) {
             if (!widget.base) {
                 console.warn("[iro.js] Widget base element not ready, retrying...");
                 // Retry on next frame
+                if (retries > maxRetries) {
+                    if (!retryWarned) {
+                        console.warn(("[iro.js] Widget base element not ready after " + maxRetries + " retries. Aborting mount."));
+                        retryWarned = true;
+                    }
+                    return;
+                }
+                retries++;
                 requestAnimationFrame(mountWidget);
                 return;
             }
@@ -2316,6 +2384,7 @@ function createWidget(WidgetComponent) {
     return widgetFactory;
 }
 
+var DEFERABLE_EVENTS = new Set(["mount", "color:init"]);
 var IroColorPicker = /*@__PURE__*/(function (Component) {
     function IroColorPicker(props) {
         var this$1 = this;
@@ -2524,7 +2593,9 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
         while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
         var deferredEvents = this.deferredEvents;
         (ref = this).emit.apply(ref, [ eventType ].concat( args ));
-        (deferredEvents[eventType] || (deferredEvents[eventType] = [])).push(args);
+        if (DEFERABLE_EVENTS.has(eventType)) {
+            deferredEvents[eventType] = [args];
+        }
     };
     // Public utility methods
     IroColorPicker.prototype.setOptions = function setOptions (newOptions) {
@@ -2626,7 +2697,9 @@ var IroColorPicker = /*@__PURE__*/(function (Component) {
                 // Step 1: Calculate visual angle with old parameters (HSV Hue → Visual Angle)
                 var visualAngle = translateWheelAngle(oldProps, color.hsv.h, true);
                 // Step 2: Calculate new hue at that visual position with new parameters (Visual Angle → HSV Hue)
-                var newHue = Math.round(translateWheelAngle(newProps, visualAngle, false));
+                var rawHue = translateWheelAngle(newProps, visualAngle, false);
+                var normalizedHue = ((rawHue % 360) + 360) % 360;
+                var newHue = Math.round(normalizedHue);
                 // Step 3: Update the color with new hue, keeping saturation and value unchanged
                 color.hsv = { h: newHue, s: color.hsv.s, v: color.hsv.v };
             });
