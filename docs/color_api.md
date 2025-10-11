@@ -8,26 +8,26 @@ The Color API is used by color pickers to store the selected color and to handle
 
 **Arguments:**
 
-* `{String | Object | Color}` Initial color. This can be any [supported color format](#supported-color-formats), or another Color instance.
+- `{String | Object | Color}` Initial color. This can be any [supported color format](#supported-color-formats), or another Color instance.
 
 ## Supported Color Formats
 
-* **Hex string**: `"#ff0000"`
-* **Hex alpha string**: `"#ff0000ff"`
-* **Shorthand hex string**: `"#f00"`
-* **Shorthand hex alpha string**: `"#f00f"`
-* **RGB string**: `"rgb(255, 0, 0)"`
-* **RGBA string**: `"rgba(255, 0, 0, 1)"`
-* **Percentage RGB string**: `"rgb(100%, 0%, 0%)"`
-* **Percentage RGBA string**: `"rgba(100%, 0%, 0%, 100%)"`
-* **RGB object**: `{r: 255, g: 0, b: 0}`
-* **RGBA object**: `{r: 255, g: 0, b: 0, a: 1}` 
-* **HSL string**: `"hsl(360, 50%, 100%)"`
-* **HSLA string**: `"hsla(360, 50%, 100%, 1)"`
-* **HSL object**: `{h: 360, s: 50, l: 100}`
-* **HSLA object**: `{h: 360, s: 50, l: 100, a: 1}`
-* **HSV object**: `{h: 360, s: 100, v: 50}`
-* **HSVA object**: `{h: 360, s: 100, v: 50, a: 1}`
+- **Hex string**: `"#ff0000"`
+- **Hex alpha string**: `"#ff0000ff"`
+- **Shorthand hex string**: `"#f00"`
+- **Shorthand hex alpha string**: `"#f00f"`
+- **RGB string**: `"rgb(255, 0, 0)"`
+- **RGBA string**: `"rgba(255, 0, 0, 1)"`
+- **Percentage RGB string**: `"rgb(100%, 0%, 0%)"`
+- **Percentage RGBA string**: `"rgba(100%, 0%, 0%, 100%)"`
+- **RGB object**: `{r: 255, g: 0, b: 0}`
+- **RGBA object**: `{r: 255, g: 0, b: 0, a: 1}`
+- **HSL string**: `"hsl(360, 50%, 100%)"`
+- **HSLA string**: `"hsla(360, 50%, 100%, 1)"`
+- **HSL object**: `{h: 360, s: 50, l: 100}`
+- **HSLA object**: `{h: 360, s: 50, l: 100, a: 1}`
+- **HSV object**: `{h: 360, s: 100, v: 50}`
+- **HSVA object**: `{h: 360, s: 100, v: 50, a: 1}`
 
 ## Properties
 
@@ -47,7 +47,7 @@ The color's blue channel as a number between `0` and `255`.
 
 ### `alpha`
 
-The color's value channel as a number between `0` and `1`.
+The color's alpha channel as a number between `0` and `1`.
 
 ### `hue`
 
@@ -133,9 +133,9 @@ The color as a percentage HSL string.
 
 ### `hslaString`
 
-The color as a percentage HSLA string
+The color as a percentage HSLA string.
 
-**Example format**: `"hsl(360, 100%, 50%, 1)"`
+**Example format**: `"hsla(360, 100%, 50%, 1)"`
 
 ### `index`
 
@@ -149,7 +149,7 @@ Set the color from any [supported color format](#supported-color-formats).
 
 **Arguments**:
 
-* `{Color}`
+- `{Color}` color value
 
 ### `setChannel`
 
@@ -157,18 +157,18 @@ Set a specific color channel to a new value. `format` can be either `hsv` or `rg
 
 **Arguments**:
 
-* `{String}` format
-* `{String}` channel
-* `{Number}` value
+- `{String}` format
+- `{String}` channel
+- `{Number}` value
 
 **Example**:
 
 ```js
 // set the rgb red channel to 255:
-color.setChannel('rgb', 'r', 255);
+color.setChannel("rgb", "r", 255);
 
 // set the hsv hue channel to 180:
-color.setChannel('hsv', 'h', 180);
+color.setChannel("hsv", "h", 180);
 ```
 
 ### `clone`
@@ -189,7 +189,7 @@ Convert a HSV object to an RGB object.
 
 **Arguments**:
 
-* `{Object}` HSV values, e.g `{h: 360, s: 100, v: 50}`
+- `{Object}` HSV values, e.g `{h: 360, s: 100, v: 50}`
 
 **Returns**: `{Object}` RGB values, e.g `{r: 255, g: 0, b: 0}`
 
@@ -199,30 +199,29 @@ Convert an RGB object to a HSV object.
 
 **Arguments**:
 
-* `{Object}` RGB values, e.g `{r: 255, g: 0, b: 0}`
+- `{Object}` RGB values, e.g `{r: 255, g: 0, b: 0}`
 
 **Returns**: `{Object}` HSV values, e.g `{h: 360, s: 100, v: 50}`
 
 ### `hsvToHsl`
 
-Convert a HSV object to a HSL object.
+Convert an HSV object to an HSL object.
 
 **Arguments**:
 
-* `{Object}` HSV values, e.g `{h: 360, s: 50, v: 100}`
+- `{Object}` HSV values, e.g `{h: 360, s: 50, v: 100}`
 
 **Returns**: `{Object}` HSL values, e.g `{h: 360, s: 100, l: 100}`
 
 ### `hslToHsv`
 
-Convert a HSL object to a HSV object.
+Convert an HSL object to an HSV object.
 
 **Arguments**:
 
-* `{Object}` HSL values, e.g `{h: 360, s: 100, l: 100}`
+- `{Object}` HSL values, e.g `{h: 360, s: 100, l: 100}`
 
 **Returns**: `{Object}` HSV values, e.g `{h: 360, s: 50, v: 100}`
-
 
 ### `kelvinToRgb`
 
@@ -230,7 +229,7 @@ Convert a kelvin temperature to an approximated RGB object.
 
 **Arguments**:
 
-* `{Number}` kelvin temperature
+- `{Number}` kelvin temperature
 
 **Returns**: `{Object}` RGB values, e.g `{r: 255, g: 0, b: 0}`
 
@@ -240,6 +239,6 @@ Convert an RGB object to an approximated kelvin temperature.
 
 **Arguments**:
 
-* `{Object}` RGB values, e.g `{r: 255, g: 0, b: 0}`
+- `{Object}` RGB values, e.g `{r: 255, g: 0, b: 0}`
 
 **Returns**: `{Number}` kelvin temperature

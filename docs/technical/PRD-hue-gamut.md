@@ -32,7 +32,7 @@ Das Ziel ist, iro.js so zu erweitern, dass Entwickler direkt mit Hue-kompatiblen
 
 ### 3.1 Funktionale Anforderungen
 
-1. **Option `gamut`**:
+1. **Option `gamut`:**
 
    - Kann beim Erstellen eines `iro.ColorPicker` oder beim Setzen von Farbeigenschaften angegeben werden.
    - Default: `"none"`.

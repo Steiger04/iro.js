@@ -2,7 +2,6 @@
 title: Advanced Usage
 ---
 
-
 ## Custom UI Layouts
 
 iro.js comes with a variety of built-in UI components. With the color picker's `layout` option, these can be combined together however you'd like.
@@ -12,37 +11,37 @@ Layouts are configured with the color picker's `layout` option. This should be a
 For example, here's what the component definitions for the default layout (a color wheel and a value slider) would look like:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
+var colorPicker = new iro.ColorPicker("#picker", {
   layout: [
-    { 
+    {
       component: iro.ui.Wheel,
     },
-    { 
+    {
       component: iro.ui.Slider,
     },
-  ]
+  ],
 });
 ```
 
 Component definitions can also include an `options` property to provide [config option](/guide.html#color-picker-options) overrides to individual components. In this example, the wheel and slider will both have the same border width of 2, but different border colors:
 
 ```js
-var colorPicker = new iro.ColorPicker('#color-picker', {
+var colorPicker = new iro.ColorPicker("#color-picker", {
   borderWidth: 2,
   layout: [
     {
       component: iro.ui.Wheel,
       options: {
-        borderColor: '#ffffff'
-      }
+        borderColor: "#ffffff",
+      },
     },
     {
       component: iro.ui.Slider,
       options: {
-        borderColor: '#000000'
-      }
-    }
-  ]
+        borderColor: "#000000",
+      },
+    },
+  ],
 });
 ```
 
@@ -59,22 +58,22 @@ var colorPicker = new iro.ColorPicker('#color-picker', {
 Wheels allow the user to adjust the color's **hue** and **saturation**. They can also support showing [more than one selectable color at once](#multi-color-selections).
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
+var colorPicker = new iro.ColorPicker("#picker", {
   layout: [
-    { 
+    {
       component: iro.ui.Wheel,
-      options: {}
+      options: {},
     },
-  ]
+  ],
 });
 ```
 
 There's a few optional wheel-specific config options that can be used:
 
-| Option           | Purpose | Default Value |
-|:-----------------|:--------|:--------|
-| `wheelLightness` | If set to `false`, the color wheel will not fade to black when the lightness decreases. | `true` |
-| `wheelAngle`     | Starting angle of the color wheel's hue gradient, measured in degrees. | `0` |
+| Option           | Purpose                                                                                 | Default Value     |
+| :--------------- | :-------------------------------------------------------------------------------------- | :---------------- |
+| `wheelLightness` | If set to `false`, the color wheel will not fade to black when the lightness decreases. | `true`            |
+| `wheelAngle`     | Starting angle of the color wheel's hue gradient, measured in degrees.                  | `0`               |
 | `wheelDirection` | Direction of the color wheel's hue gradient; either `"clockwise"` or `"anticlockwise"`. | `"anticlockwise"` |
 
 #### Box
@@ -88,21 +87,21 @@ There's a few optional wheel-specific config options that can be used:
 Boxes allow the user to adjust the color's **saturation** and **value**. They can also support showing [more than one selectable color at once](#multi-color-selections).
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
+var colorPicker = new iro.ColorPicker("#picker", {
   layout: [
-    { 
+    {
       component: iro.ui.Box,
-      options: {}
+      options: {},
     },
-  ]
+  ],
 });
 ```
 
 There's a few optional box-specific config options that can be used:
 
-| Option           | Purpose | Default Value |
-|:-----------------|:--------|:--------|
-| `boxHeight`      | Height of the box, measured in pixels. If this isn't set, it will use the box's width as its height | `null` |
+| Option      | Purpose                                                                                             | Default Value |
+| :---------- | :-------------------------------------------------------------------------------------------------- | :------------ |
+| `boxHeight` | Height of the box, measured in pixels. If this isn't set, it will use the box's width as its height | `null`        |
 
 #### Sliders
 
@@ -155,18 +154,7 @@ There's a few optional box-specific config options that can be used:
       sliderType: 'kelvin',
     }
   },
-  {
-    component: 'Slider',
-    options: {
-      sliderType: 'saturation',
-      sliderShape: 'circle',
-    }
-  },
 ]"/>
-<!-- 
-<ColorPicker :width="230" :handleRadius="8" :sliderMargin="12" :layout="[
-  
-]"/> -->
 
 Sliders allow the user to adjust a specific color channel. There are multiple slider types available, covering **hue**, **saturation**, **value**, **red**, **green**, **blue**, **alpha** and **kelvin temperature**.
 
@@ -175,40 +163,40 @@ Sliders allow the user to adjust a specific color channel. There are multiple sl
 The type of slider can be specified with the `sliderType` option:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
+var colorPicker = new iro.ColorPicker("#picker", {
   layout: [
-    { 
+    {
       component: iro.ui.Slider,
       options: {
         // can also be 'saturation', 'value', 'red', 'green', 'blue', 'alpha' or 'kelvin'
-        sliderType: 'hue'
-      }
+        sliderType: "hue",
+      },
     },
-  ]
+  ],
 });
 ```
 
 If `sliderType` is set to `'kelvin'`, the temperature range can be set with these options:
 
-| Option           | Purpose | Default Value |
-|:-----------------|:--------|:--------|
-| `minTemperature` | Minimum color temperature, in Kelvin (smallest value is `2000`) | `2200` |
-| `maxTemperature` | Maximum color temperature, in Kelvin (largest value is `40000`) | `11000` |
+| Option           | Purpose                                                         | Default Value |
+| :--------------- | :-------------------------------------------------------------- | :------------ |
+| `minTemperature` | Minimum color temperature, in Kelvin (smallest value is `2000`) | `2200`        |
+| `maxTemperature` | Maximum color temperature, in Kelvin (largest value is `40000`) | `11000`       |
 
 ##### `sliderShape`
 
 The `sliderShape` option can also be used to make the slider circular:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
+var colorPicker = new iro.ColorPicker("#picker", {
   layout: [
-    { 
+    {
       component: iro.ui.Slider,
       options: {
-        sliderShape: 'circle'
-      }
+        sliderShape: "circle",
+      },
     },
-  ]
+  ],
 });
 ```
 
@@ -218,15 +206,15 @@ iro.js supports having more than one selectable colors on the same color picker 
 
 ### Setup
 
-The `colors` [config option](/guide.html#color-picker-options) can be used to provide an intial list of colors to the color picker. Any [supported color format](/color_api.html#supported-color-formats) will work here:
+The `colors` [config option](/guide.html#color-picker-options) can be used to provide an initial list of colors to the color picker. Any [supported color format](/color_api.html#supported-color-formats) will work here:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
+var colorPicker = new iro.ColorPicker("#picker", {
   colors: [
-    'rgb(100%, 0, 0)', // pure red
-    'rgb(0, 100%, 0)', // pure green
-    'rgb(0, 0, 100%)', // pure blue
-  ]
+    "rgb(100%, 0, 0)", // pure red
+    "rgb(0, 100%, 0)", // pure green
+    "rgb(0, 0, 100%)", // pure blue
+  ],
 });
 ```
 
@@ -238,7 +226,7 @@ It's worth checking out the [working with colors guide](/guide.html#working-with
 
 ```js
 // set the first color to a new value
-colorPicker.colors[0].rgbString = 'rgb(0%, 0%, 0%)';
+colorPicker.colors[0].rgbString = "rgb(0%, 0%, 0%)";
 
 // get the saturation of the second color
 var saturation = colorPicker.colors[1].saturation;
@@ -254,10 +242,10 @@ colorPicker.colors.forEach(function (color) {
 When working with [events](/guide.html#color-picker-events), it's important to remember that all of the color-change events (like `color:change`, `input:change`, `input:start`, etc) will fire for every color. To find which color fired the event, you can use the color's `index` property:
 
 ```js
-colorPicker.on('color:change', function(color) {
+colorPicker.on("color:change", function (color) {
   // if the first color changed
   if (color.index === 0) {
-    console.log('color 0 changed!');
+    console.log("color 0 changed!");
     // log the color index and hex value
     console.log(color.index, color.hexString);
   }
@@ -279,8 +267,8 @@ var activeColorIndex = colorPicker.color.index;
 Whenever the active color changes, the `color:setActive` event will fire:
 
 ```js
-colorPicker.on('color:setActive', function(color) {
-  console.log('New active color:', color.index);
+colorPicker.on("color:setActive", function (color) {
+  console.log("New active color:", color.index);
 });
 ```
 
@@ -292,7 +280,7 @@ colorPicker.setActiveColor(1);
 
 ### Components Using the Active Color
 
-By default, Silder and Box components will reflect whichever color is currently active. However this can be manually overriden with their `activeIndex` option:
+By default, Slider and Box components will reflect whichever color is currently active. However this can be manually overridden with their `activeIndex` option:
 
 ```js
 var colorPicker = new iro.ColorPicker("#demoWheel", {
@@ -301,18 +289,18 @@ var colorPicker = new iro.ColorPicker("#demoWheel", {
     {
       component: iro.ui.Slider,
       options: {
-        sliderType: 'value'
-      }
+        sliderType: "value",
+      },
     },
     // this slider will always reflect the color at index 2
     {
       component: iro.ui.Slider,
       options: {
-        sliderType: 'value',
+        sliderType: "value",
         activeIndex: 2,
-      }
+      },
     },
-  ]
+  ],
 });
 ```
 
@@ -323,11 +311,11 @@ Colors can be added and removed from the color picker at any time:
 ```js
 // add a color to the color picker
 // this will add the color to the end of the colors array
-colorPicker.addColor('rgb(100%, 100%, 100%)');
+colorPicker.addColor("rgb(100%, 100%, 100%)");
 
 // you can also specify an index for the new color
 // add a color at index 0
-colorPicker.addColor('rgb(100%, 100%, 100%)', 0);
+colorPicker.addColor("rgb(100%, 100%, 100%)", 0);
 
 // remove the color at index 1
 colorPicker.removeColor(1);
@@ -337,9 +325,9 @@ You can also replace all of the colors at once with the `setColors` method:
 
 ```js
 colorPicker.setColors([
-  'rgba(100%, 0%, 100%)'
-  'rgba(0%, 0%, 0%)'
-  'rgba(0%, 100%, 100%)'
+  "rgba(100%, 0%, 100%)",
+  "rgba(0%, 0%, 0%)",
+  "rgba(0%, 100%, 100%)",
 ]);
 ```
 
@@ -364,17 +352,17 @@ Handle SVGs need to be placed somewhere within the page HTML, and the SVG conten
 Then when the color picker is created, make sure the `handleSvg` option is an **id selector** which matches the handle SVG:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
-  handleSvg: '#handle'
+var colorPicker = new iro.ColorPicker("#picker", {
+  handleSvg: "#handle",
 });
 ```
 
 The custom handle SVG will be drawn as if the center point is at `x 0, y 0`, but if you need to adjust the position of the handle, the `handleProps` option can be used to change the center point:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker', {
-  handleSvg: '#handle',
-  handleProps: { x: -4, y: -4 }
+var colorPicker = new iro.ColorPicker("#picker", {
+  handleSvg: "#handle",
+  handleProps: { x: -4, y: -4 },
 });
 ```
 

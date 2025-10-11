@@ -28,12 +28,6 @@
 
 <br/>
 
----
-
-> NOTE: this project is currently on **[hiatus](https://github.com/jaames/iro.js/issues/217#issuecomment-1214403290)** until further notice, as working on open source projects is becoming unsustainable for the maintainer.
-
----
-
 ## Features
 
 - Work with colors in hex, RGB, HSV and HSL formats (plus kelvin temperatures!) in one simple, frictionless API
@@ -293,7 +287,7 @@ colorPicker.off("color:change", onColorChange);
 
 ##### `color:change`
 
-Fired whenever the selected color changes -- either when the user interacts with the color picker, or when the color is updated by your own code. This event's callback functions will recieve two values:
+Fired whenever the selected color changes -- either when the user interacts with the color picker, or when the color is updated by your own code. This event's callback functions will receive two values:
 
 - `color`: the [currently selected color](#working-with-colors)
 - `changes`: an object showing which HSV channels have changed since the last time the event was fired
@@ -318,7 +312,7 @@ colorPicker.on("color:change", function (color) {
 
 Similar to `color:change`, except this event is only fired when the color is changed with the user's **mouse or touch input**.
 
-Callbacks for this event recieve the same values as `color:change`, and it is also safe to modify the `color` object within callbacks for this event.
+Callbacks for this event receive the same values as `color:change`, and it is also safe to modify the `color` object within callbacks for this event.
 
 ##### `input:start`
 
@@ -334,7 +328,7 @@ Fired whenever the user stops interacting with the color picker controls. The [c
 
 ##### `color:init`
 
-Fired whenever a color is added. This event's callbacks will recieve the newly added color object.
+Fired whenever a color is added. This event's callbacks will receive the newly added color object.
 
 ##### `color:remove`
 
@@ -352,7 +346,11 @@ Fired when the colorPicker's UI has been mounted to the DOM and is ready for use
 
 ## Testing
 
-The Jest suites in `tests/color.test.ts` and `tests/colorPicker.test.ts` were intentionally slimmed down in 2024 and now provide smoke coverage for the most critical parsing, conversion, and widget interactions.
+iro.js uses Jest with ts-jest to execute its TypeScript suites in the `tests/` directory. Focused smoke coverage in `tests/color.test.ts` and `tests/colorPicker.test.ts` exercises the most critical parsing, conversion, and widget interactions. Run the suite locally with:
+
+```sh
+npm test
+```
 
 <img height="16" height="888" src="https://raw.githubusercontent.com/jaames/iro.js/master/assets/break.png"/>
 

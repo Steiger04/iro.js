@@ -156,13 +156,13 @@ Box control height, measured in pixels.
 
 ### `color`
 
-An [`iro.Color`](/colorPicker_api.html) object representing the currently selected color. Updating this color object will also update the seclected color in the picker.
+An [`iro.Color`](/color_api.html) object representing the currently selected color. Updating this color object will also update the selected color in the picker.
 
-**See also:** [Using the Selected Color](/guide.html#color-picker-options)
+**See also:** [Working with Colors](/guide.html#working-with-colors)
 
 ### `colors`
 
-An array of [`iro.Color`](/colorPicker_api.html) objects representing the currently selected colors, used for [multicolor](/advanced.html#multicolor). Updating any of these color objects will also update the seclected color in the picker.
+An array of [`iro.Color`](/color_api.html) objects representing the currently selected colors, used for [multi-color selections](/advanced.html#multi-color-selections). Updating any of these color objects will also update the selected color in the picker.
 
 ### `el`
 
@@ -174,18 +174,13 @@ The HTML element being used as the color picker's base element.
 
 ### `props`
 
-The initial configeration options passed to the color picker.
+The initial configuration options passed to the color picker.
 
 ### `id`
 
 The ID value passed to the color picker config.
 
 ## Event Methods
-
-**Arguments:**
-
-- `{Number}` width
-- `{Number}` height
 
 ### `on`
 
@@ -231,7 +226,7 @@ function colorChangeCallback(color) {
 example.on("color:change", colorChangeCallback);
 
 // stop listening to the color change event
-// colorChangeCallback won't be called ehen the color changes
+// colorChangeCallback won't be called when the color changes
 example.off("color:change", colorChangeCallback);
 ```
 
@@ -298,7 +293,7 @@ Used internally to dispatch an event. All function arguments after the event typ
 
 ### `deferredEmit`
 
-Used internally to dispatch an deferred event. Deferred events are stored until an event listener for them is added with `on`.
+Used internally to dispatch a deferred event. Deferred events are stored until an event listener for them is added with `on`.
 
 **Arguments:**
 
@@ -314,7 +309,7 @@ Fired whenever the color changes -- either when the user interacts with the cont
 
 ### `input:change`
 
-Similar to `color:change`, except this is only fired whenever the color is changed with _direct user input_. Callbacks for this event recieve exactly the same parameters as `color:change`. It is also safe to modify the `color` object within callbacks for this event.
+Similar to `color:change`, except this is only fired whenever the color is changed with _direct user input_. Callbacks for this event receive exactly the same parameters as `color:change`. It is also safe to modify the `color` object within callbacks for this event.
 
 ### `input:start`
 
@@ -330,7 +325,7 @@ Fired whenever the user stops interacting with the color picker controls. This e
 
 ### `color:init`
 
-Fired whenever a new color is created. This event's callbacks will receive the new creat color object.
+Fired whenever a new color is created. This event's callbacks will receive the newly created color object.
 
 ### `color:remove`
 

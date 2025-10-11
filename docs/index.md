@@ -11,22 +11,24 @@ Modular, design-conscious color picker widget for JavaScript
 Work with colors in hex, RGB, HSV and HSL formats (plus kelvin temperatures!) in one simple, frictionless API.
 :::
 
-::: slot feature-colors-example 
+::: slot feature-colors-example
+
 ```js
-// Get the color as an RGB string 
-var rgb = colorPicker.color.rgbString; 
-// rgb = "{{ rgbString }}" 
+// Get the color as an RGB string
+var rgb = colorPicker.color.rgbString;
+// rgb = {{ rgbString }}
 
-// Get the color as a HSV object 
-var hsv = colorPicker.color.hsv; 
-// hsv = {{ rgbString }}
+// Get the color as a HSV object
+var hsv = colorPicker.color.hsv;
+// hsv = {{ hsvObject }}
 
-// Set the color from a hex string 
+// Set the color from a hex string
 colorPicker.color.hexString = "#fff";
 
-// Set the color from a temperature 
+// Set the color from a temperature
 colorPicker.color.kelvin = 6000;
 ```
+
 :::
 
 ::: slot feature-multicolor
@@ -38,6 +40,7 @@ Create the perfect color picker from a selection of pre-built UI components.
 :::
 
 ::: slot tutorial-iro-js
+
 ### Installation
 
 ##### Install from NPM
@@ -46,14 +49,14 @@ Create the perfect color picker from a selection of pre-built UI components.
 $ npm install @jaames/iro --save
 ```
 
-Then if you are using a module bundler like Webpack or Rollup, import iro.js into your project: 
+Then if you are using a module bundler like Webpack or Rollup, import iro.js into your project:
 
 ```js
 // Using ES6 module syntax
-import iro from '@jaames/iro';
+import iro from "@jaames/iro";
 
 // Using CommonJS modules
-const iro = require('@jaames/iro');
+const iro = require("@jaames/iro");
 ```
 
 ##### Or use the jsDelivr CDN
@@ -85,7 +88,7 @@ First, we need a HTML element with a unique identifier (such as an `id` attribut
 Then use JavaScript to create a new `iro.ColorPicker` with a CSS selector that matches your chosen container element:
 
 ```js
-var colorPicker = new iro.ColorPicker('#picker');
+var colorPicker = new iro.ColorPicker("#picker");
 ```
 
 You can also use a DOM object instead of a CSS selector here -- this might be more suitable if you're integrating iro.js into an application built with a framework such as Vue, React, etc.
@@ -99,16 +102,15 @@ var colorPicker = new iro.ColorPicker("#picker", {
   // Set the size of the color picker
   width: 320,
   // Set the initial color to pure red
-  color: "#f00"
+  color: "#f00",
 });
 ```
 
-A full list of color picker options can be found in the [options documentation](guide.html#color-picker-options).
+A full list of color picker options can be found in the [options documentation](/guide.html#color-picker-options).
 
 ### Working with Colors
 
-Each color picker has a color object which stores the currently selected color. 
-
+Each color picker has a color object which stores the currently selected color.
 
 ```js
 var hex = colorPicker.color.hexString;
@@ -126,19 +128,18 @@ A full list of color properties can be found in the [color documentation](/guide
 
 ### Events
 
+Events let you run your own code after certain things have happened, like when the selected color has changed or when the user has interacted with the color picker.
 
-Events let you to run your own code after certain things have happened, like when the selected color has changed or when the user has interacted with the color picker.
-
-The color picker's [`on`](colorPicker_api.html#on) method can be used to attach functions that will be called whenever a particular event is fired. For example, we can add a listener that fires whenever the color is changed:
+The color picker's [`on`](/colorPicker_api.html#on) method can be used to attach functions that will be called whenever a particular event is fired. For example, we can add a listener that fires whenever the color is changed:
 
 ```js
 // listen to a color picker's color:change event
 // color:change callbacks receive the current color
-colorPicker.on('color:change', function(color) {
+colorPicker.on("color:change", function (color) {
   // log the current color as a HEX string
   console.log(color.hexString);
 });
 ```
 
-For a full overview of the available events can be found in the [events documentation](/guide.html#color-picker-events).
+A full overview of the available events can be found in the [events documentation](/guide.html#color-picker-events).
 :::

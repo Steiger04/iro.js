@@ -4,12 +4,12 @@ title: Introduction
 
 ## Features
 
- * Simple, low-friction API with support for colors in HEX, RGB, HSL and HSV color formats -- plus kelvin temperatures!
- * Create the perfect color picker from a selection of pre-built UI components.
- * Add multiple colors to the same picker for selecting color harmonies and themes.
- * Contained within a single [9.5kb](https://bundlephobia.com/result?p=@jaames/iro) (min + gzip) script. No extra css, images, or third-party libraries (like jQuery) needed.
- * Works across all modern browsers and devices, including touchscreens.
- * Licenced under MPL 2.0. 100% free for personal and commercial use.
+- Simple, low-friction API with support for HEX, RGB, HSL, HSV, and kelvin temperatures.
+- Assemble the perfect color picker from a selection of pre-built UI components.
+- Add multiple colors to the same picker for quick harmony and theme exploration.
+- Ships as a single [9.5kb](https://bundlephobia.com/result?p=@jaames/iro) (min + gzip) script—no extra CSS, images, or third-party libraries needed.
+- Works across all modern browsers and devices, including touchscreens.
+- Licenced under MPL 2.0 and free for personal and commercial use.
 
 ## Examples
 
@@ -21,4 +21,4 @@ If you run into any problems when using iro.js, feel free to contact me for help
 
 ## Motivation
 
-I built iro.js after feeling pretty unsatisifed with the existing color picker widgets I came across while working on a project. They were either unintuitive, bloated, depended on extra libraries, or had been long-abandoned by their author.
+I built iro.js after feeling unsatisfied with the existing color picker widgets I came across while working on a project. They were either unintuitive, bloated, depended on extra libraries, or had been long-abandoned by their author. iro.js is my answer to that gap: a light, extensible picker that stays fast and friendly.
