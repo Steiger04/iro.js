@@ -88,8 +88,22 @@ First, we need a HTML element with a unique identifier (such as an `id` attribut
 Then use JavaScript to create a new `iro.ColorPicker` with a CSS selector that matches your chosen container element:
 
 ```js
+// Default setup (uses 'nodehue_d50_typo' matrix profile for Philips Hue compatibility)
 var colorPicker = new iro.ColorPicker("#picker");
 ```
+
+::: tip Matrix Profile Default
+By default, iro.js uses the `nodehue_d50_typo` matrix profile for compatibility with Philips Hue smart lighting systems. **For standard web applications**, you may want to use the `srgb_d65` profile instead:
+
+```js
+// Recommended for web/sRGB workflows (no Hue integration)
+var colorPicker = new iro.ColorPicker("#picker", {
+  matrixProfile: "srgb_d65",
+});
+```
+
+This ensures color calculations use the standard sRGB D65 white point instead of the Hue-specific D50 adaptation. See the [Matrix Profiles guide](/guide.html#matrix-profiles) for details.
+:::
 
 You can also use a DOM object instead of a CSS selector here -- this might be more suitable if you're integrating iro.js into an application built with a framework such as Vue, React, etc.
 
@@ -98,13 +112,25 @@ You can also use a DOM object instead of a CSS selector here -- this might be mo
 The color picker can be customized by passing a set of options to the second `iro.ColorPicker` parameter:
 
 ```js
+// Example with default matrix profile (nodehue_d50_typo)
 var colorPicker = new iro.ColorPicker("#picker", {
   // Set the size of the color picker
   width: 320,
   // Set the initial color to pure red
   color: "#f00",
 });
+
+// Example with sRGB D65 profile (recommended for web apps)
+var webColorPicker = new iro.ColorPicker("#web-picker", {
+  width: 320,
+  color: "#f00",
+  matrixProfile: "srgb_d65", // Use standard web/sRGB color space
+});
 ```
+
+::: warning Matrix Profile Default
+The default `matrixProfile` is **`"nodehue_d50_typo"`** for Philips Hue compatibility. This uses D50 white point adaptation instead of the standard D65 used by web browsers. For typical web applications without smart lighting integration, explicitly set `matrixProfile: "srgb_d65"` to match CSS color specifications and browser rendering.
+:::
 
 A full list of color picker options can be found in the [options documentation](/guide.html#color-picker-options).
 

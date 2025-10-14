@@ -124,8 +124,20 @@ First, we need a HTML element with a unique identifier (like an `id` attribute) 
 Then use JavaScript to create a new iro.ColorPicker with a CSS selector that matches your container element:
 
 ```js
+// Default setup (uses 'nodehue_d50_typo' matrix profile for Philips Hue compatibility)
 var colorPicker = new iro.ColorPicker("#picker");
 ```
+
+> **💡 For Web/sRGB Applications**
+> By default, iro.js uses the `nodehue_d50_typo` matrix profile for Philips Hue compatibility. **For standard web applications without smart lighting integration**, explicitly set `matrixProfile: "srgb_d65"` to use the standard sRGB D65 white point:
+>
+> ```js
+> var colorPicker = new iro.ColorPicker("#picker", {
+>   matrixProfile: "srgb_d65",
+> });
+> ```
+>
+> See the [Matrix Profiles guide](https://iro.js.org/guide.html#matrix-profiles) for details.
 
 You can also use a DOM object instead of a CSS selector here -- this might be more suitable if you're integrating iro.js into an application built with a framework such as Vue, React, etc.
 
@@ -148,6 +160,9 @@ var colorPicker = new iro.ColorPicker("#picker", {
 ```
 
 <!-- MARKDOWN-AUTO-DOCS:END -->
+
+> **⚠️ Matrix Profile Default**
+> The default `matrixProfile` is **`"nodehue_d50_typo"`** (for Philips Hue compatibility). For typical web applications, set `matrixProfile: "srgb_d65"` to match CSS color specifications and browser rendering. See the [Matrix Profiles guide](https://iro.js.org/guide.html#matrix-profiles) for details.
 
 ### Available Options
 

@@ -11,6 +11,32 @@ title: Introduction
 - Works across all modern browsers and devices, including touchscreens.
 - Licenced under MPL 2.0 and free for personal and commercial use.
 
+## Quick Start
+
+### Basic Usage
+
+```js
+// Default: uses 'nodehue_d50_typo' matrix profile (Philips Hue compatible)
+var colorPicker = new iro.ColorPicker("#picker");
+```
+
+### For Web/sRGB Applications
+
+```js
+// Recommended for standard web apps (no smart lighting integration)
+var colorPicker = new iro.ColorPicker("#picker", {
+  matrixProfile: "srgb_d65", // Use standard sRGB D65 white point
+});
+```
+
+::: tip About Matrix Profiles
+iro.js defaults to the **`nodehue_d50_typo`** matrix profile for compatibility with Philips Hue smart lighting systems. This uses D50 white point adaptation instead of the standard D65 white point used by web browsers and CSS specifications.
+
+**For most web applications**, you should explicitly set `matrixProfile: "srgb_d65"` to ensure color accuracy with standard web/sRGB workflows. The matrix profile only affects xy chromaticity calculations used by smart lighting APIs—it doesn't impact RGB, HSV, or HSL operations.
+
+See the [Matrix Profiles guide](/guide.html#matrix-profiles) for detailed information.
+:::
+
 ## Examples
 
 A collection of [interactive examples](https://codepen.io/collection/XQgGRB) are available on Codepen.
