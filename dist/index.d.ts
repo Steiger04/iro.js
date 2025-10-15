@@ -1,11 +1,12 @@
-import { h as _h } from 'preact';
-import { IroColor } from '@irojs/iro-core';
-import { IroComponentWrapper } from './ComponentWrapper';
-import { IroHandle } from './Handle';
-import { IroSlider } from './Slider';
-import { IroBox } from './Box';
-import { IroWheel } from './Wheel';
-import { IroColorPicker } from './ColorPicker';
+import { h as _h } from "preact";
+import { IroColor } from "@irojs/iro-core";
+import { IroComponentWrapper } from "./ComponentWrapper";
+import { IroHandle } from "./Handle";
+import { IroSlider } from "./Slider";
+import { IroBox } from "./Box";
+import { IroWheel } from "./Wheel";
+import { IroGamutWheel } from "./GamutWheel";
+import { IroColorPicker } from "./ColorPicker";
 declare namespace iro {
     const version = "5.5.2";
     type Color = IroColor;
@@ -23,6 +24,7 @@ declare namespace iro {
         const Slider: typeof IroSlider;
         const Wheel: typeof IroWheel;
         const Box: typeof IroBox;
+        const GamutWheel: typeof IroGamutWheel;
     }
 }
 export default iro;

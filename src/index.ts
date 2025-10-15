@@ -1,11 +1,12 @@
-import { h as _h } from 'preact';
-import { IroColor } from '@irojs/iro-core';
-import { IroComponentWrapper } from './ComponentWrapper';
-import { IroHandle } from './Handle';
-import { IroSlider } from './Slider';
-import { IroBox } from './Box';
-import { IroWheel } from './Wheel';
-import { IroColorPicker, IroColorPickerWidget } from './ColorPicker';
+import { h as _h } from "preact";
+import { IroColor } from "@irojs/iro-core";
+import { IroComponentWrapper } from "./ComponentWrapper";
+import { IroHandle } from "./Handle";
+import { IroSlider } from "./Slider";
+import { IroBox } from "./Box";
+import { IroWheel } from "./Wheel";
+import { IroGamutWheel } from "./GamutWheel";
+import { IroColorPicker, IroColorPickerWidget } from "./ColorPicker";
 
 namespace iro {
   export const version = VERSION; // replaced by @rollup/plugin-replace; see rollup.config.js
@@ -22,6 +23,7 @@ namespace iro {
     export const Slider = IroSlider;
     export const Wheel = IroWheel;
     export const Box = IroBox;
+    export const GamutWheel = IroGamutWheel;
   }
 }
 

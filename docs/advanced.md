@@ -76,6 +76,35 @@ There's a few optional wheel-specific config options that can be used:
 | `wheelAngle`     | Starting angle of the color wheel's hue gradient, measured in degrees.                  | `0`               |
 | `wheelDirection` | Direction of the color wheel's hue gradient; either `"clockwise"` or `"anticlockwise"`. | `"anticlockwise"` |
 
+#### Gamut Wheel
+
+Gamut Wheels are specialized color wheels designed for Philips Hue smart lighting integration. They use **perceptual gamut mapping** to display only colors that can be physically reproduced by Philips Hue bulbs, ensuring accurate color representation without unexpected shifts or clipping.
+
+```js
+var colorPicker = new iro.ColorPicker("#picker", {
+  gamut: "C", // Required: Philips Hue Gamut (A, B, or C)
+  layout: [
+    {
+      component: iro.ui.GamutWheel,
+      options: {},
+    },
+  ],
+});
+```
+
+Gamut Wheels support the same options as standard Wheels, plus the required `gamut` option:
+
+| Option           | Purpose                                                                                 | Default Value     |
+| :--------------- | :-------------------------------------------------------------------------------------- | :---------------- |
+| `gamut`          | **Required**: Philips Hue gamut type (`'A'`, `'B'`, or `'C'`)                           | `'none'`          |
+| `wheelLightness` | If set to `false`, the color wheel will not fade to black when the lightness decreases. | `true`            |
+| `wheelAngle`     | Starting angle of the color wheel's hue gradient, measured in degrees.                  | `0`               |
+| `wheelDirection` | Direction of the color wheel's hue gradient; either `"clockwise"` or `"anticlockwise"`. | `"anticlockwise"` |
+
+::: tip
+See the [Philips Hue Gamut Wheel](/guide.html#philips-hue-gamut-wheel) section in the guide for detailed information about gamut mapping, integration examples, and best practices.
+:::
+
 #### Box
 
 <ColorPicker :width="240" :handleRadius="8" :sliderMargin="12" :layout="[

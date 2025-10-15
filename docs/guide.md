@@ -316,6 +316,224 @@ console.log(color.hexString); // Still "#ff0000"
 - **Recipe 2 (rebase)**: Slower, performs conversion. RGB appearance preserved, HSV may shift slightly due to round-trip conversion, xy represents the same visual color in the new profile's space.
   :::
 
+## Philips Hue Gamut Wheel
+
+::: tip
+**Availability:** The Gamut Wheel component is included in `@jaames/iro` version 5.6.0 and later. Ensure you have the latest version installed:
+
+```bash
+npm install @jaames/iro@latest
+```
+
+Or reference it via CDN (once published):
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5.6"></script>
+```
+
+For local development, the examples in this repository use the local build (`dist/iro.js`).
+:::
+
+The Gamut Wheel is a specialized color picker component designed for Philips Hue smart lighting systems. Unlike the standard color wheel which displays the full HSV color space, the Gamut Wheel uses **perceptual gamut mapping** to show only colors that can be physically reproduced by Philips Hue bulbs. This ensures that the colors you select in the UI will accurately match what the bulbs can display, without unexpected color shifts or clipping.
+
+### What is Gamut Mapping?
+
+Philips Hue bulbs have different color reproduction capabilities depending on their generation (Gamut A, B, or C). Colors outside a bulb's gamut cannot be physically displayed and must be mapped to the nearest displayable color.
+
+The Gamut Wheel uses **perceptual gamut mapping** in the CIELAB color space to:
+
+- Preserve hue (color tone) exactly
+- Preserve lightness (brightness) exactly
+- Reduce chroma (saturation) only as much as needed to fit within the gamut
+- Create smooth, natural-looking transitions without abrupt color jumps
+
+### Basic Usage
+
+Provide a simple example:
+
+```javascript
+var colorPicker = new iro.ColorPicker("#picker", {
+  width: 300,
+  color: "#ff0000",
+  gamut: "C", // Philips Hue Gamut C (latest generation)
+  layout: [
+    {
+      component: iro.ui.GamutWheel,
+    },
+    {
+      component: iro.ui.Slider,
+      options: { sliderType: "value" },
+    },
+  ],
+});
+```
+
+The `gamut` option specifies which Philips Hue gamut to use (A, B, or C). The `iro.ui.GamutWheel` component replaces the standard `iro.ui.Wheel`. A brightness slider is typically added alongside the Gamut Wheel for full color control.
+
+### Philips Hue Gamut Types
+
+| Gamut | Generation                           | Color Space                         | Best For                   |
+| :---- | :----------------------------------- | :---------------------------------- | :------------------------- |
+| `'A'` | 1st generation (Living Colors, etc.) | Smallest gamut                      | Older Hue bulbs            |
+| `'B'` | 2nd generation                       | Medium gamut                        | Mid-range Hue bulbs        |
+| `'C'` | 3rd generation (latest)              | Largest gamut, extended color range | Latest Hue bulbs, Hue Plus |
+
+Gamut C provides the widest color range and is recommended for modern Philips Hue installations. If you're unsure which gamut your bulbs support, consult the Philips Hue API documentation or use Gamut C as a safe default for newer bulbs.
+
+### Gamut Wheel Options
+
+The Gamut Wheel supports all the same options as the standard Wheel component:
+
+| Option           | Purpose                                                       | Default Value     |
+| :--------------- | :------------------------------------------------------------ | :---------------- |
+| `wheelLightness` | If `true`, the wheel fades to black as brightness decreases   | `true`            |
+| `wheelAngle`     | Starting angle of the hue gradient (degrees)                  | `0`               |
+| `wheelDirection` | Hue gradient direction: `'clockwise'` or `'anticlockwise'`    | `'anticlockwise'` |
+| `gamut`          | **Required**: Philips Hue gamut type (`'A'`, `'B'`, or `'C'`) | `'none'`          |
+
+::: warning
+**Important:** The `gamut` option must be set to `'A'`, `'B'`, or `'C'` for the Gamut Wheel to function. If `gamut` is `'none'` or undefined, the component will not render or will show a warning.
+:::
+
+### Example: Complete Philips Hue Color Picker
+
+```javascript
+var hueColorPicker = new iro.ColorPicker("#hue-picker", {
+  width: 320,
+  color: "#ff6b35",
+  gamut: "C", // Latest Philips Hue bulbs
+  matrixProfile: "nodehue_d50_typo", // Hue-compatible color space
+  wheelLightness: true, // Show brightness in wheel
+  wheelAngle: 0,
+  wheelDirection: "anticlockwise",
+  borderWidth: 2,
+  borderColor: "#ffffff",
+  handleRadius: 10,
+  layout: [
+    {
+      component: iro.ui.GamutWheel,
+      options: {
+        borderColor: "#ffffff",
+      },
+    },
+    {
+      component: iro.ui.Slider,
+      options: {
+        sliderType: "value",
+        borderColor: "#ffffff",
+      },
+    },
+  ],
+});
+
+// Listen for color changes
+hueColorPicker.on("color:change", function (color) {
+  // Get xy chromaticity coordinates for Philips Hue API
+  var xy = color.xy;
+  console.log("Hue API xy:", xy.x, xy.y);
+
+  // Get brightness (0-100)
+  var brightness = color.value;
+  console.log("Brightness:", brightness);
+
+  // Send to Philips Hue API
+  // sendToHueAPI({ xy: [xy.x, xy.y], bri: Math.round(brightness * 2.54) });
+});
+```
+
+This example creates a complete color picker for Philips Hue integration. The `matrixProfile` is set to `'nodehue_d50_typo'` for compatibility with the node-hue-api library. The `color.xy` property provides CIE 1931 xy chromaticity coordinates required by the Philips Hue API. Brightness is accessed via `color.value` (0-100) and should be converted to Hue's 0-254 range.
+
+### Gamut Wheel vs Standard Wheel
+
+| Feature             | Standard Wheel               | Gamut Wheel                                 |
+| :------------------ | :--------------------------- | :------------------------------------------ |
+| Color Space         | Full HSV (all colors)        | Gamut-constrained (only displayable colors) |
+| Rendering           | CSS conic-gradient           | Canvas with perceptual mapping              |
+| Use Case            | General web applications     | Philips Hue smart lighting                  |
+| Hue Preservation    | N/A                          | Exact hue preservation                      |
+| Saturation Handling | Full 0-100% range            | Reduced to fit gamut                        |
+| Performance         | Faster (CSS)                 | Slightly slower (canvas rendering)          |
+| Visual Appearance   | May show unrealizable colors | Only shows achievable colors                |
+
+Use the **Standard Wheel** for general web applications where you need the full HSV color space. Use the **Gamut Wheel** when integrating with Philips Hue or other smart lighting systems with limited color gamuts.
+
+### How Perceptual Mapping Works
+
+The Gamut Wheel uses a sophisticated perceptual gamut mapping algorithm:
+
+1. Converts RGB colors to CIELAB color space (perceptually uniform)
+2. Transforms CIELAB to LCh (cylindrical coordinates: Lightness, Chroma, Hue)
+3. Iteratively reduces Chroma until the color fits within the gamut triangle
+4. Preserves Lightness and Hue throughout the process
+5. Converts back to RGB for display
+
+::: tip
+**Technical Note:** The perceptual mapping algorithm ensures that colors are mapped in a way that matches human color perception. This means that the visual difference between the original color and the mapped color is minimized, even if the mathematical difference in RGB space is significant.
+:::
+
+### Switching Between Gamuts
+
+You can dynamically change gamuts at runtime:
+
+```javascript
+var picker = new iro.ColorPicker("#picker", {
+  gamut: "A",
+  layout: [{ component: iro.ui.GamutWheel }],
+});
+
+// Later, switch to a different gamut
+picker.setGamut("C");
+
+// Listen for gamut changes
+picker.on("gamut:change", function (newGamut) {
+  console.log("Gamut changed to:", newGamut);
+});
+```
+
+Use `setGamut()` to dynamically change the gamut at runtime. The Gamut Wheel will automatically re-render with the new gamut constraints. The `gamut:change` event fires when the gamut is changed.
+
+### Integration with Philips Hue API
+
+Here's a practical integration example:
+
+```javascript
+// Example: Sending color to Philips Hue API
+function sendColorToHue(color, lightId) {
+  // Get xy chromaticity coordinates
+  var xy = color.xy;
+
+  // Get brightness (convert from 0-100 to 0-254)
+  var brightness = Math.round(color.value * 2.54);
+
+  // Construct Hue API payload
+  var payload = {
+    xy: [xy.x, xy.y],
+    bri: brightness,
+    transitiontime: 4, // 400ms transition
+  };
+
+  // Send to Hue bridge (example using fetch)
+  fetch(`http://<bridge-ip>/api/<username>/lights/${lightId}/state`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+// Use with color picker
+hueColorPicker.on("input:change", function (color) {
+  sendColorToHue(color, 1); // Send to light ID 1
+});
+```
+
+The Philips Hue API expects xy chromaticity coordinates and brightness (bri) values. Use `color.xy` to get the xy coordinates (already gamut-mapped). Convert brightness from 0-100 to 0-254 by multiplying by 2.54. Use `input:change` event to update lights only on user interaction (not programmatic changes).
+
+### See Also
+
+- [Matrix Profiles](#matrix-profiles) - Understanding color space transformations
+- [Custom UI Layouts](/advanced.html#custom-ui-layouts) - Combining Gamut Wheel with other components
+- [Color API](/color_api.html) - Working with color objects and xy coordinates
+- [ColorPicker API](/colorPicker_api.html) - Full API reference including `setGamut()` method
+
 ## Working with Colors
 
 Each color picker has a `color` object which stores the currently selected color. This color object is tied to the color picker, so any changes to its values will be reflected by the picker, and vice versa.

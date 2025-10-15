@@ -289,6 +289,19 @@
     }
   }
   /**
+   * inverse operation of applyGammaCorrection().
+   *
+   * @param channel - Linear RGB channel value (0-1)
+   * @returns Display-encoded sRGB channel value
+   */
+  function applyInverseGammaCorrection(channel) {
+    if (channel <= 0.0031308) {
+      return channel * 12.92;
+    } else {
+      return 1.055 * Math.pow(channel, 1 / 2.4) - 0.055;
+    }
+  }
+  /**
    * Color Space Notes:
    *
    * The default implementation uses the node-hue-api D50 matrix (including the historical
@@ -2039,6 +2052,627 @@
     return normalizeMatrixProfileName(profile != null ? profile : DEFAULT_MATRIX_PROFILE);
   }
 
+  /**
+   * XYZ tristimulus values for D50 white point (ICC PCS illuminant)
+   */
+  var D50_WHITE_POINT = {
+    X: 0.9642,
+    Y: 1.0,
+    Z: 0.8251
+  };
+  /**
+   * XYZ tristimulus values for D65 white point (standard daylight illuminant)
+   */
+  var D65_WHITE_POINT = {
+    X: 0.9505,
+    Y: 1.0,
+    Z: 1.089
+  };
+  /**
+   * CIE L*a*b* constants
+   */
+  var EPSILON = 216 / 24389; // 0.008856
+  var KAPPA = 24389 / 27; // 903.3
+  /**
+   * Get the appropriate white point for a matrix profile
+   */
+  function getWhitePointForProfile$1(profile) {
+    var normalizedProfile = normalizeMatrixProfileName(profile);
+    var matrixProfile = MATRIX_PROFILES[normalizedProfile];
+    if (matrixProfile.whitePoint === "D65") {
+      return D65_WHITE_POINT;
+    }
+    return D50_WHITE_POINT;
+  }
+  /**
+   * CIE f(t) function for XYZ to LAB conversion
+   */
+  function labF(t) {
+    if (t > EPSILON) {
+      return Math.pow(t, 1 / 3);
+    }
+    return (KAPPA * t + 16) / 116;
+  }
+  /**
+   * Inverse CIE f(t) function for LAB to XYZ conversion
+   */
+  function labFInverse(t) {
+    var t3 = t * t * t;
+    if (t3 > EPSILON) {
+      return t3;
+    }
+    return (116 * t - 16) / KAPPA;
+  }
+  /**
+   * Convert XYZ to CIELAB color space
+   */
+  function xyzToLab(xyz, whitePoint) {
+    // Normalize by white point
+    var xn = xyz.X / whitePoint.X;
+    var yn = xyz.Y / whitePoint.Y;
+    var zn = xyz.Z / whitePoint.Z;
+    // Apply CIE f(t) function
+    var fx = labF(xn);
+    var fy = labF(yn);
+    var fz = labF(zn);
+    // Calculate L*a*b* values
+    var l = 116 * fy - 16;
+    var a = 500 * (fx - fy);
+    var b = 200 * (fy - fz);
+    return {
+      l: l,
+      a: a,
+      b: b
+    };
+  }
+  /**
+   * Convert CIELAB to XYZ color space
+   */
+  function labToXyz(lab, whitePoint) {
+    // Calculate intermediate values
+    var fy = (lab.l + 16) / 116;
+    var fx = lab.a / 500 + fy;
+    var fz = fy - lab.b / 200;
+    // Apply inverse f(t) function
+    var xn = labFInverse(fx);
+    var yn = labFInverse(fy);
+    var zn = labFInverse(fz);
+    // Multiply by white point
+    var X = xn * whitePoint.X;
+    var Y = yn * whitePoint.Y;
+    var Z = zn * whitePoint.Z;
+    return {
+      X: X,
+      Y: Y,
+      Z: Z
+    };
+  }
+  /**
+   * Convert RGB to CIELAB color space
+   */
+  function rgbToLab(rgb, profile) {
+    if (profile === void 0) {
+      profile = "nodehue_d50_typo";
+    }
+    // Clamp and normalize RGB from 0-255 to 0-1
+    var r = clamp(rgb.r, 0, 255) / 255;
+    var g = clamp(rgb.g, 0, 255) / 255;
+    var b = clamp(rgb.b, 0, 255) / 255;
+    // Apply gamma correction (linearize)
+    r = applyGammaCorrection(r);
+    g = applyGammaCorrection(g);
+    b = applyGammaCorrection(b);
+    // Get matrix profile
+    var normalizedProfile = normalizeMatrixProfileName(profile);
+    var matrixProfile = MATRIX_PROFILES[normalizedProfile];
+    var matrix = matrixProfile.forward;
+    // Perform matrix multiplication to get XYZ
+    var X = matrix[0][0] * r + matrix[0][1] * g + matrix[0][2] * b;
+    var Y = matrix[1][0] * r + matrix[1][1] * g + matrix[1][2] * b;
+    var Z = matrix[2][0] * r + matrix[2][1] * g + matrix[2][2] * b;
+    // Get appropriate white point
+    var whitePoint = getWhitePointForProfile$1(profile);
+    // Convert XYZ to LAB
+    var lab = xyzToLab({
+      X: X,
+      Y: Y,
+      Z: Z
+    }, whitePoint);
+    // Preserve alpha if present
+    if (rgb.a !== undefined) {
+      lab.alpha = rgb.a;
+    }
+    return lab;
+  }
+  /**
+   * Convert CIELAB to RGB color space
+   */
+  function labToRgb(lab, profile) {
+    if (profile === void 0) {
+      profile = "nodehue_d50_typo";
+    }
+    // Get matrix profile
+    var normalizedProfile = normalizeMatrixProfileName(profile);
+    var matrixProfile = MATRIX_PROFILES[normalizedProfile];
+    var matrix = matrixProfile.inverse;
+    // Get appropriate white point
+    var whitePoint = getWhitePointForProfile$1(profile);
+    // Convert LAB to XYZ
+    var xyz = labToXyz(lab, whitePoint);
+    // Perform matrix multiplication to get linear RGB
+    var r = matrix[0][0] * xyz.X + matrix[0][1] * xyz.Y + matrix[0][2] * xyz.Z;
+    var g = matrix[1][0] * xyz.X + matrix[1][1] * xyz.Y + matrix[1][2] * xyz.Z;
+    var b = matrix[2][0] * xyz.X + matrix[2][1] * xyz.Y + matrix[2][2] * xyz.Z;
+    // Clamp negative values (can occur for colors outside sRGB gamut)
+    r = Math.max(0, r);
+    g = Math.max(0, g);
+    b = Math.max(0, b);
+    // Apply inverse gamma correction
+    r = applyInverseGammaCorrection(r);
+    g = applyInverseGammaCorrection(g);
+    b = applyInverseGammaCorrection(b);
+    // Denormalize from 0-1 to 0-255 and clamp
+    var rgb = {
+      r: clamp(Math.round(r * 255), 0, 255),
+      g: clamp(Math.round(g * 255), 0, 255),
+      b: clamp(Math.round(b * 255), 0, 255)
+    };
+    // Preserve alpha if present
+    if (lab.alpha !== undefined) {
+      rgb.a = lab.alpha;
+    }
+    return rgb;
+  }
+  /**
+   * Convert CIELAB to LCh (cylindrical coordinates)
+   */
+  function labToLch(lab) {
+    // Calculate Chroma
+    var c = Math.sqrt(lab.a * lab.a + lab.b * lab.b);
+    // Calculate Hue angle in degrees
+    var h = Math.atan2(lab.b, lab.a) * (180 / Math.PI);
+    // Normalize hue to 0-360 range
+    if (h < 0) {
+      h += 360;
+    }
+    var lch = {
+      l: lab.l,
+      c: c,
+      h: h
+    };
+    // Preserve alpha if present
+    if (lab.alpha !== undefined) {
+      lch.alpha = lab.alpha;
+    }
+    return lch;
+  }
+  /**
+   * Convert LCh to CIELAB (Cartesian coordinates)
+   */
+  function lchToLab(lch) {
+    // Convert hue to radians
+    var hRad = lch.h * (Math.PI / 180);
+    // Calculate a and b
+    var a = lch.c * Math.cos(hRad);
+    var b = lch.c * Math.sin(hRad);
+    var lab = {
+      l: lch.l,
+      a: a,
+      b: b
+    };
+    // Preserve alpha if present
+    if (lch.alpha !== undefined) {
+      lab.alpha = lch.alpha;
+    }
+    return lab;
+  }
+  /**
+   * Convert RGB to LCh color space
+   */
+  function rgbToLch(rgb, profile) {
+    if (profile === void 0) {
+      profile = "nodehue_d50_typo";
+    }
+    var lab = rgbToLab(rgb, profile);
+    return labToLch(lab);
+  }
+  /**
+   * Convert LCh to RGB color space
+   */
+  function lchToRgb(lch, profile) {
+    if (profile === void 0) {
+      profile = "nodehue_d50_typo";
+    }
+    var lab = lchToLab(lch);
+    return labToRgb(lab, profile);
+  }
+
+  /**
+   * Tests if an RGB color is within the specified Philips Hue gamut
+   *
+   * @param rgb - RGB color to test
+   * @param gamut - Target Philips Hue gamut ('A', 'B', 'C', or 'none')
+   * @param profile - Matrix profile for RGB→XY conversion (default: nodehue_d50_typo)
+   * @returns true if the color is inside the gamut, false otherwise
+   */
+  function isRgbInGamut(rgb, gamut, profile) {
+    if (profile === void 0) {
+      profile = DEFAULT_MATRIX_PROFILE;
+    }
+    // 'none' means no gamut restriction
+    if (gamut === "none") {
+      return true;
+    }
+    // Convert RGB to XY (without clamping)
+    var xy = rgbToXy(rgb.r, rgb.g, rgb.b, "none", profile);
+    // Get the gamut triangle
+    var triangle = GAMUT_MAP[gamut];
+    // Test if point is inside triangle
+    return isPointInTriangle(xy, triangle);
+  }
+  /**
+   * Finds the maximum chroma value that keeps the color within the gamut
+   * using binary search algorithm
+   *
+   * @param lch - LCh color with original lightness, chroma, and hue
+   * @param gamut - Target Philips Hue gamut
+   * @param profile - Matrix profile for conversion
+   * @param tolerance - Convergence tolerance for chroma (default: 0.1)
+   * @returns Maximum in-gamut chroma value
+   */
+  function findMaxInGamutChroma(lch, gamut, profile, tolerance) {
+    if (profile === void 0) {
+      profile = DEFAULT_MATRIX_PROFILE;
+    }
+    if (tolerance === void 0) {
+      tolerance = 0.1;
+    }
+    // If gamut is 'none', return original chroma
+    if (gamut === "none") {
+      return lch.c;
+    }
+    // Binary search bounds
+    var chromaMin = 0; // Achromatic (always in-gamut)
+    var chromaMax = lch.c; // Original chroma
+    // Binary search for maximum in-gamut chroma
+    while (chromaMax - chromaMin > tolerance) {
+      var testChroma = (chromaMin + chromaMax) / 2;
+      // Create test LCh color with current chroma
+      var testLch = {
+        l: lch.l,
+        c: testChroma,
+        h: lch.h
+      };
+      // Convert to RGB
+      var testRgb = lchToRgb(testLch, profile);
+      // Test if in gamut
+      if (isRgbInGamut(testRgb, gamut, profile)) {
+        // Inside gamut - can increase chroma
+        chromaMin = testChroma;
+      } else {
+        // Outside gamut - must decrease chroma
+        chromaMax = testChroma;
+      }
+    }
+    return chromaMin;
+  }
+  /**
+   * Applies smooth-knee compression for gradual transitions near gamut boundaries
+   *
+   * @param chroma - Original chroma value
+   * @param maxChroma - Maximum in-gamut chroma
+   * @param kneeThreshold - Threshold as fraction of maxChroma (default: 0.9 = 90%)
+   * @param compressionFactor - Compression strength in knee region (default: 0.5 = 50% reduction)
+   * @returns Compressed chroma value
+   */
+  function applySmoothKnee(chroma, maxChroma, kneeThreshold, compressionFactor) {
+    if (kneeThreshold === void 0) {
+      kneeThreshold = 0.9;
+    }
+    if (compressionFactor === void 0) {
+      compressionFactor = 0.5;
+    }
+    // If chroma is below knee threshold, no compression needed
+    var kneePoint = maxChroma * kneeThreshold;
+    if (chroma <= kneePoint) {
+      return chroma;
+    }
+    // Apply gradual compression in the knee region
+    var excessChroma = chroma - kneePoint;
+    var compressedExcess = excessChroma * compressionFactor;
+    return kneePoint + compressedExcess;
+  }
+  /**
+   * Maps an RGB color to the specified Philips Hue gamut using perceptual
+   * gamut mapping with hue-preserving chroma compression in CIELAB/LCh color space.
+   *
+   * This algorithm preserves hue and lightness while gradually reducing chroma
+   * (saturation) until the color falls within the target gamut. This creates
+   * smooth, natural-looking color transitions without abrupt clipping.
+   *
+   * @param rgb - Input RGB color (may be out-of-gamut)
+   * @param gamut - Target Philips Hue gamut ('A', 'B', 'C', or 'none')
+   * @param profile - Matrix profile for color space conversions (default: nodehue_d50_typo)
+   * @param options - Optional settings for tolerance and smooth-knee compression
+   * @returns RGB color mapped to the target gamut
+   *
+   * @example
+   * // Map a highly saturated magenta to Gamut A
+   * const outOfGamut = { r: 255, g: 0, b: 255 };
+   * const mapped = mapToGamutPerceptual(outOfGamut, 'A');
+   * // Result: Less saturated magenta that fits in Gamut A, with hue preserved
+   *
+   * @example
+   * // Map with smooth-knee compression for gradual transitions
+   * const mapped = mapToGamutPerceptual(outOfGamut, 'A', 'nodehue_d50_typo', {
+   *   knee: { threshold: 0.9, factor: 0.5 }
+   * });
+   *
+   * @example
+   * // Map with custom tolerance for higher precision
+   * const mapped = mapToGamutPerceptual(outOfGamut, 'A', 'nodehue_d50_typo', {
+   *   tolerance: 0.05
+   * });
+   */
+  function mapToGamutPerceptual(rgb, gamut, profile, options) {
+    var _options$tolerance, _options$knee, _options$knee2;
+    if (profile === void 0) {
+      profile = DEFAULT_MATRIX_PROFILE;
+    }
+    // Early exit: if gamut is 'none', return unchanged
+    if (gamut === "none") {
+      return rgb;
+    }
+    // Early exit: if already in gamut, return unchanged
+    if (isRgbInGamut(rgb, gamut, profile)) {
+      return rgb;
+    }
+    // Convert to LCh color space
+    var lch = rgbToLch(rgb, profile);
+    // Handle edge cases
+    // Achromatic colors (chroma ≈ 0) should already be in gamut
+    if (lch.c < 0.01) {
+      return rgb;
+    }
+    // Black (L ≈ 0) should already be in gamut
+    if (lch.l < 0.01) {
+      return rgb;
+    }
+    // White (L ≈ 100, chroma ≈ 0) should already be in gamut
+    if (lch.l > 99.9 && lch.c < 0.01) {
+      return rgb;
+    }
+    // Extract options with defaults
+    var tolerance = (_options$tolerance = options == null ? void 0 : options.tolerance) != null ? _options$tolerance : 0.1;
+    var kneeThreshold = options == null || (_options$knee = options.knee) == null ? void 0 : _options$knee.threshold;
+    var kneeFactor = options == null || (_options$knee2 = options.knee) == null ? void 0 : _options$knee2.factor;
+    // Find maximum in-gamut chroma using binary search
+    var maxChroma = findMaxInGamutChroma(lch, gamut, profile, tolerance);
+    // Apply smooth-knee compression if knee options are provided
+    var finalChroma = maxChroma;
+    if (kneeThreshold !== undefined && kneeFactor !== undefined) {
+      finalChroma = applySmoothKnee(lch.c, maxChroma, kneeThreshold, kneeFactor);
+      // Clamp to maxChroma to ensure we stay in gamut
+      finalChroma = Math.min(finalChroma, maxChroma);
+    }
+    // Create LCh color with compressed chroma (preserving L and H)
+    var mappedLch = {
+      l: lch.l,
+      c: finalChroma,
+      h: lch.h
+    };
+    // Preserve alpha if present
+    if (lch.alpha !== undefined) {
+      mappedLch.alpha = lch.alpha;
+    }
+    // Convert back to RGB
+    var mappedRgb = lchToRgb(mappedLch, profile);
+    // Preserve alpha from original RGB if present
+    if (rgb.a !== undefined) {
+      mappedRgb.a = rgb.a;
+    }
+    return mappedRgb;
+  }
+
+  /**
+   * Calculate the maximum radius for the handle movement.
+   * This is the distance from the wheel center to the edge of the usable area.
+   *
+   * @param props - Gamut wheel properties
+   * @returns The maximum handle radius (non-negative)
+   */
+  function getHandleRange$1(props) {
+    // Extract properties with safety checks
+    var width = Number.isFinite(props.width) ? props.width : 0;
+    var padding = Number.isFinite(props.padding) ? props.padding : 0;
+    var handleRadius = Number.isFinite(props.handleRadius) ? props.handleRadius : 0;
+    var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+    // Calculate handle range
+    var r = width / 2 - padding - handleRadius - borderWidth;
+    // Clamp to non-negative to prevent division by zero
+    return Math.max(0, r);
+  }
+  /**
+   * Test if input coordinates (x, y) land inside the wheel.
+   * Includes the border region in the hit area.
+   *
+   * @param props - Gamut wheel properties
+   * @param x - X coordinate
+   * @param y - Y coordinate
+   * @returns True if inside the wheel, false otherwise
+   */
+  function isInputInsideGamutWheel(props, x, y) {
+    var _getWheelDimensions = getWheelDimensions$1(props),
+      radius = _getWheelDimensions.radius,
+      cx = _getWheelDimensions.cx,
+      cy = _getWheelDimensions.cy;
+    var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+    // Calculate hit radius (includes border region)
+    var hitR = radius + borderWidth / 2;
+    // Apply safety checks for input coordinates
+    var safeX = Number.isFinite(x) ? x : cx;
+    var safeY = Number.isFinite(y) ? y : cy;
+    // Check if distance from center is less than hit radius
+    return dist(cx - safeX, cy - safeY) < hitR;
+  }
+  /**
+   * Calculate wheel dimensions and center point.
+   *
+   * @param props - Gamut wheel properties
+   * @returns Object with width, radius, cx (center X), cy (center Y)
+   */
+  function getWheelDimensions$1(props) {
+    // Extract properties with safety checks
+    var width = Number.isFinite(props.width) ? props.width : 0;
+    var borderWidth = Number.isFinite(props.borderWidth) ? props.borderWidth : 0;
+    // Calculate radius and center point
+    var radius = width / 2 - borderWidth;
+    var cx = width / 2;
+    var cy = width / 2;
+    return {
+      width: width,
+      radius: radius,
+      cx: cx,
+      cy: cy
+    };
+  }
+  /**
+   * Bidirectional conversion between visual wheel angle and HSV hue.
+   *
+   * Forward (visual → hue):
+   * - Converts a visual angle on the wheel to an HSV hue value
+   * - Accounts for wheelAngle offset and wheelDirection
+   *
+   * Inverse (hue → visual):
+   * - Converts an HSV hue value to a visual angle on the wheel
+   * - Used for positioning the handle
+   *
+   * @param props - Gamut wheel properties
+   * @param angle - Input angle (visual angle if invert=false, hue if invert=true)
+   * @param invert - Direction of conversion (false = visual→hue, true = hue→visual)
+   * @returns Converted angle normalized to 0-360 range
+   */
+  function translateWheelAngle$1(props, angle, invert) {
+    // Extract wheelAngle with default 0
+    var wheelAngle = Number.isFinite(props.wheelAngle) ? props.wheelAngle : 0;
+    // Normalize wheelDirection: only 'clockwise' is clockwise, else 'anticlockwise'
+    var isClockwise = props.wheelDirection === "clockwise";
+    var processedAngle;
+    if (invert) {
+      // Inverse transformation: hue → visual angle
+      if (isClockwise) {
+        // clockwise: visualAngle = wheelAngle - hue
+        processedAngle = wheelAngle - angle;
+      } else {
+        // anticlockwise: visualAngle = hue - wheelAngle
+        processedAngle = angle - wheelAngle;
+      }
+    } else {
+      // Forward transformation: visual angle → hue
+      if (isClockwise) {
+        // clockwise: hue = wheelAngle - visualAngle
+        processedAngle = wheelAngle - angle;
+      } else {
+        // anticlockwise: hue = visualAngle + wheelAngle
+        processedAngle = angle + wheelAngle;
+      }
+    }
+    // Normalize to 0-360 range
+    return mod(processedAngle, 360);
+  }
+  /**
+   * Calculate handle position (x, y) for a given color.
+   *
+   * Transformation pipeline:
+   * 1. HSV hue → Visual angle (using translateWheelAngle)
+   * 2. Visual angle → Radians
+   * 3. HSV saturation → Distance from center
+   * 4. Polar (angle, distance) → Cartesian (x, y)
+   *
+   * @param props - Gamut wheel properties
+   * @param color - Color object with HSV values
+   * @returns Handle position { x, y }
+   */
+  function getGamutWheelHandlePosition(props, color) {
+    // Extract HSV values from color
+    var hsv = color.hsv;
+    // Get wheel dimensions
+    var _getWheelDimensions2 = getWheelDimensions$1(props),
+      cx = _getWheelDimensions2.cx,
+      cy = _getWheelDimensions2.cy;
+    // Get handle range
+    var handleRange = getHandleRange$1(props);
+    // Early exit: if handleRange ≤ 0, return center point
+    if (handleRange <= 0) {
+      return {
+        x: cx,
+        y: cy
+      };
+    }
+    // Convert HSV hue to visual angle
+    var visualAngle = translateWheelAngle$1(props, hsv.h, true);
+    // Convert visual angle to radians
+    var angleRad = visualAngle * (TAU / 360);
+    // Calculate distance from center
+    var handleDist = hsv.s / 100 * handleRange;
+    // Convert polar to Cartesian coordinates
+    // Note: minus for y because DOM Y-axis points down
+    var x = cx + handleDist * Math.cos(angleRad);
+    var y = cy - handleDist * Math.sin(angleRad);
+    // Apply safety checks
+    var safeX = Number.isFinite(x) ? x : cx;
+    var safeY = Number.isFinite(y) ? y : cy;
+    return {
+      x: safeX,
+      y: safeY
+    };
+  }
+  /**
+   * Calculate HSV hue and saturation from user input coordinates.
+   *
+   * Transformation pipeline:
+   * 1. Cartesian (x, y) → Polar (angle, distance)
+   * 2. Angle (radians) → Visual angle (degrees)
+   * 3. Visual angle → HSV hue (using translateWheelAngle)
+   * 4. Distance → HSV saturation (clamped to handleRange)
+   *
+   * @param props - Gamut wheel properties
+   * @param x - X coordinate
+   * @param y - Y coordinate
+   * @returns HSV values { h: hue (0-360), s: saturation (0-100) }
+   */
+  function getGamutWheelValueFromInput(props, x, y) {
+    // Get wheel dimensions
+    var _getWheelDimensions3 = getWheelDimensions$1(props),
+      cx = _getWheelDimensions3.cx,
+      cy = _getWheelDimensions3.cy;
+    // Get handle range
+    var handleRange = getHandleRange$1(props);
+    // Calculate relative position from center
+    // Note: cy - y because DOM Y-axis points down
+    var dx = Number.isFinite(x) ? x - cx : 0;
+    var dy = Number.isFinite(y) ? cy - y : 0;
+    // Calculate visual angle using atan2
+    var visualAngle = Math.atan2(dy, dx) * (360 / TAU);
+    // Convert visual angle to HSV hue
+    var hue = translateWheelAngle$1(props, visualAngle, false);
+    // Handle edge case: if handleRange ≤ 0, return hue with s=0
+    if (handleRange <= 0) {
+      return {
+        h: mod(Math.round(hue), 360),
+        s: 0
+      };
+    }
+    // Calculate distance from center (clamped to handleRange)
+    var handleDist = Math.min(dist(dx, dy), handleRange);
+    // Calculate saturation
+    var saturation = 100 / handleRange * handleDist;
+    return {
+      h: mod(Math.round(hue), 360),
+      s: Math.round(saturation)
+    };
+  }
+
   var SECONDARY_EVENTS = [
       "mousemove" /* MouseMove */,
       "touchmove" /* TouchMove */,
@@ -2295,6 +2929,208 @@
           _("div", { className: "IroWheelSaturation", style: Object.assign(Object.assign({}, circleStyles), { background: "radial-gradient(circle closest-side, #fff, transparent)" }) }),
           props.wheelLightness && (_("div", { className: "IroWheelLightness", style: Object.assign(Object.assign({}, circleStyles), { background: "#000", opacity: 1 - hsv.v / 100 }) })),
           _("div", { className: "IroWheelBorder", style: Object.assign(Object.assign({}, circleStyles), cssBorderStyles(props)) }),
+          colors
+              .filter(function (color) { return color !== activeColor; })
+              .map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
+          _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+  }
+
+  var t,r$1,u$1,i$1,o$1=0,f$1=[],c$1=l,e$1=c$1.__b,a$1=c$1.__r,v$1=c$1.diffed,l$1=c$1.__c,m$1=c$1.unmount,s$1=c$1.__;function p$1(n,t){c$1.__h&&c$1.__h(r$1,n,o$1||t),o$1=0;var u=r$1.__H||(r$1.__H={__:[],__h:[]});return n>=u.__.length&&u.__.push({}),u.__[n]}function y$1(n,u){var i=p$1(t++,3);!c$1.__s&&C$1(i.__H,u)&&(i.__=n,i.u=u,r$1.__H.__h.push(i));}function A$1(n){return o$1=5,T$1(function(){return {current:n}},[])}function T$1(n,r){var u=p$1(t++,7);return C$1(u.__H,r)&&(u.__=n(),u.__H=r,u.__h=n),u.__}function j$1(){for(var n;n=f$1.shift();){ if(n.__P&&n.__H){ try{n.__H.__h.forEach(z$1),n.__H.__h.forEach(B$1),n.__H.__h=[];}catch(t){n.__H.__h=[],c$1.__e(t,n.__v);} } }}c$1.__b=function(n){r$1=null,e$1&&e$1(n);},c$1.__=function(n,t){n&&t.__k&&t.__k.__m&&(n.__m=t.__k.__m),s$1&&s$1(n,t);},c$1.__r=function(n){a$1&&a$1(n),t=0;var i=(r$1=n.__c).__H;i&&(u$1===r$1?(i.__h=[],r$1.__h=[],i.__.forEach(function(n){n.__N&&(n.__=n.__N),n.u=n.__N=void 0;})):(i.__h.forEach(z$1),i.__h.forEach(B$1),i.__h=[],t=0)),u$1=r$1;},c$1.diffed=function(n){v$1&&v$1(n);var t=n.__c;t&&t.__H&&(t.__H.__h.length&&(1!==f$1.push(t)&&i$1===c$1.requestAnimationFrame||((i$1=c$1.requestAnimationFrame)||w$1)(j$1)),t.__H.__.forEach(function(n){n.u&&(n.__H=n.u),n.u=void 0;})),u$1=r$1=null;},c$1.__c=function(n,t){t.some(function(n){try{n.__h.forEach(z$1),n.__h=n.__h.filter(function(n){return !n.__||B$1(n)});}catch(r){t.some(function(n){n.__h&&(n.__h=[]);}),t=[],c$1.__e(r,n.__v);}}),l$1&&l$1(n,t);},c$1.unmount=function(n){m$1&&m$1(n);var t,r=n.__c;r&&r.__H&&(r.__H.__.forEach(function(n){try{z$1(n);}catch(n$1){t=n$1;}}),r.__H=void 0,t&&c$1.__e(t,r.__v));};var k$1="function"==typeof requestAnimationFrame;function w$1(n){var t,r=function(){clearTimeout(u),k$1&&cancelAnimationFrame(t),setTimeout(n);},u=setTimeout(r,35);k$1&&(t=requestAnimationFrame(r));}function z$1(n){var t=r$1,u=n.__c;"function"==typeof u&&(n.__c=void 0,u()),r$1=t;}function B$1(n){var t=r$1;n.__c=n.__(),r$1=t;}function C$1(n,t){return !n||n.length!==t.length||t.some(function(t,r){return t!==n[r]})}
+
+  function IroGamutWheel(props) {
+      var _a;
+      // Gamut validation (early exit)
+      var validGamuts = new Set(["A", "B", "C"]);
+      if (!props.gamut || !validGamuts.has(props.gamut)) {
+          console.warn("GamutWheel requires gamut to be A, B, or C. Received:", props.gamut);
+          return null;
+      }
+      // Props extraction and defaults
+      var colors = props.colors;
+      var wheelAngle = (_a = props.wheelAngle) !== null && _a !== void 0 ? _a : 0;
+      var wheelDirection = props.wheelDirection;
+      var wd = wheelDirection === "clockwise" ? "clockwise" : "anticlockwise";
+      var propsWithDefaults = Object.assign(Object.assign({}, props), { wheelAngle: wheelAngle, wheelDirection: wd });
+      var ref = getWheelDimensions(propsWithDefaults);
+      var width = ref.width;
+      var radius = ref.radius;
+      var cx = ref.cx;
+      var cy = ref.cy;
+      // Early exit if dimensions are invalid (prevents createImageData errors)
+      if (!width || width <= 0 || !Number.isFinite(width)) {
+          console.warn("GamutWheel: Invalid dimensions, skipping render. width:", width);
+          return null;
+      }
+      // Refs and state
+      var canvasRef = A$1(null);
+      var colorPicker = props.parent;
+      var activeColor = props.color;
+      var hsv = activeColor.hsv;
+      var handlePositions = colors.map(function (color) { return getGamutWheelHandlePosition(propsWithDefaults, color); });
+      // Canvas rendering logic
+      y$1(function () {
+          // Inline HSV to RGB conversion helper (avoids IroColor object creation per pixel)
+          function hsvToRgb(h, s, v) {
+              var hNorm = h / 60;
+              var sNorm = s / 100;
+              var vNorm = v / 100;
+              var c = vNorm * sNorm;
+              var x = c * (1 - Math.abs((hNorm % 2) - 1));
+              var m = vNorm - c;
+              var r = 0, g = 0, b = 0;
+              if (hNorm >= 0 && hNorm < 1) {
+                  r = c;
+                  g = x;
+                  b = 0;
+              }
+              else if (hNorm >= 1 && hNorm < 2) {
+                  r = x;
+                  g = c;
+                  b = 0;
+              }
+              else if (hNorm >= 2 && hNorm < 3) {
+                  r = 0;
+                  g = c;
+                  b = x;
+              }
+              else if (hNorm >= 3 && hNorm < 4) {
+                  r = 0;
+                  g = x;
+                  b = c;
+              }
+              else if (hNorm >= 4 && hNorm < 5) {
+                  r = x;
+                  g = 0;
+                  b = c;
+              }
+              else if (hNorm >= 5 && hNorm < 6) {
+                  r = c;
+                  g = 0;
+                  b = x;
+              }
+              return {
+                  r: Math.round((r + m) * 255),
+                  g: Math.round((g + m) * 255),
+                  b: Math.round((b + m) * 255),
+              };
+          }
+          function renderGamutWheel() {
+              if (!canvasRef.current)
+                  { return; }
+              var canvas = canvasRef.current;
+              var ctx = canvas.getContext("2d", {
+                  willReadFrequently: false,
+              });
+              if (!ctx)
+                  { return; }
+              // Validate width before creating ImageData (prevents IndexSizeError)
+              if (!width || width <= 0 || !Number.isFinite(width)) {
+                  console.warn("GamutWheel renderGamutWheel: Invalid width", width);
+                  return;
+              }
+              // HiDPI/Retina support
+              var dpr = window.devicePixelRatio || 1;
+              var physicalWidth = Math.round(width * dpr);
+              var physicalHeight = Math.round(width * dpr);
+              // Set canvas physical dimensions (scaled for HiDPI)
+              canvas.width = physicalWidth;
+              canvas.height = physicalHeight;
+              // Apply DPR scaling to drawing context
+              ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+              // Create ImageData for pixel manipulation at logical size
+              var imageData = ctx.createImageData(width, width);
+              var data = imageData.data;
+              // For each pixel in the canvas (logical coordinates)
+              for (var y = 0; y < width; y++) {
+                  for (var x = 0; x < width; x++) {
+                      // 1. Calculate distance from center
+                      var dx = x - cx;
+                      var dy = cy - y; // Note: cy - y because DOM Y-axis points down
+                      var distance = Math.sqrt(dx * dx + dy * dy);
+                      // 2. Only render inside the circle
+                      if (distance <= radius) {
+                          // 3. Convert Cartesian to Polar coordinates
+                          var visualAngle = Math.atan2(dy, dx) * (360 / (2 * Math.PI));
+                          // 4. Convert visual angle to HSV hue
+                          var hue = translateWheelAngle(propsWithDefaults, visualAngle, false);
+                          // 5. Calculate saturation from distance
+                          var saturation = (distance / radius) * 100;
+                          // 6. Convert HSV to RGB (with V=100 for full brightness)
+                          var rgb = hsvToRgb(hue, saturation, 100);
+                          // 7. Apply perceptual gamut mapping
+                          var mappedRgb = mapToGamutPerceptual(rgb, props.gamut);
+                          // 8. Set pixel in ImageData
+                          var index = (y * width + x) * 4;
+                          data[index] = mappedRgb.r; // Red
+                          data[index + 1] = mappedRgb.g; // Green
+                          data[index + 2] = mappedRgb.b; // Blue
+                          data[index + 3] = 255; // Alpha (fully opaque)
+                      }
+                      // Pixels outside the circle remain transparent (alpha = 0)
+                  }
+              }
+              // Put ImageData onto canvas at logical coordinates (DPR scaling applies automatically)
+              ctx.putImageData(imageData, 0, 0);
+          }
+          renderGamutWheel();
+      }, [
+          width,
+          radius,
+          cx,
+          cy,
+          props.gamut,
+          wheelAngle,
+          wheelDirection,
+          props.wheelLightness ]);
+      // Event handling function
+      function handleInput(x, y, inputType) {
+          if (inputType === 0 /* Start */) {
+              // Check if input is inside wheel
+              if (!isInputInsideGamutWheel(propsWithDefaults, x, y)) {
+                  return false;
+              }
+              // Check if input hit a handle
+              var activeHandle = getHandleAtPoint(propsWithDefaults, x, y, handlePositions);
+              if (activeHandle !== null) {
+                  // Hit a handle, switch active color
+                  colorPicker.setActiveColor(activeHandle);
+              }
+              else {
+                  // Didn't hit a handle, update color
+                  colorPicker.inputActive = true;
+                  activeColor.hsv = getGamutWheelValueFromInput(propsWithDefaults, x, y);
+              }
+          }
+          else if (inputType === 1 /* Move */) {
+              // Update color during drag
+              colorPicker.inputActive = true;
+              activeColor.hsv = getGamutWheelValueFromInput(propsWithDefaults, x, y);
+          }
+          // let the color picker fire input:start, input:move or input:end events
+          props.onInput(inputType, props.id);
+      }
+      // Render JSX
+      return (_(IroComponentWrapper, Object.assign({}, props, { onInput: handleInput }), function (uid, rootProps, rootStyles) { return (_("div", Object.assign({}, rootProps, { className: "IroGamutWheel", style: Object.assign({ width: cssValue(width), height: cssValue(width), position: "relative" }, rootStyles) }),
+          _("canvas", { ref: canvasRef, className: "IroGamutWheelCanvas", style: {
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+              } }),
+          props.wheelLightness && (_("div", { className: "IroGamutWheelLightness", style: {
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "50%",
+                  background: "#000",
+                  opacity: 1 - hsv.v / 100,
+                  pointerEvents: "none",
+              } })),
+          _("div", { className: "IroGamutWheelBorder", style: Object.assign(Object.assign({ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", borderRadius: "50%", boxSizing: "border-box" }, cssBorderStyles(props)), { pointerEvents: "none" }) }),
           colors
               .filter(function (color) { return color !== activeColor; })
               .map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
@@ -2861,6 +3697,7 @@
           ui.Slider = IroSlider;
           ui.Wheel = IroWheel;
           ui.Box = IroBox;
+          ui.GamutWheel = IroGamutWheel;
       })(ui = iro.ui || (iro.ui = {}));
   })(iro || (iro = {}));
   var iro$1 = iro;

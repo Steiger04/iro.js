@@ -47,6 +47,9 @@ module.exports = {
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',
 
+  // Setup files to run before the test framework is installed
+  setupFiles: ['jest-canvas-mock'],
+
   // Setup files to run after the test environment is set up
   setupFilesAfterEnv: ['<rootDir>/tests/setupEnv.ts'],
 
