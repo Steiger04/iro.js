@@ -2933,11 +2933,11 @@ var t,r$1,u$1,i$1,o$1=0,f$1=[],c$1=l,e$1=c$1.__b,a$1=c$1.__r,v$1=c$1.diffed,l$1=
 
 function IroGamutWheel(props) {
     var _a;
-    // Gamut validation (early exit)
+    // Gamut validation with safe fallback
     var validGamuts = new Set(["A", "B", "C"]);
+    var safeGamut = props.gamut && validGamuts.has(props.gamut) ? props.gamut : "B";
     if (!props.gamut || !validGamuts.has(props.gamut)) {
-        console.warn("GamutWheel requires gamut to be A, B, or C. Received:", props.gamut);
-        return null;
+        console.warn("GamutWheel requires gamut to be A, B, or C. Received:", props.gamut, "- Falling back to gamut B");
     }
     // Props extraction and defaults
     var colors = props.colors;
@@ -2950,17 +2950,42 @@ function IroGamutWheel(props) {
     var radius = ref.radius;
     var cx = ref.cx;
     var cy = ref.cy;
-    // Early exit if dimensions are invalid (prevents createImageData errors)
-    if (!width || width <= 0 || !Number.isFinite(width)) {
-        console.warn("GamutWheel: Invalid dimensions, skipping render. width:", width);
-        return null;
-    }
     // Refs and state
     var canvasRef = A$1(null);
     var colorPicker = props.parent;
     var activeColor = props.color;
     var hsv = activeColor.hsv;
     var handlePositions = colors.map(function (color) { return getGamutWheelHandlePosition(propsWithDefaults, color); });
+    // Lightweight memoization cache for handle colors to avoid redundant computation
+    // Cache is keyed by: colorIndex, hue, gamut, matrixProfile
+    // Invalidated when any dependency changes
+    var handleColorCache = T$1(function () { return new Map(); }, [safeGamut, props.matrixProfile]);
+    // Helper function to compute gamut-mapped HSL color for a handle
+    var getHandleColor = function (color) {
+        // Create cache key from color properties and dependencies
+        var cacheKey = (color.index) + ":" + (color.hue) + ":" + (color.saturation) + ":" + (color.value);
+        // Check cache first
+        var cached = handleColorCache.get(cacheKey);
+        if (cached !== undefined) {
+            return cached;
+        }
+        // IMPORTANT: Use saturation=100% AND value=100% to match the canvas rendering.
+        // The canvas renders all colors at full saturation and full brightness, with:
+        // - White radial overlay creating the visual saturation gradient
+        // - Black lightness overlay (when wheelLightness=true) creating the brightness gradient
+        // The handle must use the same approach (s=100, v=100) to ensure color consistency.
+        // If we used v=color.value here, brightness would be reduced twice:
+        // once in the computed color, and again by the lightness overlay.
+        var hsv = { h: color.hue, s: color.saturation, v: color.value };
+        var rgb = IroColor.hsvToRgb(hsv);
+        var mappedRgb = mapToGamutPerceptual(rgb, safeGamut, props.matrixProfile);
+        var mappedHsv = IroColor.rgbToHsv(mappedRgb);
+        var hsl = IroColor.hsvToHsl(mappedHsv);
+        var result = "hsl(" + (Math.round(hsl.h)) + ", " + (Math.round(hsl.s)) + "%, " + (Math.round(hsl.l)) + "%)";
+        // Store in cache
+        handleColorCache.set(cacheKey, result);
+        return result;
+    };
     // Canvas rendering logic
     y$1(function () {
         // Inline HSV to RGB conversion helper (avoids IroColor object creation per pixel)
@@ -3029,32 +3054,34 @@ function IroGamutWheel(props) {
             // Set canvas physical dimensions (scaled for HiDPI)
             canvas.width = physicalWidth;
             canvas.height = physicalHeight;
-            // Apply DPR scaling to drawing context
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            // Create ImageData for pixel manipulation at logical size
-            var imageData = ctx.createImageData(width, width);
+            // Calculate physical center and radius
+            var pCx = Math.round(cx * dpr);
+            var pCy = Math.round(cy * dpr);
+            var pRadius = Math.round(radius * dpr);
+            // Create ImageData for pixel manipulation at physical size
+            var imageData = ctx.createImageData(physicalWidth, physicalHeight);
             var data = imageData.data;
-            // For each pixel in the canvas (logical coordinates)
-            for (var y = 0; y < width; y++) {
-                for (var x = 0; x < width; x++) {
-                    // 1. Calculate distance from center
-                    var dx = x - cx;
-                    var dy = cy - y; // Note: cy - y because DOM Y-axis points down
+            // For each pixel in the canvas (physical coordinates)
+            for (var y = 0; y < physicalHeight; y++) {
+                for (var x = 0; x < physicalWidth; x++) {
+                    // 1. Calculate distance from center in physical coordinates
+                    var dx = x - pCx;
+                    var dy = pCy - y; // Note: pCy - y because DOM Y-axis points down
                     var distance = Math.sqrt(dx * dx + dy * dy);
                     // 2. Only render inside the circle
-                    if (distance <= radius) {
+                    if (distance <= pRadius) {
                         // 3. Convert Cartesian to Polar coordinates
                         var visualAngle = Math.atan2(dy, dx) * (360 / (2 * Math.PI));
                         // 4. Convert visual angle to HSV hue
                         var hue = translateWheelAngle(propsWithDefaults, visualAngle, false);
-                        // 5. Calculate saturation from distance
-                        var saturation = (distance / radius) * 100;
+                        // 5. Use 100% saturation (saturation gradient is applied by CSS overlay)
+                        var saturation = 100;
                         // 6. Convert HSV to RGB (with V=100 for full brightness)
                         var rgb = hsvToRgb(hue, saturation, 100);
-                        // 7. Apply perceptual gamut mapping
-                        var mappedRgb = mapToGamutPerceptual(rgb, props.gamut);
+                        // 7. Apply perceptual gamut mapping with matrix profile
+                        var mappedRgb = mapToGamutPerceptual(rgb, safeGamut, props.matrixProfile);
                         // 8. Set pixel in ImageData
-                        var index = (y * width + x) * 4;
+                        var index = (y * physicalWidth + x) * 4;
                         data[index] = mappedRgb.r; // Red
                         data[index + 1] = mappedRgb.g; // Green
                         data[index + 2] = mappedRgb.b; // Blue
@@ -3063,7 +3090,7 @@ function IroGamutWheel(props) {
                     // Pixels outside the circle remain transparent (alpha = 0)
                 }
             }
-            // Put ImageData onto canvas at logical coordinates (DPR scaling applies automatically)
+            // Put ImageData onto canvas at origin (no transform needed)
             ctx.putImageData(imageData, 0, 0);
         }
         renderGamutWheel();
@@ -3072,7 +3099,8 @@ function IroGamutWheel(props) {
         radius,
         cx,
         cy,
-        props.gamut,
+        safeGamut,
+        props.matrixProfile,
         wheelAngle,
         wheelDirection,
         props.wheelLightness ]);
@@ -3113,6 +3141,16 @@ function IroGamutWheel(props) {
                 height: "100%",
                 borderRadius: "50%",
             } }),
+        _("div", { className: "IroGamutWheelSaturation", style: {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                borderRadius: "50%",
+                background: "radial-gradient(circle closest-side, #fff, transparent)",
+                pointerEvents: "none",
+            } }),
         props.wheelLightness && (_("div", { className: "IroGamutWheelLightness", style: {
                 position: "absolute",
                 top: 0,
@@ -3127,8 +3165,8 @@ function IroGamutWheel(props) {
         _("div", { className: "IroGamutWheelBorder", style: Object.assign(Object.assign({ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", borderRadius: "50%", boxSizing: "border-box" }, cssBorderStyles(props)), { pointerEvents: "none" }) }),
         colors
             .filter(function (color) { return color !== activeColor; })
-            .map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: color.hslString, r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
-        _(IroHandle, { isActive: true, index: activeColor.index, fill: activeColor.hslString, r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
+            .map(function (color) { return (_(IroHandle, { isActive: false, index: color.index, fill: getHandleColor(color), r: props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[color.index].x, y: handlePositions[color.index].y })); }),
+        _(IroHandle, { isActive: true, index: activeColor.index, fill: getHandleColor(activeColor), r: props.activeHandleRadius || props.handleRadius, url: props.handleSvg, props: props.handleProps, x: handlePositions[activeColor.index].x, y: handlePositions[activeColor.index].y }))); }));
 }
 
 /*! *****************************************************************************

@@ -40,7 +40,7 @@ describe("GamutWheel component rendering", () => {
     }, 50);
   });
 
-  test('does not render GamutWheel when gamut is "none"', (done) => {
+  test('renders GamutWheel with fallback when gamut is "none"', (done) => {
     const picker = IroColorPicker(root, {
       width: 300,
       color: "#ff0000",
@@ -50,8 +50,9 @@ describe("GamutWheel component rendering", () => {
 
     setTimeout(() => {
       const gamutWheel = root.querySelector(".IroGamutWheel");
-      // Component should either not exist or not render properly
-      expect(gamutWheel).toBeFalsy();
+      // Component should render with fallback gamut B
+      expect(gamutWheel).toBeTruthy();
+      expect(gamutWheel?.querySelector(".IroGamutWheelCanvas")).toBeTruthy();
       done();
     }, 50);
   });

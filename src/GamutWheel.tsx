@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { useRef, useEffect } from "preact/hooks";
+import { useRef, useEffect, useMemo } from "preact/hooks";
 import {
   IroColor,
   cssBorderStyles,
@@ -23,14 +23,17 @@ export interface IroGamutWheelProps extends IroComponentProps {
 }
 
 export function IroGamutWheel(props: IroGamutWheelProps) {
-  // Gamut validation (early exit)
+  // Gamut validation with safe fallback
   const validGamuts = new Set(["A", "B", "C"]);
+  const safeGamut =
+    props.gamut && validGamuts.has(props.gamut) ? props.gamut : "B";
+
   if (!props.gamut || !validGamuts.has(props.gamut)) {
     console.warn(
       "GamutWheel requires gamut to be A, B, or C. Received:",
-      props.gamut
+      props.gamut,
+      "- Falling back to gamut B"
     );
-    return null;
   }
 
   // Props extraction and defaults
@@ -42,15 +45,6 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
   const propsWithDefaults = { ...props, wheelAngle, wheelDirection: wd };
   const { width, radius, cx, cy } = getWheelDimensions(propsWithDefaults);
 
-  // Early exit if dimensions are invalid (prevents createImageData errors)
-  if (!width || width <= 0 || !Number.isFinite(width)) {
-    console.warn(
-      "GamutWheel: Invalid dimensions, skipping render. width:",
-      width
-    );
-    return null;
-  }
-
   // Refs and state
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const colorPicker = props.parent;
@@ -59,6 +53,47 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
   const handlePositions = colors.map((color) =>
     getGamutWheelHandlePosition(propsWithDefaults, color)
   );
+
+  // Lightweight memoization cache for handle colors to avoid redundant computation
+  // Cache is keyed by: colorIndex, hue, gamut, matrixProfile
+  // Invalidated when any dependency changes
+  const handleColorCache = useMemo(
+    () => new Map<string, string>(),
+    [safeGamut, props.matrixProfile]
+  );
+
+  // Helper function to compute gamut-mapped HSL color for a handle
+  const getHandleColor = (color: IroColor): string => {
+    // Create cache key from color properties and dependencies
+    const cacheKey = `${color.index}:${color.hue}:${color.saturation}:${color.value}`;
+
+    // Check cache first
+    const cached = handleColorCache.get(cacheKey);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    // IMPORTANT: Use saturation=100% AND value=100% to match the canvas rendering.
+    // The canvas renders all colors at full saturation and full brightness, with:
+    // - White radial overlay creating the visual saturation gradient
+    // - Black lightness overlay (when wheelLightness=true) creating the brightness gradient
+    // The handle must use the same approach (s=100, v=100) to ensure color consistency.
+    // If we used v=color.value here, brightness would be reduced twice:
+    // once in the computed color, and again by the lightness overlay.
+    const hsv = { h: color.hue, s: color.saturation, v: color.value };
+    const rgb = IroColor.hsvToRgb(hsv);
+
+    const mappedRgb = mapToGamutPerceptual(rgb, safeGamut, props.matrixProfile);
+    const mappedHsv = IroColor.rgbToHsv(mappedRgb);
+    const hsl = IroColor.hsvToHsl(mappedHsv);
+    const result = `hsl(${Math.round(hsl.h)}, ${Math.round(
+      hsl.s
+    )}%, ${Math.round(hsl.l)}%)`;
+
+    // Store in cache
+    handleColorCache.set(cacheKey, result);
+    return result;
+  };
 
   // Canvas rendering logic
   useEffect(() => {
@@ -137,23 +172,25 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
       canvas.width = physicalWidth;
       canvas.height = physicalHeight;
 
-      // Apply DPR scaling to drawing context
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Calculate physical center and radius
+      const pCx = Math.round(cx * dpr);
+      const pCy = Math.round(cy * dpr);
+      const pRadius = Math.round(radius * dpr);
 
-      // Create ImageData for pixel manipulation at logical size
-      const imageData = ctx.createImageData(width, width);
+      // Create ImageData for pixel manipulation at physical size
+      const imageData = ctx.createImageData(physicalWidth, physicalHeight);
       const data = imageData.data;
 
-      // For each pixel in the canvas (logical coordinates)
-      for (let y = 0; y < width; y++) {
-        for (let x = 0; x < width; x++) {
-          // 1. Calculate distance from center
-          const dx = x - cx;
-          const dy = cy - y; // Note: cy - y because DOM Y-axis points down
+      // For each pixel in the canvas (physical coordinates)
+      for (let y = 0; y < physicalHeight; y++) {
+        for (let x = 0; x < physicalWidth; x++) {
+          // 1. Calculate distance from center in physical coordinates
+          const dx = x - pCx;
+          const dy = pCy - y; // Note: pCy - y because DOM Y-axis points down
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           // 2. Only render inside the circle
-          if (distance <= radius) {
+          if (distance <= pRadius) {
             // 3. Convert Cartesian to Polar coordinates
             const visualAngle = Math.atan2(dy, dx) * (360 / (2 * Math.PI));
 
@@ -164,17 +201,21 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
               false
             );
 
-            // 5. Calculate saturation from distance
-            const saturation = (distance / radius) * 100;
+            // 5. Use 100% saturation (saturation gradient is applied by CSS overlay)
+            const saturation = 100;
 
             // 6. Convert HSV to RGB (with V=100 for full brightness)
             const rgb = hsvToRgb(hue, saturation, 100);
 
-            // 7. Apply perceptual gamut mapping
-            const mappedRgb = mapToGamutPerceptual(rgb, props.gamut);
+            // 7. Apply perceptual gamut mapping with matrix profile
+            const mappedRgb = mapToGamutPerceptual(
+              rgb,
+              safeGamut,
+              props.matrixProfile
+            );
 
             // 8. Set pixel in ImageData
-            const index = (y * width + x) * 4;
+            const index = (y * physicalWidth + x) * 4;
             data[index] = mappedRgb.r; // Red
             data[index + 1] = mappedRgb.g; // Green
             data[index + 2] = mappedRgb.b; // Blue
@@ -184,7 +225,7 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
         }
       }
 
-      // Put ImageData onto canvas at logical coordinates (DPR scaling applies automatically)
+      // Put ImageData onto canvas at origin (no transform needed)
       ctx.putImageData(imageData, 0, 0);
     }
 
@@ -194,7 +235,8 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
     radius,
     cx,
     cy,
-    props.gamut,
+    safeGamut,
+    props.matrixProfile,
     wheelAngle,
     wheelDirection,
     props.wheelLightness,
@@ -261,6 +303,22 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
             }}
           />
 
+          {/* Saturation overlay (radial gradient from white to transparent) */}
+          <div
+            className="IroGamutWheelSaturation"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              background:
+                "radial-gradient(circle closest-side, #fff, transparent)",
+              pointerEvents: "none",
+            }}
+          />
+
           {/* Lightness overlay (optional) */}
           {props.wheelLightness && (
             <div
@@ -295,14 +353,14 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
             }}
           />
 
-          {/* Inactive handles */}
+          {/* Inactive handles - rendered after overlays to appear on top */}
           {colors
             .filter((color) => color !== activeColor)
             .map((color) => (
               <IroHandle
                 isActive={false}
                 index={color.index}
-                fill={color.hslString}
+                fill={getHandleColor(color)}
                 r={props.handleRadius}
                 url={props.handleSvg}
                 props={props.handleProps}
@@ -311,11 +369,11 @@ export function IroGamutWheel(props: IroGamutWheelProps) {
               />
             ))}
 
-          {/* Active handle */}
+          {/* Active handle - rendered last to appear on top of inactive handles */}
           <IroHandle
             isActive={true}
             index={activeColor.index}
-            fill={activeColor.hslString}
+            fill={getHandleColor(activeColor)}
             r={props.activeHandleRadius || props.handleRadius}
             url={props.handleSvg}
             props={props.handleProps}
